@@ -1,0 +1,58 @@
+<!--
+SPDX-License-Identifier: CC-BY-SA-4.0
+Copyright (c) 2026 wUwproject
+-->
+
+# Cogito Scribo — 方法论体系
+
+> **Cogito, Scribo.** (我思，故我写。)
+>
+> wUwproject 重型技能构建过程中沉淀的方法论体系。CC BY-SA 4.0。
+
+## 仓库定位
+
+本仓库独立托管 wUwproject 的方法论系列文章（Cogito_Scribit 系列）。2026-08-02 自 `workbuddy-skills` 仓库的 `Cogito_Scribit/` 目录独立拆分而来。
+
+**历史提交说明：** 本仓库为全新初始化，不带历史提交。所有历史记录保留于永久存档仓库：
+
+- Gitee: https://gitee.com/wUwproject/workbuddy-skills （`Cogito_Scribit/` 目录）
+- GitHub: https://github.com/Ldxs001/workbuddy-skills （`Cogito_Scribit/` 目录）
+
+## 体系全景
+
+八篇文章 + 一篇操作层，一个闭环、一种架构范式：
+
+| 篇 | 主题 | 核心命题 |
+|----|------|---------|
+| 01 | 硬约束架构 | 多步骤确定性流程中，LLM 的"自觉"是负资产 |
+| 02 | 构建时契约 | 构建时用五层契约锁定技能的"正确形态" |
+| 03 | 递归自举 | 方法论不约束自己，就没有约束任何东西的资格 |
+| 04 | 技能流水线编排 | LLM 从"大脑"降级为"胶水" |
+| 05 | 链驱动执行 | 链是主体，LLM 是执行器 |
+| 06 | 领域智能体 | LLM 承担"查询策略规划者"，组合式检索 |
+| 07 | 四条原则元逻辑 | 架构的减法与约束的加法 |
+| 08 | 有限决策范式 | LLM 只填空，不决策（三体印证） |
+| 08a | 操作层 | 前置规范 > 后置验证；最小尝试次数的分工与监督范式 |
+
+## 阅读顺序
+
+**01 → 02 → 03 → 04 → 05 → 06 → 07 → 08 → 08a**
+
+详细阅读指南见 `COGITO_README.md`。
+
+## 目录结构
+
+```
+Cogito_Scribit/
+├── LICENSE                    # CC BY-SA 4.0
+├── README.md
+├── COGITO_README.md           # 系列总纲
+├── 01_~08_*.md                # 方法论文章
+└── 08a_*.md                   # 操作层文章
+```
+
+## 维护约定
+
+- 本仓库由 wUwproject 维护，Gitee / GitHub 双平台同步
+- **08 系列容器约定**：智能体协作主题的方法论沉淀统一进入 08 系列（08 + 08a + 未来同主题扩展），新增独立方法论维度时另开新篇
+- 文章采用 CC BY-SA 4.0 协议，转载须注明出处

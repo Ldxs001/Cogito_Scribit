@@ -46,6 +46,7 @@ def md_to_html(md_text):
     out = []
     i = 0
     n = len(lines)
+    seq = 0
     while i < n:
         line = lines[i]
         # 代码块
@@ -57,11 +58,12 @@ def md_to_html(md_text):
             i += 1
             out.append('<pre><code>' + html_mod.escape('\n'.join(buf)) + '</code></pre>')
             continue
-        # 标题
+        # 标题（带锚点 id，供目录跳转）
         m = re.match(r'^(#{1,4})\s+(.*)$', line)
         if m:
             level = len(m.group(1))
-            out.append(f'<h{level}>{_inline(m.group(2))}</h{level}>')
+            seq += 1
+            out.append(f'<h{level} id="h{seq}">{_inline(m.group(2))}</h{level}>')
             i += 1
             continue
         # 分隔线
@@ -133,6 +135,12 @@ pre code { background: none; padding: 0; }
 hr { border: none; border-top: 1px solid #ccc; margin: 2rem 0; }
 a { color: #2a6fd6; text-decoration: none; }
 a:hover { text-decoration: underline; }
+.toc { background: rgba(128,128,128,.06); border: 1px solid #ddd; border-radius: 8px;
+       padding: 1.2rem 1.4rem; margin: 1rem 0 2rem; }
+.toc-title { font-size: 1.15rem; font-weight: bold; margin-bottom: .6rem; }
+.toc a { display: block; padding: .18rem 0; color: #2a6fd6; text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+.toc a.toc-l2 { padding-left: 1.4rem; font-size: .92rem; color: #666; }
 @media (max-width: 600px) { body { font-size: 15px; padding: 1rem .8rem 3rem; } table { font-size: .8rem; } }
 @media (prefers-color-scheme: dark) {
   body { background: #1a1a1a; color: #ddd; }
@@ -140,8 +148,35 @@ a:hover { text-decoration: underline; }
   blockquote { color: #aaa; background: rgba(255,255,255,.05); }
   th, td { border-color: #555; }
   a { color: #6ba4ff; }
+  .toc { border-color: #444; background: rgba(255,255,255,.04); }
+  .toc a.toc-l2 { color: #aaa; }
 }
 """
+
+def build_toc(md_text):
+    """目录：基于全文标题（h1/h2 两级），锚点与 md_to_html 的 h{seq} 对应。
+    必须跳过代码块内的 # 行（md_to_html 代码块不生成锚点），保证序号严格一致。"""
+    heads = []
+    in_code = False
+    for line in md_text.split('\n'):
+        if line.strip().startswith('```'):
+            in_code = not in_code
+            continue
+        if in_code:
+            continue
+        m = re.match(r'^(#{1,4})\s+(.*?)\s*$', line)
+        if m:
+            heads.append((len(m.group(1)), m.group(2).strip()))
+    if not heads:
+        return ''
+    items, seq = [], 0
+    for level, text in heads:
+        seq += 1  # 与 md_to_html 标题锚点序号严格一致
+        if level > 2:
+            continue
+        cls = 'toc-l1' if level == 1 else 'toc-l2'
+        items.append(f'<a class="{cls}" href="#h{seq}">{html_mod.escape(re.sub(r"[`*]", "", text))}</a>')
+    return ('<div class="toc"><div class="toc-title">目录</div>' + ''.join(items) + '</div>')
 
 def wrap_document(title, body_html):
     return f'''<!DOCTYPE html>
@@ -159,4 +194,5 @@ def wrap_document(title, body_html):
 
 def convert(md_text, title='我思故我写'):
     body = md_to_html(md_text)
-    return wrap_document(title, body)
+    toc = build_toc(md_text)
+    return wrap_document(title, toc + body)

@@ -7,6 +7,8 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 # 我思故我写——一本 AI 写成的书：AI 时代的方法论、边界与人类自洽
 
+![书封](cover.png)
+
 > **Cogito, Scribo.** 我思，故我写。
 >
 > 一本由人与 AI 共同写成的书：从"如何让 LLM 不犯错"的工程方法论，到"让渡之后人还剩什么"的认知重估——一套关于判断、边界与自洽的完整弧线。

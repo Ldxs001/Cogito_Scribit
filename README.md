@@ -44,6 +44,19 @@ Copyright (c) 2026 wUwproject
 
 详细阅读指南见 `COGITO_README.md`。
 
+## 成书：《我思故我写》
+
+本系列文章已汇编为完整一书《**我思故我写——一本 AI 写成的书：AI 时代的方法论、边界与人类自洽**》（约 15.7 万字，29 章，CC BY-SA 4.0）：
+
+| 项 | 入口 |
+|----|------|
+| 在线阅读整本书（GitHub Pages） | <https://ldxs001.github.io/Cogito_Scribit/> |
+| 下载 EPUB / HTML | `book/build/output/` 或仓库 **Releases v1.0.0** 附件 |
+| 书稿源码（四部 + 序言/阅读指南/结语/附录） | [`book/`](book/README.md) |
+| 构建管线（MD → HTML/EPUB，零依赖） | `book/build/` |
+
+书是系列文章的再加工成品：正文为发布版文章，另新增版权页、序言、阅读指南、四部导读、全书结语与附录四件（术语表/工具索引/参考文献/方法论地图）。
+
 ## 目录结构
 
 ```
@@ -51,6 +64,8 @@ Cogito_Scribit/
 ├── LICENSE                    # CC BY-SA 4.0
 ├── README.md
 ├── COGITO_README.md           # 系列总纲
+├── index.html                 # 成书《我思故我写》入口页（GitHub Pages 首页）
+├── book/                      # 成书书稿（四部 + 序言/导读/结语/附录 + 构建管线）
 ├── 01_~10_*.md                # 方法论文章（含 08a、09a、10a）
 ```
 

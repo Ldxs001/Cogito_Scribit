@@ -330,7 +330,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 | **核心命题** | **提示词是模型行为的主导控制变量：结构指令重塑概率曲线形状，语气词只加深颜色，精度只换坐标纸的粗细。拉扯效力 = 决策阈值距离 × 误差传播路径长度（V ≈ D × L）——提示词不是写得越用力越好，是拉得动、拉得对、拉在该拉的地方** |
 | **关键概念** | 条件概率条件 / softmax 平移不变性 / 指令侧三查 / 分布的形状工程 / 噪声级 vs 结构级拉扯 / V ≈ D × L 四象限 / 唯一预测的幻觉 / 虚假精度 |
 | **一句话** | 提示词是拉扯分布的手：把手练好，比换纸、比加颜色，都重要得多 |
-| **佐证来源** | structured-writer CHANGELOG 3.0.0b11~3.1.0b5（KV 量化 Q8_0 vs FP16 省 412MB / VMM 慢路径 211s→38s / llama.cpp 8 t/s vs LM Studio 20+ t/s / 3B 判不了抽象标准 / "查代码不是内存/KV"）+ KB（LLM奠基理论 GPT-2/softmax / 大模型万象 / 政经文哲 / τ scaling） |
+| **佐证来源** | structured-writer CHANGELOG 3.0.0b11~3.1.0b5（KV 量化 Q8_0 vs FP16 省 412MB / VMM 慢路径 211s→38s / llama.cpp 8 t/s vs LM Studio 20+ t/s / 3B 判不了抽象标准 / "查代码不是内存/KV"）+ KB（LLM奠基理论 GPT-2/T5 / 数字与建模 Bayes filter / 大模型万象 假设检验 / 政经文哲 / τ scaling） |
 | **读它的人** | 迷信"必须/一定要"能约束模型、或纠结"要不要换更高精度量化档位"、或觉得"提示词写了等于没写"的人 |
 
 ---

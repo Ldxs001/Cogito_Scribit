@@ -26,14 +26,14 @@ def main():
     print(f'[1/3] 拼接完成: {md_path}（{len(book):,} 字符）')
 
     # 2. HTML 预览
-    html_path = os.path.join(out_dir, '我思故我写.html')
+    html_path = os.path.join(out_dir, 'book.html')
     html_doc = convert(book, '我思故我写——一本 AI 写成的书')
     with io.open(html_path, 'w', encoding='utf-8') as f:
         f.write(html_doc)
     print(f'[2/3] HTML 预览: {html_path}')
 
     # 3. EPUB
-    epub_path = os.path.join(out_dir, '我思故我写.epub')
+    epub_path = os.path.join(out_dir, 'book.epub')
     build_epub(md_path, epub_path)
     print(f'[3/3] 构建完成。输出目录: {out_dir}')
 

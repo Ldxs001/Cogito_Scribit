@@ -46,7 +46,7 @@ book/
 ├── appendix/               # 术语表 / 工具索引 / 参考文献 / 方法论地图
 └── build/
     ├── *.py                # 构建管线（assemble / md2html / build_epub，零依赖）
-    └── output/             # 全书.md / 我思故我写.html / 我思故我写.epub / book.html / book.epub
+    └── output/             # 全书.md / book.html / book.epub（发布入口命名）
 ```
 
 ## 与源系列的关系（溯源）

@@ -56,7 +56,7 @@ Copyright (c) 2026 wUwproject
 | 项 | 入口 |
 |----|------|
 | 在线阅读整本书（GitHub Pages） | <https://ldxs001.github.io/Cogito_Scribit/> |
-| 下载 EPUB / HTML | `book/build/output/` 或书的独立发行版 **book-v1.0.0**（[GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/book-v1.0.0) / Gitee 同 tag） |
+| 下载 EPUB / HTML | `book/build/output/` 或书的独立发行版 **book-v1.1.0**（[GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/book-v1.1.0) / Gitee 同 tag） |
 | 书稿源码（四部 + 序言/阅读指南/结语/附录） | [`book/`](book/README.md) |
 | 构建管线（MD → HTML/EPUB，零依赖） | `book/build/` |
 

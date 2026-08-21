@@ -188,7 +188,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 **数据目录的固定结构**：
 
-```json
+```tree
 {data_dir}/
 ├── .state.json      # 运行状态（脚本维护，不可手工编辑）
 ├── .lock            # 锁文件（running/blocked）

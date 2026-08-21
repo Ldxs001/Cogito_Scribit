@@ -80,6 +80,16 @@ a:hover { text-decoration: underline; }
 .flow-layer-name { font-weight: bold; color: #2a6fd6; margin-bottom: .2rem; }
 .flow-layer-item { line-height: 1.6; }
 .flow-layer-key { color: #555; font-weight: bold; margin-right: .3em; }
+/* 结构树形图（文件树/目录树） */
+.flow-tree { margin: 1rem 0; padding: .6rem .9rem;
+             background: rgba(128,128,128,.06);
+             border: 1px solid rgba(128,128,128,.3); border-radius: 10px;
+             font-family: Consolas, "Courier New", monospace;
+             font-size: .92rem; line-height: 1.7; }
+.flow-tnode { padding: .05rem 0; white-space: nowrap; }
+.flow-tmark { color: #888; margin-right: .35rem; }
+.flow-ttext { color: inherit; }
+.flow-tnode.dir .flow-ttext { font-weight: bold; }
 /* 并排多列对比图（flex 双列） */
 .flow-cols { display: flex; gap: 1.2rem; margin: 1rem 0;
              padding: .9rem 1.1rem; background: rgba(128,128,128,.06);
@@ -120,6 +130,8 @@ a:hover { text-decoration: underline; }
   .flow-layer { border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.03); }
   .flow-layer-name { color: #6ba4ff; }
   .flow-layer-key { color: #aaa; }
+  .flow-tree { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-tmark { color: #666; }
   .flow-phase { color: #6ba4ff; }
 }
 </style>
@@ -443,13 +455,15 @@ if &quot;BLOCKED&quot; in output or &quot;阻断&quot; in output:
 <p><strong>为什么数据必须集中管理</strong>：</p>
 <ul><li>技能可能被重新部署，内部数据会丢失</li><li>多个技能的数据需要统一清理、备份</li><li>01 的硬中断机制需要检查产出物，需要知道产出物的位置</li></ul>
 <p><strong>数据目录的固定结构</strong>：</p>
-<pre><code>{data_dir}/
-├── .state.json      # 运行状态（脚本维护，不可手工编辑）
-├── .lock            # 锁文件（running/blocked）
-├── .remaining.json  # 阻断时的问题清单
-├── outputs/         # 最终产物
-├── logs/            # 运行日志
-└── temp/            # 临时文件</code></pre>
+<div class="flow-tree">
+<div class="flow-tnode dir" style="margin-left:0px"><span class="flow-tmark"></span><span class="flow-ttext">{data_dir}/</span></div>
+<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">.state.json      # 运行状态（脚本维护，不可手工编辑）</span></div>
+<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">.lock            # 锁文件（running/blocked）</span></div>
+<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">.remaining.json  # 阻断时的问题清单</span></div>
+<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">outputs/         # 最终产物</span></div>
+<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">logs/            # 运行日志</span></div>
+<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">└──</span><span class="flow-ttext">temp/            # 临时文件</span></div>
+</div>
 <p><strong>状态文件的脚本化操作</strong>：</p>
 <ul><li>状态文件不能手工编辑，只能通过脚本操作（init、update、complete）</li><li>这保证了状态变更的可追溯性</li><li>也避免了手工编辑导致的状态不一致</li></ul>
 <h2 id="h62">四、契约的强制力来源</h2>
@@ -611,20 +625,20 @@ if &quot;BLOCKED&quot; in output or &quot;阻断&quot; in output:
 <p><strong>基本判断</strong>：如果一个工具审计其他技能的规则不能应用于自身，那么当这个工具被修改时，修改的质量无法被保证。审计引擎自身的退化会直接导致整个方法论体系的退化。</p>
 <p><strong>解决方案</strong>：审计引擎必须能够审计自己，且审计自身的规则与审计其他技能的规则相同。</p>
 <p><strong>实施方式</strong>：</p>
-<pre><code>技能标准化审计引擎（skill-standardization）
-  │
-  ├── 审计其他技能 ── 规则R-01 ~ R-26
-  │    ├── frontmatter完整性
-  │    ├── 版本号一致性
-  │    ├── 数据目录合规性
-  │    ├── 渐进式加载合规性
-  │    └── 权限声明完整性
-  │
-  └── 审计自身 ── 同一条规则集
-       ├── skill-standardization 自身的 frontmatter 完整吗？
-       ├── 它自己的版本号三端一致吗？
-       ├── 它自己的数据目录合规吗？
-       └── 它自己的渐进式加载合规吗？</code></pre>
+<div class="flow-tree">
+<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark"></span><span class="flow-ttext">技能标准化审计引擎（skill-standardization）</span></div>
+<div class="flow-tnode" style="margin-left:14px"><span class="flow-tmark">├──</span><span class="flow-ttext">审计其他技能 ── 规则R-01 ~ R-26</span></div>
+<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">frontmatter完整性</span></div>
+<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">版本号一致性</span></div>
+<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">数据目录合规性</span></div>
+<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">渐进式加载合规性</span></div>
+<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">└──</span><span class="flow-ttext">权限声明完整性</span></div>
+<div class="flow-tnode" style="margin-left:14px"><span class="flow-tmark">└──</span><span class="flow-ttext">审计自身 ── 同一条规则集</span></div>
+<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">skill-standardization 自身的 frontmatter 完整吗？</span></div>
+<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">它自己的版本号三端一致吗？</span></div>
+<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">它自己的数据目录合规吗？</span></div>
+<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">└──</span><span class="flow-ttext">它自己的渐进式加载合规吗？</span></div>
+</div>
 <p><strong>自我审计与普通审计的差异</strong>：规则相同，只是审计对象变成自己。不能使用"特殊豁免"，不能有"它因为是自己所以不需要遵守某条规则"。</p>
 <p><strong>自我审计的制约条件</strong>：自我审计不能无限递归。当审计引擎审计自己时，它不能要求"审计引擎的审计引擎"再来审计自己。递归终止于<strong>规则被证明在自身身上可执行</strong>，而不是"规则被另一个实体验证了"。</p>
 <p><strong>如何避免无限递归</strong>：</p>
@@ -1145,30 +1159,30 @@ L5 数据声明
 </div>
 <h3 id="h173">3.2 检索即服务</h3>
 <p>本地 RAG 以完整技能（local-rag-builder）的形式嵌入智能体，智能体不改造技能内部逻辑：</p>
-<pre><code>rag-assistant/                      # 智能体层
-├── main.py                         # 入口（4 种模式）
-├── rag_assistant/                  # 决策、界面、LLM 通信
-│   ├── agent.py                    # 决策循环 + 组合查询
-│   ├── web_ui.py                   # HTTP 服务器 + 前端
-│   ├── rag_wrapper.py              # 技能封装桥接层
-│   ├── memory.py                   # 四层记忆 + 用户画像
-│   ├── llm_client.py               # Ollama + LM Studio 双后端
-│   ├── search.py                   # 联网搜索（3 引擎）
-│   │
-│   └── engine/                     # ★ 技能层（只调用，不改造）
-│       ├── rag_core.py             # 检索引擎核心
-│       ├── router.py               # 两级路由
-│       ├── reranker.py             # 三模式重排序 + FallbackRouter
-│       ├── nli_classifier.py       # NLI 三向分类器
-│       ├── knowledge_base_manager.py  # 知识库 CRUD + 容灾
-│       ├── text_splitter.py        # 5 策略 + 5 守卫插件架构
-│       ├── prompt_manager.py       # 3 插槽 + 预设管理
-│       ├── config.py               # 配置管理 + 模型路径自动修正
-│       ├── embedding_model_manager.py  # 5 源并行模型下载
-│       └── utils.py                # 工具函数
-│
-├── vendor/                         # 内嵌第三方库
-└── data/                           # 运行时数据</code></pre>
+<div class="flow-tree">
+<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark"></span><span class="flow-ttext">rag-assistant/                      # 智能体层</span></div>
+<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">main.py                         # 入口（4 种模式）</span></div>
+<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">rag_assistant/                  # 决策、界面、LLM 通信</span></div>
+<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">├──</span><span class="flow-ttext">agent.py                    # 决策循环 + 组合查询</span></div>
+<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">├──</span><span class="flow-ttext">web_ui.py                   # HTTP 服务器 + 前端</span></div>
+<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">├──</span><span class="flow-ttext">rag_wrapper.py              # 技能封装桥接层</span></div>
+<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">├──</span><span class="flow-ttext">memory.py                   # 四层记忆 + 用户画像</span></div>
+<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">├──</span><span class="flow-ttext">llm_client.py               # Ollama + LM Studio 双后端</span></div>
+<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">├──</span><span class="flow-ttext">search.py                   # 联网搜索（3 引擎）</span></div>
+<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">└──</span><span class="flow-ttext">engine/                     # ★ 技能层（只调用，不改造）</span></div>
+<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">rag_core.py             # 检索引擎核心</span></div>
+<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">router.py               # 两级路由</span></div>
+<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">reranker.py             # 三模式重排序 + FallbackRouter</span></div>
+<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">nli_classifier.py       # NLI 三向分类器</span></div>
+<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">knowledge_base_manager.py  # 知识库 CRUD + 容灾</span></div>
+<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">text_splitter.py        # 5 策略 + 5 守卫插件架构</span></div>
+<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">prompt_manager.py       # 3 插槽 + 预设管理</span></div>
+<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">config.py               # 配置管理 + 模型路径自动修正</span></div>
+<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">embedding_model_manager.py  # 5 源并行模型下载</span></div>
+<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">└──</span><span class="flow-ttext">utils.py                # 工具函数</span></div>
+<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">vendor/                         # 内嵌第三方库</span></div>
+<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">└──</span><span class="flow-ttext">data/                           # 运行时数据</span></div>
+</div>
 <p>智能体层与技能层的边界清晰——智能体只负责"查什么"，技能层负责"怎么查"：</p>
 <table><thead><tr><th>层</th><th>负责</th><th>不负责</th></tr></thead><tbody><tr><td><strong>智能体</strong></td><td>实体/属性解析、组合策略、去重合并、LLM 回答、记忆管理、用户画像</td><td>向量检索、路由决策、rerank 排序、文本切分</td></tr><tr><td><strong>技能</strong></td><td>语义路由（6 方法）、Chroma 检索、Cross-encoder 重排、NLI 分类、KB 签名、容灾</td><td>问题分解、组合策略、回答生成</td></tr></tbody></table>
 <p>这种分离意味着：底层技能升级（如换用更好的嵌入模型）不影响上层策略，上层调整检索策略不影响底层技能。</p>
@@ -1195,22 +1209,27 @@ L5 数据声明
 <p>这与 Cogito 体系 01（抑制 LLM 执行偏差）一脉相承——LLM 的每一步输出都经过校验，错误不是终点而是反馈信号。</p>
 <h3 id="h175">3.4 输出格式契约（v0.8.0+ 关键创新）</h3>
 <p>v0.8.0 后引入<strong>强制结构化输出格式</strong>，System Prompt 中嵌入以下模板约束：</p>
-<div class="flow">
-<div class="flow-phase">【引用格式】</div>
-<div class="flow-phase">【输出风格】【强制输出结构】</div>
-<div class="flow-step" style="margin-left:0px">正式回答</div>
-<div class="flow-step" style="margin-left:0px">核心结论</div>
-<div class="flow-step" style="margin-left:0px">|知识库分类（按资料来源自动归纳）|涉及的文档/理论数|与本问题直接相关的关键发现|</div>
-<div class="flow-step" style="margin-left:0px">第一层：逻辑与形式理论层（此层必须包含数学公式）</div>
-<div class="flow-step" style="margin-left:0px">...</div>
-<div class="flow-step" style="margin-left:0px">第二层：哲学本体论与概念本质层（此层必须引用资料中的形而上学框架）</div>
-<div class="flow-step" style="margin-left:0px">...</div>
-<div class="flow-step" style="margin-left:0px">第三层：现实机制与功能拆解层（此层必须剥离修饰性术语）</div>
-<div class="flow-step" style="margin-left:0px">...</div>
-<div class="flow-step" style="margin-left:0px">第四层：综合判定与意义分层矩阵（此层必须使用 Markdown 表格）</div>
-<div class="flow-step" style="margin-left:0px">...</div>
-<div class="flow-step" style="margin-left:0px">引用片段索引（必须填写，不得为空）</div>
-</div>
+<pre><code>【引用格式】每个结论后面用 [n] 标注来源的段落编号
+【输出风格】【强制输出结构】（必须严格按此格式输出，严禁只写四个段落标题）：
+
+正式回答
+
+核心结论
+|知识库分类（按资料来源自动归纳）|涉及的文档/理论数|与本问题直接相关的关键发现|
+
+第一层：逻辑与形式理论层（此层必须包含数学公式）
+...
+
+第二层：哲学本体论与概念本质层（此层必须引用资料中的形而上学框架）
+...
+
+第三层：现实机制与功能拆解层（此层必须剥离修饰性术语）
+...
+
+第四层：综合判定与意义分层矩阵（此层必须使用 Markdown 表格）
+...
+
+引用片段索引（必须填写，不得为空）</code></pre>
 <p>3 个插槽可由用户在 Web UI 配置，4 个内置预设（标准模式 / 深度分析 / 对比分析 / 友好对话）+ 用户自定义预设。</p>
 <hr/>
 <h2 id="h176">四、这套机制为什么能工作</h2>

@@ -219,6 +219,38 @@ def _box_to_html(code):
     return '\n'.join(out)
 
 
+def _tree_to_html(code):
+    """结构树形图（文件树/目录树，无箭头）→ HTML 树形列表。
+    解析：分支标记（├──/└──）前的列数 // 2 = 层级（每 2 列 1 级）；
+    无分支标记行按空格缩进同样映射。保留 ├──/└── 连接线视觉。
+    以 / 结尾的节点视为目录（粗体）。"""
+    out = ['<div class="flow-tree">']
+    for raw in code.split('\n'):
+        r = raw.rstrip()
+        if not r.strip():
+            continue
+        m = re.match(r'^([│｜\s]*)([├└]──\s*)?(.*)$', r)
+        prefix = m.group(1)
+        mark = m.group(2)
+        text = m.group(3).strip()
+        if mark:
+            depth = len(prefix) // 2
+            mark_show = mark.strip()
+        else:
+            depth = len(prefix) // 2
+            mark_show = ''
+        if not text:
+            continue
+        is_dir = text.endswith('/')
+        cls = 'flow-tnode dir' if is_dir else 'flow-tnode'
+        indent = depth * 14
+        out.append(f'<div class="{cls}" style="margin-left:{indent}px">'
+                   f'<span class="flow-tmark">{mark_show}</span>'
+                   f'<span class="flow-ttext">{_inline_arrows(text)}</span></div>')
+    out.append('</div>')
+    return '\n'.join(out)
+
+
 def _multi_col_to_html(code):
     """并排多列图 → HTML：
     - 主链式（运用 = 规划 → 执行 → 验证 → 承担 + 注释对齐）→ 横向链
@@ -297,24 +329,43 @@ def _is_box_like(code):
     return wrapped >= 2
 
 
+def _is_tree(code):
+    """结构树形图（文件树/目录树）判定：含 ├──/└── 分支标记但无箭头。
+    与决策树区分：决策树带 → 箭头走 flow；纯结构树无箭头走 tree。
+    排除代码特征（= { } def import 等）。"""
+    lines = [l for l in code.split('\n') if l.strip()]
+    if len(lines) < 2:
+        return False
+    branch_lines = sum(1 for l in lines if re.search(r'[├└]──', l))
+    if branch_lines < 2:
+        return False
+    code_like = sum(1 for l in lines if any(k in l for k in ('=', '{', '}', 'def ', 'import ', 'print(', 'return ')))
+    if code_like > len(lines) // 3:
+        return False
+    return True
+
+
 def _is_flow_block(code, lang=''):
-    """判断代码块类型，五态：
+    """判断代码块类型，六态：
     'flow'   - 线性流程链 → 转 HTML 流程图
     'cols'   - 多列对比图 → 转 HTML 双列/多列布局
     'chain'  - 主链+层级注释 → 转 HTML 横向链
     'box'    - 盒子型框线图（┌┐└┘ 矩形框）→ 转 HTML 层叠结构
-    None     - 真实代码（python/json/yaml 等）或无箭头纯文本 → 保持 pre
+    'tree'   - 结构树形图（文件树，无箭头）→ 转 HTML 树形列表
+    None     - 真实代码（python/json/yaml 等）或纯文本 → 保持 pre
 
     图类型标注约定（写文章时可选，但推荐）：
       ```flow   = 线性流程链（强制）
       ```cols   = 多列对比（强制）
       ```chain  = 主链+注释（强制）
-      ```text   = 真正的纯文本（目录树/公式/说明），保持 pre
-      不标注    = 自动检测（含指向性符号/框线 → 图；多列 → cols；主链 → chain）
+      ```tree   = 结构树形图（强制，文件树/目录树）
+      ```ascii  = 显式 ASCII 图 → 自动检测
+      ```text   = 真正的纯文本（模板/公式/说明），保持 pre
+      不标注    = 自动检测（含指向性符号 → 图；盒子 → box；树形 → tree；否则 pre）
     真实代码语言标注（python/json/yaml/bash 等）= 代码，保持 pre。
     """
     if lang:
-        if lang in ('flow', 'cols', 'chain'):
+        if lang in ('flow', 'cols', 'chain', 'tree'):
             return lang  # 图类型标注：强制按指定类型解析
         if lang == 'ascii':
             pass  # 显式 ASCII 图标注 → 走自动检测（框线/箭头决定渲染类型）
@@ -326,19 +377,21 @@ def _is_flow_block(code, lang=''):
     # 1) 规整盒子型框线图（┌ 顶边 + └ 底边 + │ 包裹内容行）
     if _is_box_like(code):
         return 'box'
-    # 2) 阶段标题
-    if any('【' in l and '】' in l for l in lines):
-        return 'flow'
-    # 3) 指向性符号
+    # 2) 指向性符号（含 → 等箭头）
     dir_chars = '→↓↑↔⇄▼◀▶'
-    if not any(any(c in l for c in dir_chars) for l in lines):
-        return None
-    if _is_multi_column(code):
-        return 'cols'  # 并排多列（对比式）→ HTML 双列
-    # 多行 + 第一行连续箭头主链 + 下方对齐注释 → 主链式
-    if _is_chain_main(code):
-        return 'chain'
-    return 'flow'
+    has_dir = any(any(c in l for c in dir_chars) for l in lines)
+    if has_dir:
+        if _is_multi_column(code):
+            return 'cols'  # 并排多列（对比式）→ HTML 双列
+        # 多行 + 第一行连续箭头主链 + 下方对齐注释 → 主链式
+        if _is_chain_main(code):
+            return 'chain'
+        return 'flow'
+    # 3) 结构树形图（无箭头，含 ├──/└── 分支标记）→ HTML 树
+    if _is_tree(code):
+        return 'tree'
+    # 4) 纯【】标记（模板/契约类，无箭头无框线）→ pre，不转图
+    return None
 
 
 def _split_first_arrow(text):
@@ -457,6 +510,8 @@ def md_to_html(md_text):
                 out.append(_multi_col_to_html(code_text))
             elif kind == 'box':
                 out.append(_box_to_html(code_text))
+            elif kind == 'tree':
+                out.append(_tree_to_html(code_text))
             else:
                 out.append('<pre><code>' + html_mod.escape(code_text) + '</code></pre>')
             continue
@@ -592,6 +647,16 @@ a:hover { text-decoration: underline; }
 .flow-layer-name { font-weight: bold; color: #2a6fd6; margin-bottom: .2rem; }
 .flow-layer-item { line-height: 1.6; }
 .flow-layer-key { color: #555; font-weight: bold; margin-right: .3em; }
+/* 结构树形图（文件树/目录树） */
+.flow-tree { margin: 1rem 0; padding: .6rem .9rem;
+             background: rgba(128,128,128,.06);
+             border: 1px solid rgba(128,128,128,.3); border-radius: 10px;
+             font-family: Consolas, "Courier New", monospace;
+             font-size: .92rem; line-height: 1.7; }
+.flow-tnode { padding: .05rem 0; white-space: nowrap; }
+.flow-tmark { color: #888; margin-right: .35rem; }
+.flow-ttext { color: inherit; }
+.flow-tnode.dir .flow-ttext { font-weight: bold; }
 /* 并排多列对比图（flex 双列） */
 .flow-cols { display: flex; gap: 1.2rem; margin: 1rem 0;
              padding: .9rem 1.1rem; background: rgba(128,128,128,.06);
@@ -632,6 +697,8 @@ a:hover { text-decoration: underline; }
   .flow-layer { border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.03); }
   .flow-layer-name { color: #6ba4ff; }
   .flow-layer-key { color: #aaa; }
+  .flow-tree { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-tmark { color: #666; }
   .flow-phase { color: #6ba4ff; }
 }
 """

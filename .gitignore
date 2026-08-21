@@ -1,2 +1,4 @@
 __pycache__/
 *.pyc
+fix_src.py
+commit_msg.txt

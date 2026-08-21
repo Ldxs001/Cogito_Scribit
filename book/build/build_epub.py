@@ -134,8 +134,7 @@ hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
 .flow-edge { color: #555; padding: .15em 0 .15em 1.5em; font-size: .95em; }
 .flow-inline-arrow { color: #2a6fd6; font-weight: bold; margin: 0 .25em; }
 .flow-arrow { color: #2a6fd6; text-align: center; line-height: 1.3; font-weight: bold;
-              background: #f0f4fa; border: 1px solid #ccc; border-radius: 4px;
-              padding: .12em 0; margin: .2em 0; }
+              padding: .1em 0; }
 .flow-edge .edge-fall { color: #2a6fd6; font-weight: bold; }
 """
 

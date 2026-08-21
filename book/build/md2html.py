@@ -93,6 +93,20 @@ def _is_flow_block(code):
     return False
 
 
+def _inline_arrows(text):
+    """将文本内所有 → 统一包成 flow-inline-arrow span（蓝色加粗箭头），
+    与独立箭头（flow-arrow ↓）视觉一致。"""
+    return re.sub(r'(→)', r'<span class="flow-inline-arrow">\1</span>', text)
+
+
+def _split_first_arrow(text):
+    """按第一个 → 拆分，返回 (前段, 后段)，→ 被完整保留在中间。"""
+    idx = text.find('→')
+    if idx < 0:
+        return text, None
+    return text[:idx].strip(), text[idx+1:].strip()
+
+
 def _flow_to_html(code):
     """将 ASCII 流程图代码块渲染为 HTML 流程容器。
     规则：
@@ -122,9 +136,9 @@ def _flow_to_html(code):
             content = l_strip[2:].strip(' -─│')
             if content:
                 depth = (len(raw) - len(raw.lstrip())) // 2 * 14
-                if '→' in content:
-                    p1, p2 = content.split('→', 1)
-                    out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{p1.strip()} → <span class="edge-fall">{p2.strip()}</span></div>')
+                p1, p2 = _split_first_arrow(content)
+                if p2 is not None:
+                    out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span></div>')
                 else:
                     out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{content}</div>')
             continue
@@ -153,9 +167,9 @@ def _flow_to_html(code):
         leading = len(raw) - len(raw.lstrip())
         depth = (leading // 2) * 14
         # 6) 行内箭头拆分
-        if '→' in l2:
-            p1, p2 = l2.split('→', 1)
-            out.append(f'<div class="flow-step" style="margin-left:{depth}px">{p1.strip()} → <span class="edge-fall">{p2.strip()}</span></div>')
+        p1, p2 = _split_first_arrow(l2)
+        if p2 is not None:
+            out.append(f'<div class="flow-step" style="margin-left:{depth}px">{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span></div>')
         else:
             out.append(f'<div class="flow-step" style="margin-left:{depth}px">{l2}</div>')
     out.append('</div>')
@@ -253,19 +267,21 @@ blockquote { border-left: 4px solid #999; margin: 1rem 0; padding: .4rem 1rem;
 table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .92rem;
         table-layout: auto; }
 th, td { border: 1px solid #bbb; padding: .4rem .6rem; text-align: left;
-         word-break: keep-all; overflow-wrap: anywhere; vertical-align: top; }
+         word-break: keep-all; overflow-wrap: break-word; vertical-align: top; }
 th { background: rgba(128,128,128,.12); }
 /* 引用编号索引表：三列固定列宽比例（编号≈6字符 / 文献 / 出处），与全局表格同宽 */
 table.ref-table { table-layout: fixed; }
 table.ref-table th:nth-child(1), table.ref-table td:nth-child(1) { width: 8%; }
 table.ref-table th:nth-child(2), table.ref-table td:nth-child(2) { width: 47%; }
 table.ref-table th:nth-child(3), table.ref-table td:nth-child(3) { width: 45%; }
+/* 引用索引表内长文件名才允许任意断行 */
+table.ref-table th, table.ref-table td { overflow-wrap: anywhere; }
 /* 表格内多段文本（<br> 分隔）每段独立，保证一个原子信息不会被列宽拆字 */
 table td .ref-piece, table th .ref-piece {
   display: block;
   white-space: normal;
   word-break: keep-all;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   line-height: 1.7;
 }
 pre { background: rgba(128,128,128,.1); padding: .8rem; border-radius: 6px;
@@ -288,8 +304,14 @@ a:hover { text-decoration: underline; }
 .flow-edge { color: #555; padding: .15rem 0 .15rem 1.4rem; font-size: .92em;
              line-height: 1.5; }
 .flow-edge .edge-fall { color: #2a6fd6; font-weight: bold; }
-.flow-arrow { color: #2a6fd6; text-align: center; line-height: 1.2;
-              font-weight: bold; padding: .05rem 0; }
+/* 行内箭头：与独立箭头同色同权重，视觉统一 */
+.flow-inline-arrow { color: #2a6fd6; font-weight: bold; margin: 0 .25em; }
+/* 箭头行：与步骤卡同底色带边框，视觉统一 */
+.flow-arrow { color: #2a6fd6; text-align: center; line-height: 1.4;
+              font-weight: bold; padding: .12rem 0;
+              background: rgba(128,128,128,.04);
+              border: 1px solid rgba(128,128,128,.15);
+              border-radius: 6px; margin: .2rem 0; }
 .flow-arrow::before { content: ""; }
 .toc { background: rgba(128,128,128,.06); border: 1px solid #ddd; border-radius: 8px;
        padding: 1.2rem 1.4rem; margin: 1rem 0 2rem; }
@@ -309,8 +331,8 @@ a:hover { text-decoration: underline; }
   .flow { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-step { border-color: #444; background: rgba(255,255,255,.05); }
   .flow-edge { color: #999; }
+  .flow-arrow { border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.03); }
   .flow-phase { color: #6ba4ff; }
-  .flow-arrow { color: #6ba4ff; }
 }
 """
 

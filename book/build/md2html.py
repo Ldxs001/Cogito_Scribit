@@ -169,6 +169,56 @@ def _chain_to_html(code):
     return '\n'.join(out)
 
 
+def _box_to_html(code):
+    """盒子型框线图 → HTML 层叠结构（每层 = 层名 + 内容行 + 输出）。
+    示例（三层分离）：
+        ┌─────────────────────────────┐
+        │  规划层（蓝图）              │
+        │  用户编排 / 固化算法优化     │
+        │  输出: Pipeline JSON        │
+        ├─────────────────────────────┤
+        │  执行层（引擎）              │
+        └─────────────────────────────┘
+    按水平分隔线（┌─/├─/└─ 行）分块，块内去掉 │ 取文本；
+    每块第一行 = 层名（flow-layer-name），其余 = 内容行；
+    `输出: X` 形式拆 key/val（flow-layer-key/val）。"""
+    out = ['<div class="flow-layers">']
+    cur_layer = []
+    layers = []
+    for raw in code.split('\n'):
+        l = raw.strip()
+        if not l:
+            continue
+        # 水平分隔线行（┌───┐ / ├───┤ / └───┘：剥掉框线字符后为空）→ 层边界
+        core = l.strip('┌├└┐┤┘│─ ')
+        if not core:
+            if cur_layer:
+                layers.append(cur_layer)
+                cur_layer = []
+            continue
+        # 普通行：去 │ 包围和首尾框线，取真实文本
+        text = l.strip('│┌┐└┘├┤ ').strip()
+        if text:
+            cur_layer.append(text)
+    if cur_layer:
+        layers.append(cur_layer)
+    for layer in layers:
+        if not layer:
+            continue
+        out.append('<div class="flow-layer">')
+        name = layer[0]
+        out.append(f'<div class="flow-layer-name">{_inline_arrows(name)}</div>')
+        for item in layer[1:]:
+            if re.search(r'[:：]', item):
+                k, v = re.split(r'[:：]', item, 1)
+                out.append(f'<div class="flow-layer-item"><span class="flow-layer-key">{_inline_arrows(k.strip())}</span><span class="flow-layer-val">{_inline_arrows(v.strip())}</span></div>')
+            else:
+                out.append(f'<div class="flow-layer-item">{_inline_arrows(item)}</div>')
+        out.append('</div>')
+    out.append('</div>')
+    return '\n'.join(out)
+
+
 def _multi_col_to_html(code):
     """并排多列图 → HTML：
     - 主链式（运用 = 规划 → 执行 → 验证 → 承担 + 注释对齐）→ 横向链
@@ -220,25 +270,74 @@ def _is_multi_column(code):
     return False
 
 
+def _is_box_like(code):
+    """规整盒子型分层图判定（三层分离这类矩形框叠层）：
+    - 整个代码块就是一个盒子：首行（非空）┌ 开头、末行（非空）└ 结尾
+    - 中间每行要么是水平分隔线（剥框线后为空）、要么被 │ 竖线包裹
+    - 至少 2 个包裹内容行
+    07 篇（盒外有标题/箭头）、四部弧线、目录树等混合结构不满足
+    首末行约束 → 走 flow/其他。"""
+    lines = [l for l in code.split('\n') if l.strip()]
+    if len(lines) < 3:
+        return False
+    if not lines[0].strip().startswith('┌'):
+        return False
+    if not lines[-1].strip().startswith('└'):
+        return False
+    wrapped = 0
+    for l in lines[1:-1]:
+        s = l.strip()
+        core = s.strip('┌├└┐┤┘│─ ')
+        if not core:
+            continue  # 分隔线 OK
+        if s.startswith('│') or s.endswith('│'):
+            wrapped += 1
+            continue
+        return False  # 盒内出现非分隔非包裹行 → 混合结构，不是规整盒子
+    return wrapped >= 2
+
+
 def _is_flow_block(code, lang=''):
-    """判断代码块类型，三态：
-    'flow'  - 未标注语言 + 含指向性符号 + 单列链 → 转 HTML 流程图
-    'cols'  - 未标注语言 + 并排多列对比图 → 转 HTML 双列布局
-    None    - 标注语言（代码）或无箭头 → 保持 <pre>
+    """判断代码块类型，五态：
+    'flow'   - 线性流程链 → 转 HTML 流程图
+    'cols'   - 多列对比图 → 转 HTML 双列/多列布局
+    'chain'  - 主链+层级注释 → 转 HTML 横向链
+    'box'    - 盒子型框线图（┌┐└┘ 矩形框）→ 转 HTML 层叠结构
+    None     - 真实代码（python/json/yaml 等）或无箭头纯文本 → 保持 pre
+
+    图类型标注约定（写文章时可选，但推荐）：
+      ```flow   = 线性流程链（强制）
+      ```cols   = 多列对比（强制）
+      ```chain  = 主链+注释（强制）
+      ```text   = 真正的纯文本（目录树/公式/说明），保持 pre
+      不标注    = 自动检测（含指向性符号/框线 → 图；多列 → cols；主链 → chain）
+    真实代码语言标注（python/json/yaml/bash 等）= 代码，保持 pre。
     """
-    if lang:  # 显式标注语言 = 代码
-        return None
+    if lang:
+        if lang in ('flow', 'cols', 'chain'):
+            return lang  # 图类型标注：强制按指定类型解析
+        if lang == 'ascii':
+            pass  # 显式 ASCII 图标注 → 走自动检测（框线/箭头决定渲染类型）
+        else:
+            return None  # 任何语言标注（含 text）= 代码/纯文本，保持 pre
     lines = [l for l in code.split('\n') if l.strip()]
     if not lines:
         return None
+    # 1) 规整盒子型框线图（┌ 顶边 + └ 底边 + │ 包裹内容行）
+    if _is_box_like(code):
+        return 'box'
+    # 2) 阶段标题
+    if any('【' in l and '】' in l for l in lines):
+        return 'flow'
+    # 3) 指向性符号
     dir_chars = '→↓↑↔⇄▼◀▶'
     if not any(any(c in l for c in dir_chars) for l in lines):
         return None
     if _is_multi_column(code):
         return 'cols'  # 并排多列（对比式）→ HTML 双列
-    # 多行 + 第一行连续箭头主链 + 下方对齐注释 → 主链式 'cols'
+    # 多行 + 第一行连续箭头主链 + 下方对齐注释 → 主链式
     if _is_chain_main(code):
-        return 'cols'
+        return 'chain'
     return 'flow'
 
 
@@ -274,20 +373,28 @@ def _flow_to_html(code):
             if any(c in l_strip for c in '┬┴▼↓↑'):
                 out.append('<div class="flow-arrow">▼</div>' if '┬' in l_strip or '▼' in l_strip else '<div class="flow-arrow">↓</div>')
             continue
-        # 0.2) 长横线箭头归一化：────→ ／ ────┬ 等 → 统一 →
-        l_strip = re.sub(r'─+→', '→', l_strip)
-        l_strip = re.sub(r'─+', '', l_strip)
-        # 0.5) 分支前缀检测（├─ / └─ 引导的说明行，非纯框线）
-        if l_strip.startswith('├─') or l_strip.startswith('└─'):
-            content = l_strip[2:].strip(' -─│')
+        # 0.5) 分支前缀检测（├─ / └─ 引导的说明行，可带 │ 引导线前缀）
+        #      必须在本处理长横线归一化之前：├── 的 ─ 是分支标记一部分，
+        #      先删 ─ 会让分支正则永远不命中
+        #      层级 = 分支标记（├/└）前的列数 // 2 * 14（每 2 列 = 1 级）
+        #      注意用原始行 r2（保留缩进）计算位置：l_strip 已删前导空格，
+        #      纯空格缩进的分支行（无 │ 引导线）会丢失层级
+        r2 = raw.rstrip()
+        bm = re.match(r'^[│｜\s]*([├└])─', r2)
+        if bm:
+            mark_pos = bm.start(1)
+            content = r2[mark_pos+2:].strip(' -─│')
             if content:
-                depth = (len(raw) - len(raw.lstrip())) // 2 * 14
+                depth = (mark_pos // 2) * 14
                 p1, p2 = _split_first_arrow(content)
                 if p2 is not None:
                     out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span></div>')
                 else:
                     out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{content}</div>')
             continue
+        # 0.2) 长横线箭头归一化：────→ ／ ────┬ 等 → 统一 →
+        l_strip = re.sub(r'─+→', '→', l_strip)
+        l_strip = re.sub(r'─+', '', l_strip)
         # 1) 去前后空白
         l = raw.strip()
         if not l:
@@ -310,7 +417,7 @@ def _flow_to_html(code):
             if any(c in l2 for c in arrow_chars_all):
                 out.append(f'<div class="flow-arrow">{l2}</div>')
             continue
-        # 5) 缩进级别
+        # 5) 缩进级别（2 空格 = 1 级）
         leading = len(raw) - len(raw.lstrip())
         depth = (leading // 2) * 14
         # 5.5) 长横线箭头归一化（剥框线后）：────→ → →
@@ -346,8 +453,10 @@ def md_to_html(md_text):
             kind = _is_flow_block(code_text, lang)
             if kind == 'flow':
                 out.append(_flow_to_html(code_text))
-            elif kind == 'cols':
+            elif kind in ('cols', 'chain'):
                 out.append(_multi_col_to_html(code_text))
+            elif kind == 'box':
+                out.append(_box_to_html(code_text))
             else:
                 out.append('<pre><code>' + html_mod.escape(code_text) + '</code></pre>')
             continue
@@ -473,6 +582,16 @@ a:hover { text-decoration: underline; }
 .flow-cnode .flow-note { margin-top: .2rem; }
 .flow-carr { align-self: center; color: #2a6fd6; font-weight: bold; font-size: 1.15em;
              padding: 0 .15rem; }
+/* 盒子型分层图（三层分离：层名 + 内容 + 输出 层叠） */
+.flow-layers { margin: 1rem 0; padding: .6rem .9rem;
+               background: rgba(128,128,128,.06);
+               border: 1px solid rgba(128,128,128,.3); border-radius: 10px; }
+.flow-layer { border: 1px solid rgba(128,128,128,.28); border-radius: 8px;
+              margin: .5rem 0; padding: .45rem .75rem;
+              background: rgba(128,128,128,.04); }
+.flow-layer-name { font-weight: bold; color: #2a6fd6; margin-bottom: .2rem; }
+.flow-layer-item { line-height: 1.6; }
+.flow-layer-key { color: #555; font-weight: bold; margin-right: .3em; }
 /* 并排多列对比图（flex 双列） */
 .flow-cols { display: flex; gap: 1.2rem; margin: 1rem 0;
              padding: .9rem 1.1rem; background: rgba(128,128,128,.06);
@@ -509,6 +628,10 @@ a:hover { text-decoration: underline; }
   .flow-note { color: #888; }
   .flow-cols { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-chain { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-layers { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-layer { border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.03); }
+  .flow-layer-name { color: #6ba4ff; }
+  .flow-layer-key { color: #aaa; }
   .flow-phase { color: #6ba4ff; }
 }
 """

@@ -151,6 +151,13 @@ hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
 .flow-layer-name { font-weight: bold; color: #2a6fd6; margin-bottom: .2em; }
 .flow-layer-item { line-height: 1.6; }
 .flow-layer-key { color: #555; font-weight: bold; margin-right: .3em; }
+.flow-tree { margin: .8em 0; padding: .6em .8em;
+             background: #f4f6fa; border: 1px solid #ccc; border-radius: 8px;
+             font-family: Consolas, "Courier New", monospace;
+             font-size: .9em; line-height: 1.7; }
+.flow-tnode { padding: .05em 0; white-space: nowrap; }
+.flow-tmark { color: #888; margin-right: .35em; }
+.flow-tnode.dir .flow-ttext { font-weight: bold; }
 .flow-cols { display: flex; gap: 1.2em; margin: .8em 0;
              padding: .7em .9em; background: #f4f6fa; border: 1px solid #ccc; border-radius: 8px; }
 .flow-col { flex: 1; min-width: 0; }

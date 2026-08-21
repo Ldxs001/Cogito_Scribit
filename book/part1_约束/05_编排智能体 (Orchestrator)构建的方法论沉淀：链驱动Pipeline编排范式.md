@@ -5,13 +5,7 @@ Licensed under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-
 See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 -->
 
-# 编排智能体 (Orchestrator) 构建的方法论沉淀：链驱动 Pipeline 编排范式
-
-> 从"LLM 当大脑"到"链是主体"——用确定性 Pipeline 执行替代 ReAct 自由对话的架构范式。
-> **v2.8.1 修订：执行机制从"LLM 编输出"进化为"subprocess 真执行 + LLM 只做两头"。**
-> 更新：2026-08-07
-
----
+# 第 I 部 · 05｜编排智能体 (Orchestrator) 构建的方法论沉淀：链驱动 Pipeline 编排范式
 
 ## 一、背景：ReAct 的盲区
 

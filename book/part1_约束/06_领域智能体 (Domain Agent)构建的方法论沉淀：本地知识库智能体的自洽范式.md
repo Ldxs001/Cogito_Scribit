@@ -5,12 +5,7 @@ Licensed under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-
 See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 -->
 
-# 领域智能体 (Domain Agent) 构建的方法论沉淀：本地知识库智能体的自洽范式
-
-> 从"搜索靠猜"到"检索靠切片"——用 LLM 驱动的穷举组合取代单轮 RAG 的架构范式。
-> 更新：2026-07-24（新增第十二章：插件系统的自举闭环与控制权分离）
-
----
+# 第 I 部 · 06｜领域智能体 (Domain Agent) 构建的方法论沉淀：本地知识库智能体的自洽范式
 
 ## 一、背景：传统 RAG 的盲区
 

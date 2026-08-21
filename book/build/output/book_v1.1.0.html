@@ -38,6 +38,16 @@ table td .ref-piece, table th .ref-piece {
 pre { background: rgba(128,128,128,.1); padding: .8rem; border-radius: 6px;
       overflow-x: auto; font-size: .88rem; }
 code { background: rgba(128,128,128,.12); padding: .1em .35em; border-radius: 3px; font-size: .9em; }
+/* 行内公式（LaTeX → HTML 轻量渲染） */
+.math { font-family: "Times New Roman", Georgia, "STIX Two Math", serif;
+        font-style: italic; white-space: nowrap; }
+.math sup, .math sub { font-style: normal; font-size: .72em; }
+/* 公式块（```math） */
+.math-block { text-align: center; margin: 1rem 0; padding: .7rem 1rem;
+              background: rgba(128,128,128,.06);
+              border: 1px solid rgba(128,128,128,.3); border-radius: 10px;
+              font-size: 1.05rem; }
+.math-block .math { font-size: 1.1em; white-space: normal; }
 pre code { background: none; padding: 0; }
 hr { border: none; border-top: 1px solid #ccc; margin: 2rem 0; }
 a { color: #2a6fd6; text-decoration: none; }
@@ -132,6 +142,7 @@ a:hover { text-decoration: underline; }
   .flow-layer-key { color: #aaa; }
   .flow-tree { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-tmark { color: #666; }
+  .math-block { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-phase { color: #6ba4ff; }
 }
 </style>
@@ -293,22 +304,12 @@ if &quot;BLOCKED&quot; in output or &quot;阻断&quot; in output:
     &quot;timestamp&quot;: &quot;阻断发生时间&quot;
 }</code></pre>
 <p><strong>恢复路径</strong>：</p>
-<div class="flow-chain">
-<div class="flow-cnode">
-<div class="flow-step">正常执行</div>
-</div>
-<div class="flow-carr">→</div>
-<div class="flow-cnode">
-<div class="flow-step">发生阻断</div>
-</div>
-<div class="flow-carr">→</div>
-<div class="flow-cnode">
-<div class="flow-step">写入锁文件</div>
-</div>
-<div class="flow-carr">→</div>
-<div class="flow-cnode">
-<div class="flow-step">进程退出(2)</div>
-</div>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">正常执行 <span class="flow-inline-arrow">→</span> <span class="edge-fall">发生阻断 <span class="flow-inline-arrow">→</span> 写入锁文件 <span class="flow-inline-arrow">→</span> 进程退出(2)</span></div>
+<div class="flow-arrow">↓</div>
+<div class="flow-step" style="margin-left:0px">（外部修复问题）</div>
+<div class="flow-arrow">↓</div>
+<div class="flow-step" style="margin-left:0px">重新执行，传入恢复参数 <span class="flow-inline-arrow">→</span> <span class="edge-fall">读取锁文件 <span class="flow-inline-arrow">→</span> 跳过已完成步骤 <span class="flow-inline-arrow">→</span> 从阻断点继续</span></div>
 </div>
 <p><strong>这要求执行引擎具备以下能力</strong>：</p>
 <ol><li>能识别"恢复执行"模式（通过特定参数）</li><li>能读取并解析锁文件中的状态</li><li>能跳过已完成步骤，不从第一步重新开始</li><li>在恢复完成后清理锁文件</li></ol>
@@ -1312,15 +1313,15 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h4 id="h189">核心结论</h4>
 <table><thead><tr><th>知识库分类</th><th>涉及的文档/理论数</th><th>与本问题直接相关的关键发现</th></tr></thead><tbody><tr><td>大模型训练与缩放定律</td><td>6 篇</td><td>当前大模型处于"过度规模、训练不足"状态，未达性能极限</td></tr><tr><td>训练超参数与架构细节</td><td>2 篇</td><td>核心瓶颈在于 Token/Params 配比而非单纯规模</td></tr><tr><td>历史与经济理论参照</td><td>4 篇</td><td>此部分资料关于市场经济与中国思想史，与技术极限无直接关联</td></tr></tbody></table>
 <h4 id="h190">第一层：逻辑与形式理论层</h4>
-<p><strong>前提公理</strong>：大语言模型的性能 $P$ 受限于计算预算 $C$、参数量 $N$ 和训练 Token 数 $T$。缩放定律（Scaling Laws）指出损失随规模按幂律下降。</p>
-<p><strong>形式边界</strong>：资料 [2] 与 [12] 指出，当前趋势是增加 $N$ 而保持 $T$ 不变，导致模型在给定 $C$ 下未达最优。计算预算约束可表述为 $C \approx N \times T$（FLOPs）。</p>
+<p><strong>前提公理</strong>：大语言模型的性能 <span class="math">P</span> 受限于计算预算 <span class="math">C</span>、参数量 <span class="math">N</span> 和训练 Token 数 <span class="math">T</span>。缩放定律（Scaling Laws）指出损失随规模按幂律下降。</p>
+<p><strong>形式边界</strong>：资料 [2] 与 [12] 指出，当前趋势是增加 <span class="math">N</span> 而保持 <span class="math">T</span> 不变，导致模型在给定 <span class="math">C</span> 下未达最优。计算预算约束可表述为 <span class="math">C ≈ N × T</span>（FLOPs）。</p>
 <p><strong>自洽性缺陷</strong>：单纯扩大参数量而不增加训练 Token，会导致边际收益递减甚至性能下降 [3]。当前模型被评估为 "considerably over-sized" [12]。</p>
 <h4 id="h191">第二层：哲学本体论与概念本质层</h4>
 <p><strong>存在方式追问</strong>：模型能力的"极限"在本体论上是硬件/数据资源的物理边界，还是算法架构的收敛性问题？资料 [2] 与 [12] 倾向于后者——当前状态是工程分配问题而非能力天花板。</p>
 <p><strong>定义边界</strong>："接近极限"若指性能无法再提升则不成立；若指特定规模下的训练效率则已触及非最优边界。</p>
 <h4 id="h192">第三层：现实机制与功能拆解层</h4>
 <p><strong>量化指标</strong>：</p>
-<ul><li>175B Params → 最优计算预算 ≈ $4.4 \times 10^{24}$ FLOPs [13]</li><li>MT-NLG 530B 参数量大但 Token 数与 GPT-3 相当 → 性能未达预期 [11]</li></ul>
+<ul><li>175B Params → 最优计算预算 ≈ <span class="math">4.4 × 10<sup>24</sup></span> FLOPs [13]</li><li>MT-NLG 530B 参数量大但 Token 数与 GPT-3 相当 → 性能未达预期 [11]</li></ul>
 <h4 id="h193">第四层：综合判定矩阵</h4>
 <table><thead><tr><th>场景</th><th>意义等级</th><th>判定依据</th></tr></thead><tbody><tr><td>① 纯思辨/本体论讨论</td><td>中</td><td>模型能力受限于算法架构与数据配比，非物理绝对极限</td></tr><tr><td>② 工程/实操应用</td><td><strong>高</strong></td><td>明确存在"过度规模、训练不足"的工程误区，优化空间巨大</td></tr><tr><td>③ 伦理/安全监管</td><td>中</td><td>模型未达极限意味着潜在能力风险仍随规模增加而累积</td></tr><tr><td>④ 跨学科形式化路径</td><td>低</td><td>经济史资料无法提供 LLM 技术极限的实证支持</td></tr></tbody></table>
 <p><strong>最终断言</strong>：现有大语言模型并未接近能力极限，核心瓶颈在于"参数规模与训练 Token 数的配比失衡"，在同等计算预算下通过增加训练数据可显著提升性能，目前处于工程优化的红利期而非技术穷尽期。</p>
@@ -1701,7 +1702,6 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <div class="flow-step" style="margin-left:0px">执行时 LLM 的角色：</div>
 <div class="flow-step" style="margin-left:14px">子结构 1_1：LLM(节RAG + 子结构RAG + 文档元数据 + 前文) <span class="flow-inline-arrow">→</span> <span class="edge-fall">400 字正文（含引用标记）</span></div>
 <div class="flow-step" style="margin-left:14px">子结构 1_2：LLM(新子结构RAG + 累积文档元数据 + 前文(含 1_1)) <span class="flow-inline-arrow">→</span> <span class="edge-fall">400 字正文</span></div>
-<div class="flow-step" style="margin-left:14px">...</div>
 <div class="flow-step" style="margin-left:14px">所有节完成后 <span class="flow-inline-arrow">→</span> <span class="edge-fall">确定性引用后处理（LLM 不参与）:</span></div>
 <div class="flow-step" style="margin-left:28px">正则扫描 <span class="flow-inline-arrow">→</span> <span class="edge-fall">去重编号 <span class="flow-inline-arrow">→</span> [N] 替换 <span class="flow-inline-arrow">→</span> 参考文献节自动填充</span></div>
 </div>
@@ -1887,7 +1887,7 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h294">3.1 LLM 和 BERT 都是预测模型</h3>
 <p>先把一个被忽略的事实摆上台面：<strong>无论是自回归 LLM 还是掩码语言模型 BERT，本质都是预测模型。</strong></p>
 <ul><li><strong>LLM（自回归）</strong>：给定前文 token 序列，预测下一个 token。GPT-2 论文写得很清楚——语言建模就是最大化条件概率连乘 [1]：</li></ul>
-<pre><code>  p(x) = ∏ p(sn | s1, ..., sn-1)</code></pre>
+<div class="math-block"><span class="math">p(x) = ∏ p(sn | s1, ..., sn-1)</span></div>
 <p>  <strong>向后预测</strong>：每一步都看着过去，预测未来。</p>
 <ul><li><strong>BERT（掩码）</strong>：随机遮住输入中的 token，预测被遮住的内容。BERT 系论文（含 T5 的 noising 综述、ELECTRA 的判别式改造）把这一类统称为 masked language model——<strong>收敛预测</strong>：看着上下文，收敛到被遮住的那个值 [2]。</li></ul>
 <p>两者的共同点是：<strong>输出都是从条件概率分布里采出来的，不是查表查出来的。</strong> 无论是向后预测还是收敛预测，模型的每一次输出都是一次采样——采样就有方差，方差就是误差的来源。</p>
@@ -2453,22 +2453,9 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>由此得出全文最实用的一条判断：</p>
 <blockquote><strong>大多数时候，误差受控比靶心偏差几毫米更值得关注。</strong></blockquote>
 <p>展开说——这里"误差受控"说的是<strong>精密度</strong>，"靶心偏差几毫米"说的是<strong>正确度</strong>：</p>
-<div class="flow-chain">
-<div class="flow-cnode">
-<div class="flow-step">精密度差（每次乱跳）：均值漂移不可控</div>
-</div>
-<div class="flow-carr">→</div>
-<div class="flow-cnode">
-<div class="flow-step">准确度观测不可靠</div>
-</div>
-<div class="flow-carr">→</div>
-<div class="flow-cnode">
-<div class="flow-step">正确度评估不准</div>
-</div>
-<div class="flow-carr">→</div>
-<div class="flow-cnode">
-<div class="flow-step">不可校准</div>
-</div>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">精密度差（每次乱跳）：均值漂移不可控 <span class="flow-inline-arrow">→</span> <span class="edge-fall">准确度观测不可靠 <span class="flow-inline-arrow">→</span> 正确度评估不准 <span class="flow-inline-arrow">→</span> 不可校准</span></div>
+<div class="flow-step" style="margin-left:0px">精密度好（每次同一点）：均值稳定 <span class="flow-inline-arrow">→</span> <span class="edge-fall">准确度可观测 <span class="flow-inline-arrow">→</span> 正确度可间接逼近 <span class="flow-inline-arrow">→</span> 可收敛</span></div>
 </div>
 <p>精密度好的系统可能"偏"（平均落点离真值有固定距离——正确度差），但它是<strong>可治理</strong>的：你可以声明它的偏差，校准它的偏差，甚至设计它的偏差（第三章的抵消与补正）。精密度差的系统看起来"准"（某一次碰巧接近真值），但它是<strong>不可治理</strong>的——你无法对它做任何系统性改进，每次修修补补都是打地鼠。</p>
 <p>标准化的意义正在于此。标准化不是"把偏差消灭到零"——那是正确度崇拜。<strong>标准化是把精密度先钉住：统一的推动点位、统一的字段语义、统一的枚举表，让每次落点可预测</strong>——然后正确度才谈得上校准（补正）或设计（抵消）。标准化的产物不是"准"，是"稳"——而稳是通往准的唯一可行路径，因为只有稳，校准才有落点。</p>
@@ -2593,7 +2580,7 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>语言模型的输出层是 softmax：每个词的概率正比于 <code>exp(zi/T)</code>，其中 zi 是模型给候选词的打分，T 是温度 [1]。温度等于 1 时是标准 softmax，T 越大分布越平、采样越随机。<strong>这意味着 LLM 的每一个 token 都是从一个概率分布里抽出来的</strong>——不是查表，是抽样。抽样就有噪声：同样的输入，同样的上下文，两次生成可能差一个词；而一个词的差别，在一个需要"精确改这一句"的任务里，就是天壤之别。</p>
 <p>细碎处理要求的是<strong>确定性动作</strong>：把 L02S01 补到文件末尾，就是把 L02S01 补到文件末尾，不允许"补成 L02S02"或"顺手加个空格"。但 LLM 无法提供这种确定性——它的输出由采样决定，采样的随机性是内禀的，温度参数只是缩放分布，无法消除噪声。<strong>精度不可能超过采样噪声</strong>：这不是模型不够好的工程缺陷，而是 <code>exp(zi/T)</code> 这个公式决定的架构事实。</p>
 <p>于是细碎处理面对 LLM 时出现一个无法绕开的陷阱——幻觉概率的累积。设单次修复的幻觉概率为 p（一个大于零的常数，GPT-4 的技术报告也承认模型"can suffer from hallucinations"，幻觉是机制性的而非偶然 [2]）。细碎处理做 N 次，至少一次出幻觉的概率是：</p>
-<pre><code>P(至少一次幻觉) = 1 - (1-p)^N</code></pre>
+<div class="math-block"><span class="math">P(至少一次幻觉) = 1 - (1-p)<sup>N</sup></span></div>
 <p>p 不随次数变化——<strong>次数不影响概率，但影响触发次数</strong>。单次 p=0.1 时，修 1 次的风险是 10%，修 5 次是 41%，修 10 次是 65%；p=0.2 时，10 次累积到 89%。细碎处理做得越多，整体出幻觉的概率越逼近 1。每一次"小修补"都像是往一个账户里存一份风险，而利率是复利。9c 里我写过"推理免疫"——大模型对语义不对等免疫，靠的是自回归解码范式 [3]；但免疫有边界：免疫不了采样噪声本身。幻觉是范式内胎生的，不是外来的。</p>
 <h2 id="h430">四、区域重构不是没有粒度：粒度让渡给成本切割</h2>
 <p>如果细碎处理是确定性的特权，那么所有五确定不满足的问题，就只能走向区域重构。但区域重构常被误解为"没有粒度"——整段重写嘛，还要粒度干什么？这是误读。<strong>区域重构不代表着没有粒度，而是成本如何切割的平衡性考量。</strong></p>
@@ -2641,15 +2628,15 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>四个问题一条主线：<strong>提示词是模型行为的主导控制变量，它通过重塑概率曲线的形状拉扯模型；而曲线从来不是纯定性或纯定量的——定性的边界由定量撑起，定量的意义由定性收束，拉扯的效力取决于离决策阈值的距离与误差传播路径的长度。</strong></p>
 <h2 id="h437">二、提示词是怎么拉扯概率曲线的</h2>
 <p>先给"概率曲线"一个严格的定义。语言模型是一个条件概率分布：给定前文 token 序列 s1, s2, ..., sn-1，模型输出下一个 token sn 的概率分布。GPT-2 的论文把这一点写得很清楚——语言建模就是最大化下式的乘积 [1]：</p>
-<pre><code>p(x) = ∏ p(sn | s1, ..., sn-1)</code></pre>
+<div class="math-block"><span class="math">p(x) = ∏ p(sn | s1, ..., sn-1)</span></div>
 <p><strong>提示词就是条件里的那一段固定前缀。</strong> 用户输入的全部 token——指令、示例、格式要求、上下文——构成了 s1...sk，模型后续生成的每一个 token 都以这段前缀为条件。提示词变了，条件变了，整条链上每一个后续 token 的分布全部跟着变。<strong>提示词是分布的开关，不是分布的调节旋钮——它直接替换条件，而不只是微调输出。</strong></p>
 <p>输出层的分布形状由一个公式决定——softmax [2]：</p>
-<pre><code>p(sn) = exp(zi / T) / Σj exp(zj / T)</code></pre>
+<div class="math-block"><span class="math">p(sn) = exp(zi / T) / Σj exp(zj / T)</span></div>
 <p>其中 zi 是模型给候选 token 的打分（logits），T 是温度。模型对"下一个词该是谁"有一份原始打分，softmax 把打分变成概率，采样器从概率里抽一个 token 出来。<strong>概率曲线的形状由 logits 的分布决定：一个候选的 logits 远高于其他候选，曲线就是陡峰；所有候选的 logits 接近，曲线就是平野。</strong></p>
 <p>现在关键的问题来了：<strong>提示词怎么改变这条曲线？</strong></p>
 <p>答案是：通过改变 logits 的相对结构。提示词里出现"输出 JSON"，模型在训练中见过无数"JSON 指令 → JSON 输出"的序列，于是 JSON 相关 token 的 logits 被系统性抬高，其他 token 的 logits 相对压低——曲线从平野变成一座指向 JSON 的峰。提示词里给出示例（few-shot），示例 token 激活的模式把目标路径的 logits 进一步抬升。<strong>提示词拉扯的是 logits 的相对结构：哪条路径被抬高、哪条被压低、抬多少压多少，全部由提示词的内容决定。</strong></p>
 <p>这里有一个关键数学事实——<strong>softmax 的平移不变性</strong>：</p>
-<pre><code>softmax(x + c) = softmax(x)    （c 是任意常数向量，对所有候选加同一个数）</code></pre>
+<div class="math-block"><span class="math">softmax(x + c) = softmax(x)    （c 是任意常数向量，对所有候选加同一个数）</span></div>
 <p>给所有 logits 同时加上一个常数，softmax 的输出完全不变。这意味着：<strong>任何"对所有路径一视同仁"的影响，在概率层面等于零。</strong> 一条指令要真正改变模型的行为，它必须非均匀地改变 logits——让这条路径上去、那条路径下来；均匀地"强化所有路径"（抬升所有 logits）在数学上等于什么都没做。</p>
 <p>这个事实直接埋葬了一大类提示词写法。<strong>"你必须认真""一定要准确""绝对不许出错"——这类语气词的作用机制，是对所有候选路径施加一个近乎均匀的"强调偏移"。</strong> 这里必须把两件事分开：softmax 平移不变性是数学事实（均匀偏移 → 分布严格不变）；而"语气词产生均匀偏移"是对语气词作用的<strong>经验刻画</strong>——语气词作为输入 token 会经过注意力机制，其影响不可能是数学上严格的均匀，但实践中它不指向任何具体路径、不建立任何结构，对 logits 相对结构的影响远弱于结构性指令，量级接近均匀偏移。<strong>按平移不变性：如果影响是均匀的，分布不变；实际影响接近均匀，分布的形状变化趋近于零。</strong> 语气词真正能改变的是让模型在措辞上显得更"用力"，但概率曲线的峰谷形状没有因此被拉动，采样结果自然也没有结构性变化。<strong>这就是"死板废话"的操作性定义：对 logits 的影响接近均匀（不指向路径、不建立结构），因而对概率分布形状的拉扯趋近于零——这是一个经验论证，以"语气词≈均匀偏移"为假设前提，而非先验的数学定理。</strong></p>
 <p>反过来，什么才是真正的拉扯？非均匀的结构性指令：</p>
@@ -2699,7 +2686,7 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>先摆数据。structured-writer 3.0.0b13：KV cache 从 FP16 换成 Q8_0，同一模型（1B 全 GPU）、同一上下文，显存省 412MB，flash_attn 路径加载、推理完全正常 [6]——<strong>CHANGELOG 只记录了加载/推理正常与显存节省，未做文本质量对比</strong>；8-bit KV 量化对输出分布的影响属于采样噪声量级，是量化理论推论（KV 量化损失的是注意力 KV 值的低位精度，误差经注意力传播到输出分布，与 softmax 采样噪声同量级），不是引擎实测。3.0.0b21：修复引擎 n_ctx 固定 16384 后 KV 缓存压缩到约 0.7GB——精度档位是被资源约束逼着选的，不是被"更准"的追求逼着选的 [7]。3.1.0b1：同一模型 llama.cpp 直挂 8 t/s vs LM Studio 20+ t/s，吞吐翻两倍半 [9]——<strong>差距的主因是两代推理内核的代差</strong>：llama-cpp-python 官方 PyPI 最高 0.3.35（2025 年初内核，已停更），旧内核对 Qwen3.5/3.6-35B-A3B（新 MoE）无专家并行/CUDA MoE kernel 优化，9 层 partial offload 后 55 层（含全部专家）在 CPU 串行，8 t/s 是旧内核的物理极限；LM Studio 用最新 llama.cpp master，20+ t/s 是 MoE 优化的收益（CHANGELOG 记录的是吞吐差距与根因，输出质量相当为推断）。</p>
 <p>这三条数据放在"提示词拉扯"的坐标系里，结论非常清晰：<strong>精度调优（Q8_0 vs FP16）移动的是输出分布的噪声级扰动，提示词拉扯改变的是 logits 的结构级差异。</strong> 8-bit KV 量化损失的是注意力 KV 值的低位精度（相对误差约 0.4% 量级），误差经注意力机制间接传播到输出分布，这种扰动与 softmax 的温度采样噪声属于同一个数量级，被淹没在采样噪声里；而提示词改变的是 logits 的相对结构——目标路径抬升多少、竞争路径压低多少——这个差异是结构级的，直接决定曲线的峰谷。<strong>精度调优是曲线坐标纸的细密程度，提示词拉扯是曲线本身的形状。坐标纸再细，也改变不了曲线的峰谷；曲线形状一旦被拉扯，坐标纸的粗细根本无感。</strong></p>
 <p>把数量级关系写清楚：</p>
-<pre><code>logits = f(提示词结构) + ε(精度/采样噪声)</code></pre>
+<div class="math-block"><span class="math">logits = f(提示词结构) + ε(精度/采样噪声)</span></div>
 <p>提示词结构决定 logits 的主项（峰谷），精度与采样噪声是 ε（扰动）。Q8_0 vs FP16 只改 ε 的量级——而 ε 本来就淹没在采样噪声里，改 ε 的粗细不影响主项的峰谷。<strong>这就是"定性精度的空耗"：当模型行为由提示词结构主导时，为精度位数付费，买到的只是噪声粗细的微调——边际收益趋近于零。</strong></p>
 <p>3.1.0b1 那条数据，恰好能给这个数量级关系补一个更锋利的侧面证据：8 → 20+ t/s 的差距<strong>不是精度调优买来的，是内核代差换来的</strong>——llama-cpp-python 停更在 0.3.35（2025 年初内核），对 Qwen3.5/3.6-35B-A3B 这类新 MoE 架构没有专家并行与 CUDA MoE kernel 优化，55 层专家（含全部专家）在 CPU 串行，8 t/s 是它的<strong>物理极限</strong>；LM Studio 用最新 llama.cpp master，MoE 优化完整，20+ t/s。<strong>同一个模型、同一个权重，只换内核（结构级变化），吞吐翻两倍半；同一个模型、同一个内核，只换精度位数（噪声级变化），输出分布的变化被淹没在采样噪声里——后者是第六节开头的量化理论推论（structured-writer 未做过文本质量对比实测），前者是 CHANGELOG 实测。</strong> 代差是结构级的收益，精度是噪声级的收益——这条实证比 Q8_0 更硬：它把"结构级 ≫ 噪声级"从精度对比推广到了内核代次对比，而提示词拉扯（另一类结构级变化）与内核代差同属一个层级，作用层级都在精度调优之上。</p>
 <p>这里有一个必须补上的侧面：精度空耗的结论<strong>只在"提示词结构已经到位"时成立</strong>。反过来，如果提示词结构本身就是空的（死板废话），那模型行为完全由噪声主导——这时换更大的模型、更精确的精度，本质是在一个"没有形状的分布"上花力气，照样是空耗。<strong>3.0.0b11 的实证就是这个镜像：Qwen2.5-3B 判不了"叙事目的/起承转合"这种抽象标准——22 条问题筛到 8 条，剩下仍以伪问题为主 [10]。这不是精度问题，是 3B 模型的分布里根本没有"起承转合"的判别结构；引擎随后落地 Qwen3-8B 作判定模型（3.0.0b12 起注入 /no_think 实测使用）——这是换了一个"分布表达能力"更强的模型，不是把同一个分布修得更细。注意这次换模型同时变了两个变量：规模（3B→8B）与代次（Qwen2.5→Qwen3），CHANGELOG 只记录了"换模型"这一动作、未拆解两者各自贡献——但它们同属结构级变化：定性能力的跃迁来自状态空间的扩大（规模 × 代次），不来自同一空间内的精度提升（位数）——而提示词的作用，是在给定的状态空间里把分布拉成正确的形状。</strong> 模型规模与代次是分布表达能力的天花板，提示词是分布的实际塑造者，精度是分布里的噪声粗细——三个变量，作用层级完全不同。**</p>
@@ -2709,7 +2696,7 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p><strong>判据一：决策阈值距离。</strong> 一条提示词拉扯分布之后，模型输出的样本要经过一个"定性判定"（六检过不过、HARD/SOFT、阳性/阴性）——这个判定就是决策阈值。样本离阈值远，提示词的小偏差无感；样本贴阈值，提示词的每一个字都可能是翻盘的关键。<strong>提示词的拉扯效力与样本离决策阈值的距离成反比：离得越远，拉扯越廉价；离得越近，拉扯越致命。</strong></p>
 <p><strong>判据二：误差传播路径长度。</strong> 一条提示词产生的偏差，会沿着执行链传播。structured-writer 的写作链：规划 → 写作 → 六检 → 修复，每章十几步，协议固定——链短，提示词偏差没有放大舞台；09d 的细碎修复链：改 A → 验证 → 发现 B → 改 B → 验证 → 发现 C——链可以无限长，每步的偏差都会累积 [5]。09d 写过幻觉累积公式 P(至少一次幻觉) = 1-(1-p)^N——N 就是传播路径长度的原型 [5]。<strong>提示词的拉扯效力与误差传播路径长度成正比：链短，拉扯误差一次就消耗完；链长，拉扯误差复利累积。</strong></p>
 <p>两个判据是乘数关系（两个必要条件：判据一决定"这条拉扯够不够得着决策"，判据二决定"这条拉扯有没有机会被消耗"——两个条件同时成立拉扯才产生实际价值，故取乘而非加）：</p>
-<pre><code>拉扯效力 V ≈ 阈值距离因子 D × 传播路径因子 L</code></pre>
+<div class="math-block"><span class="math">拉扯效力 V ≈ 阈值距离因子 D × 传播路径因子 L</span></div>
 <p>四个象限：</p>
 <table><thead><tr><th>象限</th><th>阈值距离</th><th>传播路径</th><th>提示词投入策略</th></tr></thead><tbody><tr><td>①</td><td>远</td><td>短</td><td><strong>零投入</strong>。写作链章节生成：六检判定离阈值远，提示词小偏差不传播 → KV 量化 Q8_0 省 412MB 显存（1B 全 GPU 实测，加载/推理正常），提示词写完就不用管</td></tr><tr><td>②</td><td>远</td><td>长</td><td><strong>低投入</strong>。偏差沿链传播但每步都远离阈值，累积也够不到阈值——只买"防累积到阈值"的最低保底</td></tr><tr><td>③</td><td>近</td><td>短</td><td><strong>中投入</strong>。贴阈值但链短，一次判定定生死——提示词必须把边界划清（b11：3B 判不了就换 8B，是换判别结构不是换精度）</td></tr><tr><td>④</td><td>近</td><td>长</td><td><strong>高投入</strong>。贴阈值且误差复利——每一步的提示词都在救后面的命，逐字打磨，不留余地</td></tr></tbody></table>
 <p>对照 structured-writer 的四个实证：b13（KV 量化）落在象限①——写作链离六检阈值远、链短，精度零投入正确（412MB 为 1B 全 GPU 实测，CHANGELOG 未记录 35B 上的 KV 量化显存收益；35B n_ctx=262K 时 Q8_0 使层数估算 7 → 9 层，量化收益随模型规模放大，结论方向不变）；b14（层数估算）落在象限①的另一个案例——-1 不是"多投入"而是"指令坐标形态错误"，精确范围零成本修正（211s→38s 实测于显存被 LM Studio 占满、估算准确的条件下）；3.1.0b1（后端切换）也落象限①——吞吐差距的主因是两代推理内核的代差（旧 llama-cpp-python 0.3.35 缺 MoE 优化 vs LM Studio 最新 master），换内核是结构级路径更换，不是精度投入；b11（模型升级）落在象限③——判定"起承转合"贴阈值（3B 判不了 = 分布里没有判别结构），链短（判定是单步决策），所以换模型（扩状态空间：规模 × 代次）而不是换精度（加密坐标）。</p>
@@ -2887,24 +2874,9 @@ if seq &lt;= 3: is_header = True</code></pre>
 <table><thead><tr><th></th><th>论点一：判断的让渡</th><th>论点二：翻译的打通</th></tr></thead><tbody><tr><td>被终结的东西</td><td>记住→合适引用的提炼（认知层）</td><td>表层→底层的转换（工程层）</td></tr><tr><td>终结的方式</td><td>概率暴力绕过"思"</td><td>巨量计算取代人力</td></tr><tr><td>人类的旧投入</td><td>堆砌知识、积累经验</td><td>学习底层、充当翻译者</td></tr><tr><td>人类的旧投入结局</td><td>沉没成本（贬值）</td><td>沉没成本（贬值）</td></tr><tr><td>剩下的稀缺品</td><td>运用（真实约束下的决策）</td><td>对齐判断（什么值得对齐）</td></tr></tbody></table>
 <p>两条线共享同一个底层事实：<strong>AI 终结了两种"力气活"。</strong> 判断是认知的力气活（把存量炼成恰当），翻译是工程的力气活（把表层译成底层）。两者都符合"力气活"的定义：成本高、回报不对称、依赖人类精力去扛——而精力，恰恰是 AI 唯一不稀缺的东西。</p>
 <p>于是人类的认知价值链被重排了：</p>
-<div class="flow-chain">
-<div class="flow-cnode">
-<div class="flow-step">旧价值链：  记住（贵）</div>
-<div class="flow-note">新价值链：</div>
-</div>
-<div class="flow-carr">→</div>
-<div class="flow-cnode">
-<div class="flow-step">说出</div>
-<div class="flow-note">记住（免费）<span class="flow-inline-arrow">→</span> 合适引用（免费）<span class="flow-inline-arrow">→</span> 运用（唯一还贵的东西）</div>
-</div>
-<div class="flow-carr">→</div>
-<div class="flow-cnode">
-<div class="flow-step">合适引用（最贵）</div>
-</div>
-<div class="flow-carr">→</div>
-<div class="flow-cnode">
-<div class="flow-step">运用</div>
-</div>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">旧价值链：  记住（贵） <span class="flow-inline-arrow">→</span> <span class="edge-fall">说出 <span class="flow-inline-arrow">→</span> 合适引用（最贵）<span class="flow-inline-arrow">→</span> 运用</span></div>
+<div class="flow-step" style="margin-left:0px">新价值链：  记住（免费） <span class="flow-inline-arrow">→</span> <span class="edge-fall">合适引用（免费）<span class="flow-inline-arrow">→</span> 运用（唯一还贵的东西）</span></div>
 </div>
 <p><strong>判断的让渡把"思"从认知链的中段抹掉了，翻译的打通把"翻译"从工程链的中段抹掉了。</strong> 两条链都只剩下两端：输入（说人话/定表层）和输出（落地/对齐）。中间那段曾经最贵、也曾经最能定义"专业"的部分，变成了免费的。</p>
 <p>这带来的认知冲击是巨大的：<strong>过去我们以为"专业"= 记得多 + 译得准（图书馆 + 翻译者），现在这两样都免费了。</strong> 专业还剩下什么？剩下运用——真实约束下的决策、执行、验证、负责。而运用恰恰是人类历史上最不擅长、最不愿被考核的部分。<strong>AI 没有抢走人类的饭碗，它抢走的是人类的舒适区。</strong></p>
@@ -3126,18 +3098,9 @@ if seq &lt;= 3: is_header = True</code></pre>
 <h1 id="h513">结语：划界权与人类自洽</h1>
 <h2 id="h514">这本书走完了一条什么路</h2>
 <p>从第 I 部的"怎么让 LLM 不犯错"，到第 IV 部的"人还剩什么"——这本书走完了一条从工程到哲学的弧线：</p>
-<div class="flow-chain">
-<div class="flow-cnode">
-<div class="flow-step">约束（让 LLM 可靠）</div>
-</div>
-<div class="flow-carr">→</div>
-<div class="flow-cnode">
-<div class="flow-step">协作（让多个智能体分工）</div>
-</div>
-<div class="flow-carr">→</div>
-<div class="flow-cnode">
-<div class="flow-step">边界（承认穷举的宿命）</div>
-</div>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">约束（让 LLM 可靠） <span class="flow-inline-arrow">→</span> <span class="edge-fall">协作（让多个智能体分工）<span class="flow-inline-arrow">→</span> 边界（承认穷举的宿命）</span></div>
+<div class="flow-step" style="margin-left:0px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">重估（判断的让渡与翻译的打通）<span class="flow-inline-arrow">→</span> 画圈（伦理牢笼与划界权）</span></div>
 </div>
 <p>回头看，前四部做的其实是同一件事的不同表述：<strong>人用判断划定 AI 的边界。</strong></p>
 <ul><li>第 I 部的契约，是"输出格式的边界"</li><li>第 II 部的分工，是"决策权的边界"</li><li>第 III 部的穷举，是"场景的边界"</li><li>第 IV 部的牢笼，是"伦理的边界"</li></ul>

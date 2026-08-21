@@ -77,7 +77,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 **实施方式**：
 
-```text
+```
 技能标准化审计引擎（skill-standardization）
   │
   ├── 审计其他技能 ── 规则R-01 ~ R-26

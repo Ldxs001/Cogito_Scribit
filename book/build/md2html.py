@@ -70,81 +70,94 @@ def _table(rows):
     return f'<table{ref_class}><thead>' + html_rows[0] + '</thead><tbody>' + ''.join(html_rows[1:]) + '</tbody></table>'
 
 def _is_flow_block(code):
-    """判断代码块是否为结构化流程图：含框线字符 (│ ┌ ┐ └ ┘ ├ ┤) 或 【】 阶段标题。
-    这种代码块 ASCII 框线套娃，只用 <pre> 显示很难看清，需要 HTML 化。
-    简单文字带 → 的不算（保留 pre）。
+    """判断代码块是否为流程图，满足其一即转 flow：
+    1. 含框线字符 (│ ┌ ┐ └ ┘ ├ ┤ ┬ ┴ ─) 或 【】 阶段标题（结构化框图）
+    2. 含 ↓↑→▼ 箭头且箭头行 >= 2（单向链，如 正常执行 → 阻断 → 锁文件）
+    目录树（├── 无箭头）与代码示例（= { } import 等）保持 pre。
     """
     lines = [l for l in code.split('\n') if l.strip()]
-    if len(lines) < 3:
+    if len(lines) < 2:
         return False
-    box_chars = '│┌┐└┘├┤'
+    box_chars = '│┌┐└┘├┤┬┴─'
     has_box = any(any(c in l for c in box_chars) for l in lines)
     has_phase = any('【' in l and '】' in l for l in lines)
-    return has_box or has_phase
+    if has_box or has_phase:
+        return True
+    # 单向链：含 ↓↑→▼ 的行 >= 2
+    arrow_lines = sum(1 for l in lines if any(c in l for c in '↓↑→▼'))
+    if arrow_lines >= 2:
+        # 排除纯代码（含 = { } import def 等代码特征）
+        code_like = sum(1 for l in lines if any(k in l for k in ('=', '{', '}', 'import ', 'def ', 'print(', '()', 'return ')))
+        if code_like <= len(lines) // 3:
+            return True
+    return False
 
 
 def _flow_to_html(code):
     """将 ASCII 流程图代码块渲染为 HTML 流程容器。
     规则：
     - 跳过空行
-    - 去框线装饰字符 (│ ┌ ┐ └ ┘ ├ ┤ ─)，保留实际文本
+    - 去框线装饰字符 (│ ┌ ┐ └ ┘ ├ ┤ ┬ ┴ ─)，保留实际文本
     - 【...】识别为阶段标题
-    - ↓ ↑ → 仅含箭头字符的行识别为箭头
+    - ↓ ↑ → ▼ 仅含箭头字符的行识别为箭头
     - └─ / ├─ 等引导分支说明行识别为 flow-edge
     - 其他文本作为步骤卡片（按原缩进级别映射为 padding-left）
     """
     out = ['<div class="flow">']
-    box_chars = '│┌┐└┘├┤─'
-    branch_prefix = ('├─', '└─', '└', '├')
+    box_chars = '│┌┐└┘├┤┬┴─'
+    arrow_chars_all = '↓↑→▼'
 
     for raw in code.split('\n'):
+        # 0) 框线行预判：整行只由框线/箭头字符组成 → 连接线
+        l_strip = raw.strip()
+        if not l_strip:
+            continue
+        if all(c in box_chars + arrow_chars_all + ' ' for c in l_strip):
+            # 纯框线（┌──┐ / └──┬──┘ / ────）：丢弃或转箭头
+            if any(c in l_strip for c in '┬┴▼↓↑'):
+                out.append('<div class="flow-arrow">▼</div>' if '┬' in l_strip or '▼' in l_strip else '<div class="flow-arrow">↓</div>')
+            continue
+        # 0.5) 分支前缀检测（├─ / └─ 引导的说明行，非纯框线）
+        if l_strip.startswith('├─') or l_strip.startswith('└─'):
+            content = l_strip[2:].strip(' -─│')
+            if content:
+                depth = (len(raw) - len(raw.lstrip())) // 2 * 14
+                if '→' in content:
+                    p1, p2 = content.split('→', 1)
+                    out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{p1.strip()} → <span class="edge-fall">{p2.strip()}</span></div>')
+                else:
+                    out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{content}</div>')
+            continue
         # 1) 去前后空白
         l = raw.strip()
         if not l:
             continue
-        # 2) 去框线装饰字符（包括 | 但不去掉 | 包围的真实文本）
-        # 先去掉行首尾的纯框线字符（如 │   │ / ┌──┐）
+        # 2) 去框线装饰字符（首尾循环去除）
         l2 = l
-        # 去掉首尾的 | / 框线
         while l2 and l2[0] in box_chars + ' ':
             l2 = l2[1:]
         while l2 and l2[-1] in box_chars + ' ':
             l2 = l2[:-1]
         if not l2:
             continue
-        # 去 '[' ']' ┌ 之类的两侧装饰（---┐ / └--- 等）
-        l3 = l2
         # 3) 阶段标题
-        if l3.startswith('【') and '】' in l3:
-            phase = l3[l3.find('【'):l3.rfind('】')+1]
+        if l2.startswith('【') and '】' in l2:
+            phase = l2[l2.find('【'):l2.rfind('】')+1]
             out.append(f'<div class="flow-phase">{phase}</div>')
             continue
-        # 4) 纯箭头行
-        arrow_chars = [c for c in l3 if c in '↓↑→']
-        if arrow_chars and not any(ch.isalnum() for ch in l3 if ch not in '↓↑→│├└─ '):
-            out.append(f'<div class="flow-arrow">{l3}</div>')
+        # 4) 纯箭头/连接线行（剥框线后只剩箭头字符）
+        if all(c in box_chars + arrow_chars_all for c in l2):
+            out.append(f'<div class="flow-arrow">{l2}</div>')
             continue
-        # 5) 分支说明（├─ └─ 开头）
-        if l3.startswith('├─') or l3.startswith('└─'):
-            content = l3[2:].strip(' -─│')
-            depth = (leading // 2) * 14
-            # 拆箭头后内容：'L1-L5全部完整 → 继续'
-            if '→' in content:
-                p1, p2 = content.split('→', 1)
-                out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{p1.strip()} → <span class="edge-fall">{p2.strip()}</span></div>')
-            else:
-                out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{content}</div>')
-            continue
-        # 6) 缩进级别（按前导空格数 × 2 计算 padding-left）
+        # 5) 缩进级别
         leading = len(raw) - len(raw.lstrip())
         depth = (leading // 2) * 14
-        # 7) 行内箭头：检查是否含 → （如 "步骤N完成后：检查产出物格式" 不含箭头）
-        if '→' in l3:
-            # 拆箭头
-            p1, p2 = l3.split('→', 1)
+        # 6) 行内箭头拆分
+        if '→' in l2:
+            p1, p2 = l2.split('→', 1)
             out.append(f'<div class="flow-step" style="margin-left:{depth}px">{p1.strip()} → <span class="edge-fall">{p2.strip()}</span></div>')
         else:
-            out.append(f'<div class="flow-step" style="margin-left:{depth}px">{l3}</div>')
+            out.append(f'<div class="flow-step" style="margin-left:{depth}px">{l2}</div>')
     out.append('</div>')
     return '\n'.join(out)
 

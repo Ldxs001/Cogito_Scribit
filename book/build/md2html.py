@@ -45,6 +45,52 @@ def _table(rows):
         html_rows.append('<tr>' + ''.join(f'<{tag}>{_inline(c)}</{tag}>' for c in cells) + '</tr>')
     return '<table><thead>' + html_rows[0] + '</thead><tbody>' + ''.join(html_rows[1:]) + '</tbody></table>'
 
+def _is_flow_block(code):
+    """判断代码块是否为流程图：含 ↓ / → 流程箭头，且行数 >= 3"""
+    lines = [l for l in code.split('\n') if l.strip()]
+    if len(lines) < 3:
+        return False
+    arrow_count = sum(1 for l in lines if any(c in l for c in '↓↑→'))
+    return arrow_count >= 2
+
+
+def _flow_to_html(code):
+    """将 ASCII 流程图代码块渲染为 HTML 流程容器。
+    每行去掉前导空白，按行渲染；箭头行作为连接线。
+    """
+    lines = [l.rstrip() for l in code.split('\n')]
+    # 计算统一缩进（去掉共同前导空白）
+    stripped = [l.strip() for l in lines if l.strip()]
+    # 识别块级结构：步骤行（含文字）与箭头行
+    out = ['<div class="flow">']
+    for l in stripped:
+        if not l:
+            continue
+        if any(c in l for c in '↓↑→'):
+            # 箭头行
+            for c in '↓↑→':
+                if c in l:
+                    arrow = c
+                    rest = l.replace(c, '').strip(' -─|├└┌┐│')
+                    if rest:
+                        out.append(f'<div class="flow-edge">{arrow} {rest}</div>')
+                    else:
+                        out.append(f'<div class="flow-arrow">{arrow}</div>')
+                    break
+        else:
+            # 步骤行（可能是标题/阶段/文本）
+            l2 = l.strip('| ')
+            if l2.startswith('【') and l2.endswith('】'):
+                out.append(f'<div class="flow-phase">{l2}</div>')
+            else:
+                # 去框线装饰：│ ┌ ─ ┐ 等
+                l3 = l2.strip('┌─┐└┘│├┤')
+                if l3:
+                    out.append(f'<div class="flow-step">{l3}</div>')
+    out.append('</div>')
+    return '\n'.join(out)
+
+
 def md_to_html(md_text):
     lines = md_text.split('\n')
     out = []
@@ -60,7 +106,11 @@ def md_to_html(md_text):
             while i < n and not lines[i].strip().startswith('```'):
                 buf.append(lines[i]); i += 1
             i += 1
-            out.append('<pre><code>' + html_mod.escape('\n'.join(buf)) + '</code></pre>')
+            code_text = '\n'.join(buf)
+            if _is_flow_block(code_text):
+                out.append(_flow_to_html(code_text))
+            else:
+                out.append('<pre><code>' + html_mod.escape(code_text) + '</code></pre>')
             continue
         # 标题（带锚点 id，供目录跳转）
         m = re.match(r'^(#{1,4})\s+(.*)$', line)
@@ -130,7 +180,8 @@ h4 { font-size: 1rem; }
 blockquote { border-left: 4px solid #999; margin: 1rem 0; padding: .4rem 1rem;
              background: rgba(128,128,128,.08); color: #666; }
 table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .92rem; }
-th, td { border: 1px solid #bbb; padding: .4rem .6rem; text-align: left; }
+th, td { border: 1px solid #bbb; padding: .4rem .6rem; text-align: left;
+         word-break: keep-all; overflow-wrap: anywhere; vertical-align: top; }
 th { background: rgba(128,128,128,.12); }
 pre { background: rgba(128,128,128,.1); padding: .8rem; border-radius: 6px;
       overflow-x: auto; font-size: .88rem; }
@@ -139,6 +190,17 @@ pre code { background: none; padding: 0; }
 hr { border: none; border-top: 1px solid #ccc; margin: 2rem 0; }
 a { color: #2a6fd6; text-decoration: none; }
 a:hover { text-decoration: underline; }
+/* 流程图 */
+.flow { margin: 1rem 0; padding: .4rem 0; }
+.flow-phase { font-weight: bold; color: #2a6fd6; margin: .6rem 0 .2rem;
+              font-size: 1.02em; }
+.flow-step { background: rgba(128,128,128,.08); border: 1px solid #ccc;
+             border-radius: 6px; padding: .3rem .7rem; margin: .25rem 0;
+             line-height: 1.6; }
+.flow-edge { color: #666; padding: .1rem 0 .1rem .4rem; font-size: .95em; }
+.flow-arrow { color: #2a6fd6; text-align: center; line-height: 1.2;
+              font-weight: bold; padding: .05rem 0; }
+.flow-arrow::before { content: ""; }
 .toc { background: rgba(128,128,128,.06); border: 1px solid #ddd; border-radius: 8px;
        padding: 1.2rem 1.4rem; margin: 1rem 0 2rem; }
 .toc-title { font-size: 1.15rem; font-weight: bold; margin-bottom: .6rem; }
@@ -154,6 +216,10 @@ a:hover { text-decoration: underline; }
   a { color: #6ba4ff; }
   .toc { border-color: #444; background: rgba(255,255,255,.04); }
   .toc a.toc-l2 { color: #aaa; }
+  .flow-step { border-color: #444; background: rgba(255,255,255,.05); }
+  .flow-edge { color: #999; }
+  .flow-phase { color: #6ba4ff; }
+  .flow-arrow { color: #6ba4ff; }
 }
 """
 

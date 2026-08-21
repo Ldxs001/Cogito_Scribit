@@ -54,6 +54,30 @@ a:hover { text-decoration: underline; }
              line-height: 1.6; }
 .flow-edge { color: #555; padding: .15rem 0 .15rem 1.4rem; font-size: .92em;
              line-height: 1.5; }
+.flow-note { color: #777; font-size: .88em; padding: .15rem 0; text-align: center; }
+/* 主链式对齐图（运用 = 规划 → 执行 → 验证 → 承担 + 注释） */
+.flow-chain { display: flex; align-items: stretch; justify-content: center;
+              flex-wrap: wrap; gap: .4rem; margin: 1rem 0;
+              padding: .9rem 1.1rem; background: rgba(128,128,128,.06);
+              border: 1px solid rgba(128,128,128,.3); border-radius: 10px; }
+.flow-chain-title { align-self: center; font-weight: bold; color: #2a6fd6;
+                    font-size: 1.05em; margin-right: .4rem;
+                    padding: .3rem .6rem; background: rgba(42,111,214,.08);
+                    border-radius: 6px; }
+.flow-cnode { display: flex; flex-direction: column; justify-content: center;
+              min-width: 5.5rem; text-align: center; }
+.flow-cnode .flow-step { margin: 0; }
+.flow-cnode .flow-note { margin-top: .2rem; }
+.flow-carr { align-self: center; color: #2a6fd6; font-weight: bold; font-size: 1.15em;
+             padding: 0 .15rem; }
+/* 并排多列对比图（flex 双列） */
+.flow-cols { display: flex; gap: 1.2rem; margin: 1rem 0;
+             padding: .9rem 1.1rem; background: rgba(128,128,128,.06);
+             border: 1px solid rgba(128,128,128,.3); border-radius: 10px; }
+.flow-col { flex: 1; min-width: 0; }
+.flow-col .flow-step { margin: .3rem 0; }
+.flow-col .flow-edge { padding-left: 0; text-align: center; color: #777; }
+@media (max-width: 600px) { .flow-cols { flex-direction: column; } }
 .flow-edge .edge-fall { color: #2a6fd6; font-weight: bold; }
 /* 行内箭头：与独立箭头同色同权重，视觉统一 */
 .flow-inline-arrow { color: #2a6fd6; font-weight: bold; margin: 0 .25em; }
@@ -79,6 +103,9 @@ a:hover { text-decoration: underline; }
   .flow { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-step { border-color: #444; background: rgba(255,255,255,.05); }
   .flow-edge { color: #999; }
+  .flow-note { color: #888; }
+  .flow-cols { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-chain { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-phase { color: #6ba4ff; }
 }
 </style>
@@ -138,11 +165,11 @@ a:hover { text-decoration: underline; }
 <h2 id="h17">四部路线</h2>
 <div class="flow">
 <div class="flow-step" style="margin-left:0px">第 I 部 约束（01-07）   "LLM 不听话怎么办"——用架构约束它</div>
-<div class="flow-step" style="margin-left:28px">↓ 单技能可靠之后</div>
+<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 单技能可靠之后</div>
 <div class="flow-step" style="margin-left:0px">第 II 部 协作（08-08c） "多个智能体怎么配合"——LLM 只填空，不决策</div>
-<div class="flow-step" style="margin-left:28px">↓ 体系成型之后</div>
+<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 体系成型之后</div>
 <div class="flow-step" style="margin-left:0px">第 III 部 边界（09-09e）"这套规则能走多远"——穷举是宿命，边界由人画</div>
-<div class="flow-step" style="margin-left:28px">↓ 从工程退一步</div>
+<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 从工程退一步</div>
 <div class="flow-step" style="margin-left:0px">第 IV 部 重估（10-10a） "让渡之后人还剩什么"——判断与划界权</div>
 </div>
 <h2 id="h18">篇目速查</h2>
@@ -240,12 +267,22 @@ if &quot;BLOCKED&quot; in output or &quot;阻断&quot; in output:
     &quot;timestamp&quot;: &quot;阻断发生时间&quot;
 }</code></pre>
 <p><strong>恢复路径</strong>：</p>
-<div class="flow">
-<div class="flow-step" style="margin-left:0px">正常执行 <span class="flow-inline-arrow">→</span> <span class="edge-fall">发生阻断 <span class="flow-inline-arrow">→</span> 写入锁文件 <span class="flow-inline-arrow">→</span> 进程退出(2)</span></div>
-<div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">（外部修复问题）</div>
-<div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">重新执行，传入恢复参数 <span class="flow-inline-arrow">→</span> <span class="edge-fall">读取锁文件 <span class="flow-inline-arrow">→</span> 跳过已完成步骤 <span class="flow-inline-arrow">→</span> 从阻断点继续</span></div>
+<div class="flow-chain">
+<div class="flow-cnode">
+<div class="flow-step">正常执行</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">发生阻断</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">写入锁文件</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">进程退出(2)</div>
+</div>
 </div>
 <p><strong>这要求执行引擎具备以下能力</strong>：</p>
 <ol><li>能识别"恢复执行"模式（通过特定参数）</li><li>能读取并解析锁文件中的状态</li><li>能跳过已完成步骤，不从第一步重新开始</li><li>在恢复完成后清理锁文件</li></ol>
@@ -654,13 +691,13 @@ L5 数据声明
 <p><strong>自举链的结构</strong>：</p>
 <div class="flow">
 <div class="flow-step" style="margin-left:0px">方法论的定义（这套方法论文档本身）</div>
-<div class="flow-step" style="margin-left:14px">↓ 指导</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 指导</div>
 <div class="flow-step" style="margin-left:0px">标准化审计引擎（skill-standardization）</div>
-<div class="flow-step" style="margin-left:14px">↓ 能够审计</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 能够审计</div>
 <div class="flow-step" style="margin-left:0px">自身（包括它自己的代码、文档、元数据）</div>
-<div class="flow-step" style="margin-left:14px">↓ 自审通过</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 自审通过</div>
 <div class="flow-step" style="margin-left:0px">方法论工具群（执行框架、测试套件、同步工具…）</div>
-<div class="flow-step" style="margin-left:14px">↓ 每个工具自审通过</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 每个工具自审通过</div>
 <div class="flow-step" style="margin-left:0px">方法论体系可以声称"自洽"</div>
 </div>
 <p><strong>自举的终止条件</strong>：</p>
@@ -793,7 +830,9 @@ L5 数据声明
 <h2 id="h115">一、背景：ReAct 的瓶颈</h2>
 <h3 id="h116">1.1 ReAct 循环的隐形成本</h3>
 <p>ReAct（Reasoning + Acting）循环是 LLM Agent 的主流架构：</p>
-<pre><code>LLM 思考 → LLM 决定行动 → 执行工具 → 观察结果 → LLM 再次思考 → ...</code></pre>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">LLM 思考 <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 决定行动 <span class="flow-inline-arrow">→</span> 执行工具 <span class="flow-inline-arrow">→</span> 观察结果 <span class="flow-inline-arrow">→</span> LLM 再次思考 <span class="flow-inline-arrow">→</span> ...</span></div>
+</div>
 <p>在技能数量较少（<5个）时，这个模式工作良好。但当技能数量增长到 20+ 个，问题显现：</p>
 <table><thead><tr><th>问题</th><th>表现</th><th>根因</th></tr></thead><tbody><tr><td><strong>决策抖动</strong></td><td>同样的任务每次走不同的技能路径</td><td>LLM 是概率模型，每次推理的路径选择不同</td></tr><tr><td><strong>循环失控</strong></td><td>LLM 在 2-3 个步骤间反复横跳</td><td>ReAct 没有天然的终止条件</td></tr><tr><td><strong>状态膨胀</strong></td><td>上下文窗口中塞满历史观察</td><td>每一步的观察都累积，但大部分对后续无用</td></tr><tr><td><strong>技能遗忘</strong></td><td>LLM 知道有某个技能但实际没用</td><td>技能列表太长 > LLM 的注意力窗口</td></tr><tr><td><strong>不可复现</strong></td><td>相同的输入可能得到完全不同的执行路径</td><td>概率生成 × 多次决策 = 结果不可控</td></tr></tbody></table>
 <h3 id="h117">1.2 "LLM 当大脑"的根本问题</h3>
@@ -890,15 +929,21 @@ L5 数据声明
 <h2 id="h137">一、背景：ReAct 的盲区</h2>
 <h3 id="h138">1.1 ReAct 循环的隐含假设</h3>
 <p>传统智能体架构的核心模式是 ReAct（Reasoning + Acting）循环：</p>
-<pre><code>用户输入 → LLM 思考 → 调用工具 → 观察结果 → LLM 再思考 → ... → 最终回答</code></pre>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">用户输入 <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 思考 <span class="flow-inline-arrow">→</span> 调用工具 <span class="flow-inline-arrow">→</span> 观察结果 <span class="flow-inline-arrow">→</span> LLM 再思考 <span class="flow-inline-arrow">→</span> ... <span class="flow-inline-arrow">→</span> 最终回答</span></div>
+</div>
 <p>这条循环的隐含假设是：<strong>LLM 有能力在每一步做出正确的路径决策</strong>。</p>
 <p>但这个假设在技能编排场景中存在严重问题：</p>
 <table><thead><tr><th>问题</th><th>表现</th><th>根因</th></tr></thead><tbody><tr><td><strong>路径不可复现</strong></td><td>同一个 Pipeline 执行两次结果不同</td><td>LLM 每次的路径选择是概率性的</td></tr><tr><td><strong>决策循环失控</strong></td><td>LLM 陷入"思考→调用→再思考"的死循环</td><td>没有硬性的步骤数上限或路径约束</td></tr><tr><td><strong>技能调用混乱</strong></td><td>LLM 调用 load_skill 后不知道下一步该干什么</td><td>缺乏预定义的执行顺序和输出契约</td></tr><tr><td><strong>上下文污染</strong></td><td>上一次调用的输出影响下一次的路径选择</td><td>ReAct 循环的历史消息是状态敏感的</td></tr><tr><td><strong>审计困难</strong></td><td>无法回溯某次执行中 LLM 为什么选了这个技能</td><td>路径决策是隐式的，没有显式记录</td></tr></tbody></table>
 <h3 id="h139">1.2 核心矛盾的识别</h3>
 <p>ReAct 的进化为一条自由循环：</p>
-<pre><code>用户输入 → [LLM 决策 → 工具调用]^N → 回答</code></pre>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">用户输入 <span class="flow-inline-arrow">→</span> <span class="edge-fall">[LLM 决策 <span class="flow-inline-arrow">→</span> 工具调用]^N <span class="flow-inline-arrow">→</span> 回答</span></div>
+</div>
 <p>但技能编排需要的是：</p>
-<pre><code>用户输入 → 编排好的技能链 → 逐步骤执行（串行/并行/循环） → 输出</code></pre>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">用户输入 <span class="flow-inline-arrow">→</span> <span class="edge-fall">编排好的技能链 <span class="flow-inline-arrow">→</span> 逐步骤执行（串行/并行/循环） <span class="flow-inline-arrow">→</span> 输出</span></div>
+</div>
 <p>两者之间的鸿沟就是：<strong>LLM 做路径决策不是优势，而是负担</strong>。当技能链是确定的（用户或编排器已经定义好顺序），ReAct 循环中 LLM 的"思考"就变成了多余开销。</p>
 <hr/>
 <h2 id="h140">二、核心命题</h2>
@@ -1008,14 +1053,16 @@ L5 数据声明
 <p>本篇文章是 04（编排范式）的<strong>工程实现文档</strong>。04 是方法论的理论阐述，本文是具体代码架构。两者构成了编排方法的完整闭环：</p>
 <div class="flow">
 <div class="flow-step" style="margin-left:0px">04：编排范式（理论） <span class="flow-inline-arrow">→</span> <span class="edge-fall">提出"LLM 是胶水"</span></div>
-<div class="flow-step" style="margin-left:28px">↓ 工程实现</div>
+<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 工程实现</div>
 <div class="flow-step" style="margin-left:0px">Orchestrator（链驱动执行） <span class="flow-inline-arrow">→</span> <span class="edge-fall">实现"链是主体，LLM 只做两头"</span></div>
-<div class="flow-step" style="margin-left:28px">↓ 方法论文档</div>
+<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 方法论文档</div>
 <div class="flow-step" style="margin-left:0px">本文（架构范式） <span class="flow-inline-arrow">→</span> <span class="edge-fall">沉淀编排范式在工程中的实践经验</span></div>
 </div>
 <h3 id="h163">C. 链驱动模式的通用化</h3>
 <p>链驱动执行是一个通用模式，适用于任何需要将多个技能组合为确定流程的场景：</p>
-<pre><code>编排链 → 遍历步骤 → 执行（subprocess 跑脚本） → 传递输出 → 下一轮</code></pre>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">编排链 <span class="flow-inline-arrow">→</span> <span class="edge-fall">遍历步骤 <span class="flow-inline-arrow">→</span> 执行（subprocess 跑脚本） <span class="flow-inline-arrow">→</span> 传递输出 <span class="flow-inline-arrow">→</span> 下一轮</span></div>
+</div>
 <p>这个模式在 04 中被系统化描述，Orchestrator 是它的一个具体实现案例。</p>
 <hr/>
 <h1 id="h164">第 I 部 · 06｜领域智能体 (Domain Agent) 构建的方法论沉淀：本地知识库智能体的自洽范式</h1>
@@ -1034,9 +1081,13 @@ L5 数据声明
 <table><thead><tr><th>问题</th><th>表现</th><th>根因</th></tr></thead><tbody><tr><td><strong>实体丢失</strong></td><td>"三个代表与无为而治的异同"只命中"三个代表"</td><td>一句话包含多个实体，但向量检索只返回整体相似度</td></tr><tr><td><strong>属性模糊</strong></td><td>查不到"相同点"和"不同点"的对比信息</td><td>比较类问题的属性维度分散在不同文档中</td></tr><tr><td><strong>路由抖动</strong></td><td>包含两个实体的查询路由到错误的 KB</td><td>多实体 = 多目标，单个路由无法同时覆盖</td></tr><tr><td><strong>上下文孤岛</strong></td><td>LLM 看到三个代表但没有无为而治的背景</td><td>一个 top-K 结果集只覆盖问题的一个侧面</td></tr><tr><td><strong>假阳性回答</strong></td><td>LLM 基于不完整上下文强行生成对比</td><td>上下文只包含 A 的信息，LLM 自己脑补 B 的部分</td></tr></tbody></table>
 <h3 id="h167">1.2 核心矛盾的识别</h3>
 <p>传统 RAG 的进化为一条线性流水线：</p>
-<pre><code>问题 → 检索 → 回答</code></pre>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">问题 <span class="flow-inline-arrow">→</span> <span class="edge-fall">检索 <span class="flow-inline-arrow">→</span> 回答</span></div>
+</div>
 <p>但真实的知识库问答需要的是：</p>
-<pre><code>问题 → 分解（实体/属性/关系） → 多路检索 → 聚合 → 综合回答</code></pre>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">问题 <span class="flow-inline-arrow">→</span> <span class="edge-fall">分解（实体/属性/关系） <span class="flow-inline-arrow">→</span> 多路检索 <span class="flow-inline-arrow">→</span> 聚合 <span class="flow-inline-arrow">→</span> 综合回答</span></div>
+</div>
 <p>两者之间的鸿沟就是：<strong>问题不是查询</strong>。用户的问题是一个<strong>复合指令</strong>，需要解析为检索策略再执行，而不是直接扔给向量库。</p>
 <hr/>
 <h2 id="h168">二、核心命题</h2>
@@ -1343,7 +1394,9 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h212">12.2 自举闭环：AI 辅助的自动化扩展</h3>
 <p>插件系统的第二层命题是：<strong>智能体不仅使用插件，而且参与插件的生成和验证</strong>。</p>
 <p>传统插件的生命周期是单向的：</p>
-<pre><code>开发者 → 编写代码 → 手动部署 → 用户启用</code></pre>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">开发者 <span class="flow-inline-arrow">→</span> <span class="edge-fall">编写代码 <span class="flow-inline-arrow">→</span> 手动部署 <span class="flow-inline-arrow">→</span> 用户启用</span></div>
+</div>
 <p>RAG Assistant 引入了一个可复用的闭环模式：</p>
 <div class="flow">
 <div class="flow-step" style="margin-left:0px">能力缺口（用户描述需求）</div>
@@ -1552,9 +1605,9 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <p>Orchestrator 的填空域是"一个技能步骤的输出"，RAG Assistant 的填空域是"一个查询切片的语义标注"，Structured Writer 的填空域是"一个子结构的正文"。这三个域不重叠、不冲突、不包含关系。它们互补：</p>
 <div class="flow">
 <div class="flow-step" style="margin-left:0px">Orchestrator（执行链）</div>
-<div class="flow-step" style="margin-left:14px">↓ 调用技能</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 调用技能</div>
 <div class="flow-step" style="margin-left:0px">RAG Assistant（检索知识库） <span class="flow-inline-arrow">→</span> <span class="edge-fall">提供材料</span></div>
-<div class="flow-step" style="margin-left:14px">↓ 提供上下文</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 提供上下文</div>
 <div class="flow-step" style="margin-left:0px">Structured Writer（写作）</div>
 </div>
 <p>Structured Writer 调用 RAG Assistant 获取材料，这是编排层（Orchestrator 模式）调用领域智能体（RAG Assistant 模式）的具体实现。三个智能体可以串联使用，形成完整的"检索→理解→生成"管线。</p>
@@ -1674,11 +1727,11 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <p>LLM 的错误不是孤立的，它<strong>自我繁殖</strong>。Structured Writer 的前文回顾机制是繁殖通道的典型：每一节写作都注入"已写内容回顾"，后续节基于前文继续生成。</p>
 <div class="flow">
 <div class="flow-step" style="margin-left:0px">节 1 生成（捏造了一个不存在的引用来源）</div>
-<div class="flow-step" style="margin-left:14px">↓ 写入 context_buffer</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 写入 context_buffer</div>
 <div class="flow-step" style="margin-left:0px">节 2 生成（前文回顾包含节 1，基于错误继续）</div>
-<div class="flow-step" style="margin-left:14px">↓ 引用该来源</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 引用该来源</div>
 <div class="flow-step" style="margin-left:0px">节 3 生成（前文回顾包含节 1+2，错误链条加长）</div>
-<div class="flow-step" style="margin-left:14px">↓ ...</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> ...</div>
 <div class="flow-step" style="margin-left:0px">节 N：错误已经在 N-1 处被"引用"过</div>
 </div>
 <table><thead><tr><th>错误被发现的时间</th><th>修复成本</th><th>影响范围</th></tr></thead><tbody><tr><td>节 1 生成时</td><td>重写一节</td><td>1 处</td></tr><tr><td>全文生成后</td><td>重写全部引用链路</td><td>N 处 + 参考文献节</td></tr><tr><td>交付后（用户发现）</td><td>全文重写 + 信任损失</td><td>不可逆</td></tr></tbody></table>
@@ -1693,11 +1746,11 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <p>后验证的成本不是常数，是四段式：</p>
 <div class="flow">
 <div class="flow-step" style="margin-left:0px">检测（发现异常）</div>
-<div class="flow-step" style="margin-left:14px">↓ 概率衰减</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 概率衰减</div>
 <div class="flow-step" style="margin-left:0px">定位（找到异常源头）</div>
-<div class="flow-step" style="margin-left:14px">↓ 概率衰减</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 概率衰减</div>
 <div class="flow-step" style="margin-left:0px">修复（修正源头）</div>
-<div class="flow-step" style="margin-left:14px">↓ 概率衰减</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 概率衰减</div>
 <div class="flow-step" style="margin-left:0px">回归（确认不再复发）</div>
 </div>
 <p>每一段都是概率衰减。错误越晚被发现，累计需要穿越的衰减段越多，修复成本指数上升。而后验证的终极形态，不是"更好的验证器"，而是<strong>验证器的自我淘汰</strong>。</p>
@@ -1840,8 +1893,8 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h301">4.3 双向张力的交点</h3>
 <p>把第二、三、四节叠起来，空的设计露出真面目——<strong>两个方向相反的力：</strong></p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">空越小 <span class="flow-inline-arrow">→</span> <span class="edge-fall">容错带窄（重试概率↑，越界成本↑）        ← 第三节</span></div>
-<div class="flow-step" style="margin-left:0px">空越小 <span class="flow-inline-arrow">→</span> <span class="edge-fall">注意力窗口小（U 型谷底小，偏离概率↓）    ← 第四节</span></div>
+<div class="flow-step" style="margin-left:0px">空越小 <span class="flow-inline-arrow">→</span> <span class="edge-fall">容错带窄（重试概率<span class="flow-inline-arrow">↑</span>，越界成本<span class="flow-inline-arrow">↑</span>）        ← 第三节</span></div>
+<div class="flow-step" style="margin-left:0px">空越小 <span class="flow-inline-arrow">→</span> <span class="edge-fall">注意力窗口小（U 型谷底小，偏离概率<span class="flow-inline-arrow">↓</span>）    ← 第四节</span></div>
 </div>
 <ul><li>想要<strong>少重试</strong> → 空应该大（容错带宽）；</li><li>想要<strong>少偏离</strong> → 空应该小（注意力集中）。</li></ul>
 <p><strong>空的收束是这两个判据的交点，不是单目标优化。</strong> 这就是"填空的边界"的严格含义：不是"能收多紧"，而是"在容错与注意力之间取平衡点"。而这个平衡点，正是验证分工的出发点。</p>
@@ -1961,12 +2014,18 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">10 门禁钩子锁定：focus_reasoning <span class="flow-inline-arrow">→</span> divergent_reasoning <span class="flow-inline-arrow">→</span> integration_reasoning</span></div>
 </div>
 <p><strong>triphasic-execution</strong>（三段步骤规划）[21]：</p>
-<div class="flow">
-<div class="flow-step" style="margin-left:0px">Execute <span class="flow-inline-arrow">→</span> <span class="edge-fall">Review <span class="flow-inline-arrow">→</span> Advance 三步循环</span></div>
-<div class="flow-step" style="margin-left:14px">Execute：执行当前步骤（最小单元）</div>
-<div class="flow-step" style="margin-left:14px">Review：审查执行结果（验证/发现问题）</div>
-<div class="flow-step" style="margin-left:14px">Advance：推进到下一步（或换思路，须走完整三步）</div>
-<div class="flow-step" style="margin-left:14px">约束：最多重试 3 次、最多空转 3 次；换思路禁止三步骤内部直接循环</div>
+<div class="flow-chain">
+<div class="flow-cnode">
+<div class="flow-step">Execute</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">Review</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">Advance 三步循环</div>
+</div>
 </div>
 <ul><li><strong>"通过提示词槽位限定"</strong> = semantic-split Pipeline C 三槽位双视角：FOCUS_SYSTEM / DIVERGENT_SYSTEM / INTEGRATION_SYSTEM，三个 system prompt 把 LLM 的推理限定在三个槽位里 [18]；</li><li><strong>"后置验证查多余槽位编造"</strong> = semantic-split 10 门禁钩子：<code>HOOK_STATUS</code> 十个布尔门禁，LLM 跳过任何子步骤、编造任何槽位，门禁 Fail [18]；</li><li><strong>"槽位内是否编造我没办法验证"</strong> = 门禁查"槽位有没有被填"（可枚举），查不了"填的对不对"（不可枚举）[11]；</li><li><strong>"被确认的步骤越多，出现语义偏离的可能性越大"</strong> = triphasic-execution 每步 Review 都是一次确认，每次确认都是一次采样——幻觉累积公式 <code>1-(1-p)^N</code>（09d [16]）的工程形态。</li></ul>
 <h3 id="h331">6.2 拆分方法论：纯提示词拉动</h3>
@@ -2026,9 +2085,9 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <p>把三条路径放在一起，选择判据就清晰了：</p>
 <div class="flow">
 <div class="flow-step" style="margin-left:0px">语义复杂度低 + 需要确定性高 <span class="flow-inline-arrow">→</span> <span class="edge-fall">场景二（RAG Assistant：子集+槽位+凝练+代码拼接）</span></div>
-<div class="flow-step" style="margin-left:56px">↓ 语义复杂度上升、需要 LLM 判断</div>
+<div class="flow-step" style="margin-left:56px"><span class="flow-inline-arrow">↓</span> 语义复杂度上升、需要 LLM 判断</div>
 <div class="flow-step" style="margin-left:0px">语义复杂度中 + 需要结构化步骤 <span class="flow-inline-arrow">→</span> <span class="edge-fall">场景一（semantic-split + triphasic-execution：提示词槽位限定+后置验证+模型调校）</span></div>
-<div class="flow-step" style="margin-left:56px">↓ 语义复杂度继续上升、需要创作自由</div>
+<div class="flow-step" style="margin-left:56px"><span class="flow-inline-arrow">↓</span> 语义复杂度继续上升、需要创作自由</div>
 <div class="flow-step" style="margin-left:0px">语义复杂度高 + 需要发散 <span class="flow-inline-arrow">→</span> <span class="edge-fall">场景三（novel-weaver + structured-writer：发散+纠偏+前置规范+人类兜底）</span></div>
 </div>
 <table><thead><tr><th>判据</th><th>场景一</th><th>场景二</th><th>场景三</th></tr></thead><tbody><tr><td>语义自由度</td><td>低-中</td><td>低</td><td>最高</td></tr><tr><td>多头语义处理</td><td>槽位限定在开端 + 后置验证</td><td><strong>钉死在开端</strong></td><td>让渡给创作</td></tr><tr><td>幻觉治理主力</td><td>后置验证（可枚举）+ 模型调校</td><td>evidence + 代码确定性</td><td>分阶段前置规范 + 纠偏</td></tr><tr><td>确定性程度</td><td>中</td><td><strong>最高</strong></td><td>前置强、后置弱</td></tr><tr><td>后置验证优先级</td><td>中</td><td>高</td><td><strong>最低（可跳过）</strong></td></tr><tr><td>残余风险</td><td>槽位内编造无法验证</td><td>复杂句式分解错误</td><td>后置验证是软承诺</td></tr></tbody></table>
@@ -2171,11 +2230,11 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h368">5.3 循环：穷举的宿主在转移，人类永远站在最后</h3>
 <div class="flow">
 <div class="flow-step" style="margin-left:0px">穷举的宿主：门禁钩子（if/elif，重型技能）</div>
-<div class="flow-step" style="margin-left:14px">↓ 转移</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 转移</div>
 <div class="flow-step" style="margin-left:0px">穷举的宿主：画围栏（Prompt 分类 / 路由签名，智能体）</div>
-<div class="flow-step" style="margin-left:14px">↓ 转移</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 转移</div>
 <div class="flow-step" style="margin-left:0px">穷举的宿主：奖励定义（RL 工程）</div>
-<div class="flow-step" style="margin-left:14px">↓ 转移</div>
+<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 转移</div>
 <div class="flow-step" style="margin-left:0px">穷举的宿主：世界模型与评估者的边界（架构师）</div>
 <div class="flow-arrow">↓</div>
 <div class="flow-step" style="margin-left:0px">回到原点：谁来定义？</div>
@@ -2360,9 +2419,22 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>由此得出全文最实用的一条判断：</p>
 <blockquote><strong>大多数时候，误差受控比靶心偏差几毫米更值得关注。</strong></blockquote>
 <p>展开说——这里"误差受控"说的是<strong>精密度</strong>，"靶心偏差几毫米"说的是<strong>正确度</strong>：</p>
-<div class="flow">
-<div class="flow-step" style="margin-left:0px">精密度差（每次乱跳）：均值漂移不可控 <span class="flow-inline-arrow">→</span> <span class="edge-fall">准确度观测不可靠 <span class="flow-inline-arrow">→</span> 正确度评估不准 <span class="flow-inline-arrow">→</span> 不可校准</span></div>
-<div class="flow-step" style="margin-left:0px">精密度好（每次同一点）：均值稳定 <span class="flow-inline-arrow">→</span> <span class="edge-fall">准确度可观测 <span class="flow-inline-arrow">→</span> 正确度可间接逼近 <span class="flow-inline-arrow">→</span> 可收敛</span></div>
+<div class="flow-chain">
+<div class="flow-cnode">
+<div class="flow-step">精密度差（每次乱跳）：均值漂移不可控</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">准确度观测不可靠</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">正确度评估不准</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">不可校准</div>
+</div>
 </div>
 <p>精密度好的系统可能"偏"（平均落点离真值有固定距离——正确度差），但它是<strong>可治理</strong>的：你可以声明它的偏差，校准它的偏差，甚至设计它的偏差（第三章的抵消与补正）。精密度差的系统看起来"准"（某一次碰巧接近真值），但它是<strong>不可治理</strong>的——你无法对它做任何系统性改进，每次修修补补都是打地鼠。</p>
 <p>标准化的意义正在于此。标准化不是"把偏差消灭到零"——那是正确度崇拜。<strong>标准化是把精密度先钉住：统一的推动点位、统一的字段语义、统一的枚举表，让每次落点可预测</strong>——然后正确度才谈得上校准（补正）或设计（抵消）。标准化的产物不是"准"，是"稳"——而稳是通往准的唯一可行路径，因为只有稳，校准才有落点。</p>
@@ -2580,7 +2652,7 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p><strong>例证三：softmax 自回归——语言模型本身就是定性-定量循环的机器。</strong> 回到第二节的公式：logits（定量）→ softmax 分布（定量）→ 采样决策（定性：选哪个 token）→ 选中的 token 成为下一个 logits 的条件（定量）[1][2]。<strong>每一次生成都是一次完整的循环：定量喂给定性，定性又变成定量的新条件。</strong> 提示词拉扯之所以能工作，正是因为它站在这个循环的入口：改变条件（定量 logits 的结构），改变采样（定性的选择），改变下一个条件（新的 logits 结构）。</p>
 <p>三个例证指向同一个结构：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">定性（划界/决策） ⇄ 定量（阈值/概率/测量）</div>
+<div class="flow-step" style="margin-left:0px">定性（划界/决策） <span class="flow-inline-arrow">⇄</span> 定量（阈值/概率/测量）</div>
 <div class="flow-step" style="margin-left:14px">定性撑起定量的方向与意义</div>
 <div class="flow-step" style="margin-left:14px">定量撑起定性的边界与位置</div>
 </div>
@@ -2631,9 +2703,26 @@ if seq &lt;= 3: is_header = True</code></pre>
 <h2 id="h447">一、总纲：认知链的四段与两种力气活</h2>
 <h3 id="h448">1.1 认知链的四段</h3>
 <p>先把"知识活动"拆成一条链：</p>
-<div class="flow">
-<div class="flow-step" style="margin-left:0px">记住（人形图书馆） <span class="flow-inline-arrow">→</span> <span class="edge-fall">说出（纸上谈兵）<span class="flow-inline-arrow">→</span> 合适引用（画龙点睛）<span class="flow-inline-arrow">→</span> 运用（落地生根）</span></div>
-<div class="flow-step" style="margin-left:42px">存量                复述            说的质量（非做）        实践</div>
+<div class="flow-chain">
+<div class="flow-cnode">
+<div class="flow-step">记住（人形图书馆）</div>
+<div class="flow-note">存量</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">说出（纸上谈兵）</div>
+<div class="flow-note">复述</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">合适引用（画龙点睛）</div>
+<div class="flow-note">说的质量（非做）</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">运用（落地生根）</div>
+<div class="flow-note">实践</div>
+</div>
 </div>
 <p>四个词，对应四种完全不同的能力：</p>
 <table><thead><tr><th>环节</th><th>名称</th><th>本质</th><th>谁擅长</th></tr></thead><tbody><tr><td>记住</td><td>人形图书馆</td><td>存量的堆砌</td><td>人类（但正在被 AI 碾压）</td></tr><tr><td>说出</td><td>纸上谈兵</td><td>存量的复述</td><td>人类与 AI 相当</td></tr><tr><td>合适引用</td><td>画龙点睛</td><td>在恰当处引恰当的知识——<strong>这仍然是"说"，不是"做"</strong></td><td>人类曾经靠"思"，现在 AI 用概率暴力追平</td></tr><tr><td>运用</td><td>落地生根</td><td>在真实约束里决策、执行、验证</td><td><strong>AI 够不到，人类也未必强——这是唯一剩下的竞技场</strong></td></tr></tbody></table>
@@ -2649,10 +2738,17 @@ if seq &lt;= 3: is_header = True</code></pre>
 <h3 id="h451">2.1 差距的重新度量</h3>
 <p>先做一个反直觉的比较。传统上，我们总说"知道 ≠ 做到"，认为"纸上谈兵到落地"的差距是最大的鸿沟——知识转化行动的困难，被反复哀叹。</p>
 <p>但把认知链摆开，会发现真正的鸿沟在别处：</p>
-<div class="flow">
-<div class="flow-step" style="margin-left:0px">记住 <span class="flow-inline-arrow">→</span> <span class="edge-fall">合适引用          说出 <span class="flow-inline-arrow">→</span> 运用</span></div>
-<div class="flow-step" style="margin-left:0px">（人形图书馆） <span class="flow-inline-arrow">→</span> <span class="edge-fall">（画龙点睛）      （纸上谈兵）<span class="flow-inline-arrow">→</span>（落地生根）</span></div>
-<div class="flow-step" style="margin-left:42px">差距 A                         差距 B</div>
+<div class="flow-cols">
+<div class="flow-col">
+<div class="flow-step">记住 <span class="flow-inline-arrow">→</span> <span class="edge-fall">合适引用</span></div>
+<div class="flow-step">（人形图书馆） <span class="flow-inline-arrow">→</span> <span class="edge-fall">（画龙点睛）</span></div>
+<div class="flow-note">差距 A</div>
+</div>
+<div class="flow-col">
+<div class="flow-step">说出 <span class="flow-inline-arrow">→</span> <span class="edge-fall">运用</span></div>
+<div class="flow-step">（纸上谈兵） <span class="flow-inline-arrow">→</span> <span class="edge-fall">（落地生根）</span></div>
+<div class="flow-note">差距 B</div>
+</div>
 </div>
 <p><strong>差距 A（记住 → 合适引用）＞ 差距 B（说出 → 落地）。</strong></p>
 <p>为什么？因为两者的性质不同：</p>
@@ -2686,9 +2782,27 @@ if seq &lt;= 3: is_header = True</code></pre>
 <ul><li><strong>运用需要真实约束下的试错</strong>：落地意味着要在资源有限、噪声真实、反馈延迟的环境里决策。AI 的输出是"无成本地生成"，运用的成本是"有代价地执行"。生成可以不负责，执行必须负责——而"负责"不在概率分布的参数里。</li><li><strong>运用需要闭环验证</strong>：说得好不好，模型自己知道（困惑度）；做得好不好，只有世界知道。AI 无法自己验收自己的运用，就像导航软件无法自己开到目的地。</li><li><strong>运用需要承担后果的意志</strong>：判断的让渡让"说什么"变得便宜，但"做什么、承担什么"依然昂贵。AI 可以替你说对，但不能替你做对，更不能替你承担。</li></ul>
 <p>王阳明用四个字把这条界线画死了：<strong>知行合一。</strong> 他断言"知而不行，只是未知"（《传习录》："未有知而不行者。知而不行，只是未知。"）——真正的"知"，必然已经包含了"行"；一个只停留在"说"的知，在阳明看来是<strong>假知</strong>。这句话在 AI 时代锋利得可怕：<strong>AI 拥有全部"知"（记住+合适引用），却没有"行"——按阳明的标准，它的"知"是假知，因为它从未在真实行动中验证过自己。</strong> 这不是贬低 AI，而是划界：AI 的"合适引用"是<strong>未经验证的知</strong>，它的概率规范保证的是"说得像"，不是"做得对"。人类通往"运用"的路，恰恰是阳明说的那条——<strong>在行中验知，在知中成行</strong>；而这条路，AI 没有走过，也走不了（它没有身体、没有代价、没有承担）。</p>
 <p>但必须诚实：<strong>"运用"不是铁板一块，它的入口已经被 AI 撬开了。</strong> 把运用拆开看：</p>
-<div class="flow">
-<div class="flow-step" style="margin-left:0px">运用 = 规划 <span class="flow-inline-arrow">→</span> <span class="edge-fall">执行 <span class="flow-inline-arrow">→</span> 验证 <span class="flow-inline-arrow">→</span> 承担</span></div>
-<div class="flow-step" style="margin-left:42px">做判断  行动    闭环    负责</div>
+<div class="flow-chain">
+<div class="flow-chain-title">运用 =</div>
+<div class="flow-cnode">
+<div class="flow-step">规划</div>
+<div class="flow-note">做判断</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">执行</div>
+<div class="flow-note">行动</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">验证</div>
+<div class="flow-note">闭环</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">承担</div>
+<div class="flow-note">负责</div>
+</div>
 </div>
 <p><strong>规划的本质，其实还是判断——只不过是一种更深的判断。</strong> 判断有两种：</p>
 <ul><li><strong>说的判断</strong>：在知识里选择该引用什么——对应"说出"与"合适引用"，就是论点一里被 AI 让渡的那种判断。</li><li><strong>做的判断</strong>：在行动路径里选择该怎么走——对应"规划"。规划不是在堆知识，是在约束（资源、时间、风险、执行者能力）下选择一条路径，<strong>这是判断，不是记忆</strong>。</li></ul>
@@ -2706,7 +2820,7 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>先看低代码的本质。一个低代码平台让用户在前端搭一个"简单的东西"——一个按钮、一个报表、一个审批流。用户看到的表层是简单性。但在这层简单性背后，是成倍的复杂性：</p>
 <div class="flow">
 <div class="flow-step" style="margin-left:0px">表层（前端表象）                底层（后端实现）</div>
-<div class="flow-step" style="margin-left:0px">用户看到"一个按钮"       ↔      服务、数据库、权限、事务、架构决策</div>
+<div class="flow-step" style="margin-left:0px">用户看到"一个按钮"       <span class="flow-inline-arrow">↔</span>      服务、数据库、权限、事务、架构决策</div>
 <div class="flow-step" style="margin-left:0px">简单性                         复杂性</div>
 </div>
 <p><strong>低代码 = 前端表象的假简单 + 后端实现的真复杂。</strong> 表层的任何一个"简单实现"，都要求底层不成比例的大量工作——甚至架构更改。一个拖拽出来的表单，背后是数据建模、接口设计、状态管理、权限体系；一次"这里加个字段"，背后可能是一场数据库迁移。</p>
@@ -2739,9 +2853,24 @@ if seq &lt;= 3: is_header = True</code></pre>
 <table><thead><tr><th></th><th>论点一：判断的让渡</th><th>论点二：翻译的打通</th></tr></thead><tbody><tr><td>被终结的东西</td><td>记住→合适引用的提炼（认知层）</td><td>表层→底层的转换（工程层）</td></tr><tr><td>终结的方式</td><td>概率暴力绕过"思"</td><td>巨量计算取代人力</td></tr><tr><td>人类的旧投入</td><td>堆砌知识、积累经验</td><td>学习底层、充当翻译者</td></tr><tr><td>人类的旧投入结局</td><td>沉没成本（贬值）</td><td>沉没成本（贬值）</td></tr><tr><td>剩下的稀缺品</td><td>运用（真实约束下的决策）</td><td>对齐判断（什么值得对齐）</td></tr></tbody></table>
 <p>两条线共享同一个底层事实：<strong>AI 终结了两种"力气活"。</strong> 判断是认知的力气活（把存量炼成恰当），翻译是工程的力气活（把表层译成底层）。两者都符合"力气活"的定义：成本高、回报不对称、依赖人类精力去扛——而精力，恰恰是 AI 唯一不稀缺的东西。</p>
 <p>于是人类的认知价值链被重排了：</p>
-<div class="flow">
-<div class="flow-step" style="margin-left:0px">旧价值链：  记住（贵） <span class="flow-inline-arrow">→</span> <span class="edge-fall">说出 <span class="flow-inline-arrow">→</span> 合适引用（最贵）<span class="flow-inline-arrow">→</span> 运用</span></div>
-<div class="flow-step" style="margin-left:0px">新价值链：  记住（免费） <span class="flow-inline-arrow">→</span> <span class="edge-fall">合适引用（免费）<span class="flow-inline-arrow">→</span> 运用（唯一还贵的东西）</span></div>
+<div class="flow-chain">
+<div class="flow-cnode">
+<div class="flow-step">旧价值链：  记住（贵）</div>
+<div class="flow-note">新价值链：</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">说出</div>
+<div class="flow-note">记住（免费）<span class="flow-inline-arrow">→</span> 合适引用（免费）<span class="flow-inline-arrow">→</span> 运用（唯一还贵的东西）</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">合适引用（最贵）</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">运用</div>
+</div>
 </div>
 <p><strong>判断的让渡把"思"从认知链的中段抹掉了，翻译的打通把"翻译"从工程链的中段抹掉了。</strong> 两条链都只剩下两端：输入（说人话/定表层）和输出（落地/对齐）。中间那段曾经最贵、也曾经最能定义"专业"的部分，变成了免费的。</p>
 <p>这带来的认知冲击是巨大的：<strong>过去我们以为"专业"= 记得多 + 译得准（图书馆 + 翻译者），现在这两样都免费了。</strong> 专业还剩下什么？剩下运用——真实约束下的决策、执行、验证、负责。而运用恰恰是人类历史上最不擅长、最不愿被考核的部分。<strong>AI 没有抢走人类的饭碗，它抢走的是人类的舒适区。</strong></p>
@@ -2868,7 +2997,9 @@ if seq &lt;= 3: is_header = True</code></pre>
 <ul><li><strong>停止</strong>（fail-safe）：误差被吸收，系统回到安全基线。割圆割错了？重割。工程系统故障？停机，回到初始状态。</li><li><strong>失控</strong>（runaway）：误差通过正反馈被<strong>放大</strong>，系统无法回到基线，偏离越来越远。</li></ul>
 <p><strong>在封闭系统里，失效之后是停止。在开放复杂系统里，失效之后是失控。</strong></p>
 <p>为什么？因为开放系统里存在<strong>误差自激</strong>的回路：</p>
-<pre><code>AI 的近似判断（错）→ 进入行动 → 行动改变世界 → 世界反馈改变输入 → 误差被放大 → 下一个判断更错</code></pre>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">AI 的近似判断（错） <span class="flow-inline-arrow">→</span> <span class="edge-fall">进入行动 <span class="flow-inline-arrow">→</span> 行动改变世界 <span class="flow-inline-arrow">→</span> 世界反馈改变输入 <span class="flow-inline-arrow">→</span> 误差被放大 <span class="flow-inline-arrow">→</span> 下一个判断更错</span></div>
+</div>
 <p>圆里没有这个回路——割错了只是重割，误差不改变圆。但做工的世界里，<strong>每一个判断都会改写它下一次判断的依据</strong>。这就是失控的机制。</p>
 <h3 id="h491">5.2 失控的现实案例</h3>
 <p>这个结构不是假设，它已经在发生：</p>
@@ -2920,7 +3051,9 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>其中"独立伦理审查"尤其关键：<strong>画圈权必须由一个独立于研究者的机构掌握。</strong> 研究者不能自己判断自己的研究是否合乎伦理——因为研究者是利益相关方。同理，<strong>AI 不能自己判断自己的边界——因为 AI 是利益相关方（它自己的"是"不知道自己的"应当"）。</strong></p>
 <h3 id="h503">7.5 点题</h3>
 <p>医学研究画圈的完整路径是：</p>
-<pre><code>失控（纳粹人体实验）→ 原则（纽伦堡法典：自愿同意）→ 制度（赫尔辛基宣言：受试者优先 + IRB）→ 演进（9 次修订，圈随能力扩张，2013 纳入数据）</code></pre>
+<div class="flow">
+<div class="flow-step" style="margin-left:0px">失控（纳粹人体实验） <span class="flow-inline-arrow">→</span> <span class="edge-fall">原则（纽伦堡法典：自愿同意）<span class="flow-inline-arrow">→</span> 制度（赫尔辛基宣言：受试者优先 + IRB）<span class="flow-inline-arrow">→</span> 演进（9 次修订，圈随能力扩张，2013 纳入数据）</span></div>
+</div>
 <p><strong>AI 正在重演这个剧本——判断让渡、翻译打通、能力扩张、责任悬空——区别是：这次我们提前知道结局。</strong> 医学用了二十年（1947-1964）从失控走到画圈，AI 没有二十年可以浪费。赫尔辛基宣言证明的不只是"应该画圈"，而是<strong>画圈是可行的、是有效的、是文明自我保存的机制</strong>——人类已经这么干过一次了，干得很好。</p>
 <hr/>
 <h2 id="h504">八、AI 的宿命：划界权的垄断</h2>
@@ -2959,9 +3092,18 @@ if seq &lt;= 3: is_header = True</code></pre>
 <h1 id="h513">结语：划界权与人类自洽</h1>
 <h2 id="h514">这本书走完了一条什么路</h2>
 <p>从第 I 部的"怎么让 LLM 不犯错"，到第 IV 部的"人还剩什么"——这本书走完了一条从工程到哲学的弧线：</p>
-<div class="flow">
-<div class="flow-step" style="margin-left:0px">约束（让 LLM 可靠） <span class="flow-inline-arrow">→</span> <span class="edge-fall">协作（让多个智能体分工）<span class="flow-inline-arrow">→</span> 边界（承认穷举的宿命）</span></div>
-<div class="flow-step" style="margin-left:0px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">重估（判断的让渡与翻译的打通）<span class="flow-inline-arrow">→</span> 画圈（伦理牢笼与划界权）</span></div>
+<div class="flow-chain">
+<div class="flow-cnode">
+<div class="flow-step">约束（让 LLM 可靠）</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">协作（让多个智能体分工）</div>
+</div>
+<div class="flow-carr">→</div>
+<div class="flow-cnode">
+<div class="flow-step">边界（承认穷举的宿命）</div>
+</div>
 </div>
 <p>回头看，前四部做的其实是同一件事的不同表述：<strong>人用判断划定 AI 的边界。</strong></p>
 <ul><li>第 I 部的契约，是"输出格式的边界"</li><li>第 II 部的分工，是"决策权的边界"</li><li>第 III 部的穷举，是"场景的边界"</li><li>第 IV 部的牢笼，是"伦理的边界"</li></ul>
@@ -3062,16 +3204,16 @@ if seq &lt;= 3: is_header = True</code></pre>
 <h2 id="h543">三、工具支撑层（方法论落地）</h2>
 <div class="flow">
 <div class="flow-step" style="margin-left:0px">方法论体系（19 篇命题）</div>
-<div class="flow-step" style="margin-left:28px">↓ 由谁承载</div>
+<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 由谁承载</div>
 <div class="flow-step" style="margin-left:0px">元方法论工具（9 个）：skill-standardization / triphasic-execution / git-sync /</div>
 <div class="flow-step" style="margin-left:28px">skill-function-test / skill-sub / semantic-split / universal-file-ops /</div>
 <div class="flow-step" style="margin-left:28px">Orchestrator / RAG Assistant</div>
-<div class="flow-step" style="margin-left:28px">↓ 应用到哪</div>
+<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 应用到哪</div>
 <div class="flow-step" style="margin-left:0px">领域工具（14 个）：drawiodo / hug-html / latex-modular / Structured Writer /</div>
 <div class="flow-step" style="margin-left:28px">simulated-peak-plot / analysis-toolkit / local-rag-builder / activity-duration-estimation /</div>
 <div class="flow-step" style="margin-left:28px">color-toolkit / round-robin-allocator / svg-composer / workday-calendar /</div>
 <div class="flow-step" style="margin-left:28px">everything-search-breadmemory / memory-pet</div>
-<div class="flow-step" style="margin-left:28px">↓ 三体印证</div>
+<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 三体印证</div>
 <div class="flow-step" style="margin-left:0px">智能体三体：Orchestrator（编排） / RAG Assistant（检索） / Structured Writer（写作）</div>
 <div class="flow-step" style="margin-left:28px">——三个独立系统，同一个架构选择：LLM 只填空，不决策</div>
 </div>

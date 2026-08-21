@@ -94,23 +94,152 @@ def _is_flow_block(code):
 
 
 def _inline_arrows(text):
-    """将文本内所有 → 统一包成 flow-inline-arrow span（蓝色加粗箭头），
-    与独立箭头（flow-arrow ↓）视觉一致。"""
-    return re.sub(r'(→)', r'<span class="flow-inline-arrow">\1</span>', text)
+    """将文本内所有方向箭头（→ ↓ ↑ ↔ ⇄ ▼ ◀ ▶）统一包成
+    flow-inline-arrow span（蓝色加粗），与独立箭头视觉一致。"""
+    return re.sub(r'([→↓↑↔⇄▼◀▶])', r'<span class="flow-inline-arrow">\1</span>', text)
 
 
-def _is_flow_block(code, lang=''):
-    """判断代码块是否为流程图（有向图）：
-    规则：代码块标注了语言（```python 等）→ 代码，不转图；
-    未标注语言且含指向性符号（→ ↓ ↑ ↔ ⇄ ▼ 等）→ 转图。
-    """
-    if lang:  # 显式标注语言 = 代码
-        return False
+def _split_chain_cell(text):
+    """渲染单个链单元格（如 记住 → 合适引用 / （人形图书馆）→（画龙点睛））"""
+    p1, p2 = _split_first_arrow(text)
+    if p2 is not None:
+        return f'{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span>'
+    return _inline_arrows(text)
+
+
+def _is_chain_main(code):
+    """判断是否为"主链 + 对齐注释"结构（运用图）：
+    需多行（>=2 行）；第一行含 >=2 个 → 且箭头间隔小（连续链，无列分隔）。
+    对比式（差距图）第一行箭头间隔大（>=4 空格列分隔）。
+    单行链（编排链 → 遍历 → 执行）只有 1 行，不算主链式。"""
     lines = [l for l in code.split('\n') if l.strip()]
     if len(lines) < 2:
         return False
+    first = lines[0]
+    idxs = [m.start() for m in re.finditer(r'→', first)]
+    if len(idxs) < 2:
+        return False
+    for i in range(len(idxs) - 1):
+        if re.search(r'\s{4,}', first[idxs[i]:idxs[i+1]]):
+            return False  # 有列分隔 = 对比式
+    return True
+
+
+def _chain_to_html(code):
+    """主链 + 对齐注释 → HTML 横向链（每环节节点 = step + 注释在下方）。
+    示例：运用 = 规划 → 执行 → 验证 → 承担
+              ｜      ｜      ｜      ｜
+             做判断  行动    闭环    负责
+    语义：运用 = (规划 → 执行 → 验证 → 承担)，"运用 =" 是链标题，
+    四个环节是链上节点，注释在环节下方。
+    渲染：标题（flow-chain-title）+ 四个横向节点 + → 连接。"""
+    lines = [l.rstrip() for l in code.split('\n') if l.strip()]
+    lines = [re.sub(r'─+→', '→', l) for l in lines]
+    chain = lines[0]
+    # 等号前缀 = 链标题（运用 = 规划 → ... → 运用 是标题，规划→执行→验证→承担 是链）
+    title = ''
+    body = chain
+    if '=' in chain:
+        eq = chain.find('=')
+        title = chain[:eq+1].strip()  # "运用 ="
+        body = chain[eq+1:].strip()
+    parts = [p.strip() for p in body.split('→') if p.strip()]
+    # 注释行：跳过竖线对齐行，找空格分隔行
+    notes = []
+    for l in lines[1:]:
+        if '｜' in l or '│' in l:
+            continue
+        segs = [p.strip() for p in re.split(r'\s{2,}', l) if p.strip()]
+        if len(segs) >= 2:
+            notes = segs
+    n = max(len(parts), len(notes))
+    out = ['<div class="flow-chain">']
+    if title:
+        out.append(f'<div class="flow-chain-title">{_inline_arrows(title)}</div>')
+    for i in range(n):
+        out.append('<div class="flow-cnode">')
+        if i < len(parts):
+            out.append(f'<div class="flow-step">{_split_chain_cell(parts[i])}</div>')
+        if i < len(notes):
+            out.append(f'<div class="flow-note">{_inline_arrows(notes[i])}</div>')
+        out.append('</div>')
+        if i < n - 1:
+            out.append('<div class="flow-carr">→</div>')
+    out.append('</div>')
+    return '\n'.join(out)
+
+
+def _multi_col_to_html(code):
+    """并排多列图 → HTML：
+    - 主链式（运用 = 规划 → 执行 → 验证 → 承担 + 注释对齐）→ 横向链
+    - 对比式（记住→合适引用 | 说出→运用 两列）→ flex 双列
+    按 >=4 连续空格切成列，逐列垂直组装，保留多列结构。"""
+    if _is_chain_main(code):
+        return _chain_to_html(code)
+    lines = [l.rstrip() for l in code.split('\n') if l.strip()]
+    # 每行按列分隔切成 cells
+    rows_cells = []
+    for l in lines:
+        # 先归一化长横线箭头
+        l2 = re.sub(r'─+→', '→', l)
+        l2 = re.sub(r'─+', '', l2)
+        cells = [c.strip() for c in re.split(r'\s{4,}', l2) if c.strip()]
+        rows_cells.append(cells)
+    ncols = max(len(c) for c in rows_cells)
+    out = ['<div class="flow-cols">']
+    for c in range(ncols):
+        out.append('<div class="flow-col">')
+        for cells in rows_cells:
+            if c < len(cells):
+                cell = cells[c]
+                # 注释行（含括号）→ edge；纯文本（差距 A）→ note；含 → → step
+                if '→' in cell:
+                    out.append(f'<div class="flow-step">{_split_chain_cell(cell)}</div>')
+                elif '（' in cell or '(' in cell:
+                    out.append(f'<div class="flow-edge">{_inline_arrows(cell)}</div>')
+                else:
+                    out.append(f'<div class="flow-note">{_inline_arrows(cell)}</div>')
+        out.append('</div>')
+    out.append('</div>')
+    return '\n'.join(out)
+
+
+def _is_multi_column(code):
+    """检测并排多列布局：某行内两个箭头之间隔了 >=4 个连续空格
+    （列分隔，如 记住→合适引用          说出→运用）。
+    单行连续链（编排链 → 遍历 → 执行 → 下一轮）箭头间无大段空白，不算多列。"""
+    lines = [l for l in code.split('\n') if l.strip()]
+    if len(lines) < 2:  # 单行链不算多列
+        return False
+    for l in lines:
+        idxs = [m.start() for m in re.finditer(r'[→↓]', l)]
+        for i in range(len(idxs) - 1):
+            gap = l[idxs[i]:idxs[i+1]]
+            if re.search(r'\s{4,}', gap):  # 箭头间含 >=4 连续空格 = 列分隔
+                return True
+    return False
+
+
+def _is_flow_block(code, lang=''):
+    """判断代码块类型，三态：
+    'flow'  - 未标注语言 + 含指向性符号 + 单列链 → 转 HTML 流程图
+    'cols'  - 未标注语言 + 并排多列对比图 → 转 HTML 双列布局
+    None    - 标注语言（代码）或无箭头 → 保持 <pre>
+    """
+    if lang:  # 显式标注语言 = 代码
+        return None
+    lines = [l for l in code.split('\n') if l.strip()]
+    if not lines:
+        return None
     dir_chars = '→↓↑↔⇄▼◀▶'
-    return any(any(c in l for c in dir_chars) for l in lines)
+    if not any(any(c in l for c in dir_chars) for l in lines):
+        return None
+    if _is_multi_column(code):
+        return 'cols'  # 并排多列（对比式）→ HTML 双列
+    # 多行 + 第一行连续箭头主链 + 下方对齐注释 → 主链式 'cols'
+    if _is_chain_main(code):
+        return 'cols'
+    return 'flow'
 
 
 def _split_first_arrow(text):
@@ -187,12 +316,12 @@ def _flow_to_html(code):
         # 5.5) 长横线箭头归一化（剥框线后）：────→ → →
         l2 = re.sub(r'─+→', '→', l2)
         l2 = re.sub(r'─+', '', l2)
-        # 6) 行内箭头拆分
+        # 6) 行内箭头拆分（所有文本统一染色箭头）
         p1, p2 = _split_first_arrow(l2)
         if p2 is not None:
             out.append(f'<div class="flow-step" style="margin-left:{depth}px">{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span></div>')
         else:
-            out.append(f'<div class="flow-step" style="margin-left:{depth}px">{l2}</div>')
+            out.append(f'<div class="flow-step" style="margin-left:{depth}px">{_inline_arrows(l2)}</div>')
     out.append('</div>')
     return '\n'.join(out)
 
@@ -214,8 +343,11 @@ def md_to_html(md_text):
                 buf.append(lines[i]); i += 1
             i += 1
             code_text = '\n'.join(buf)
-            if _is_flow_block(code_text, lang):
+            kind = _is_flow_block(code_text, lang)
+            if kind == 'flow':
                 out.append(_flow_to_html(code_text))
+            elif kind == 'cols':
+                out.append(_multi_col_to_html(code_text))
             else:
                 out.append('<pre><code>' + html_mod.escape(code_text) + '</code></pre>')
             continue
@@ -325,6 +457,30 @@ a:hover { text-decoration: underline; }
              line-height: 1.6; }
 .flow-edge { color: #555; padding: .15rem 0 .15rem 1.4rem; font-size: .92em;
              line-height: 1.5; }
+.flow-note { color: #777; font-size: .88em; padding: .15rem 0; text-align: center; }
+/* 主链式对齐图（运用 = 规划 → 执行 → 验证 → 承担 + 注释） */
+.flow-chain { display: flex; align-items: stretch; justify-content: center;
+              flex-wrap: wrap; gap: .4rem; margin: 1rem 0;
+              padding: .9rem 1.1rem; background: rgba(128,128,128,.06);
+              border: 1px solid rgba(128,128,128,.3); border-radius: 10px; }
+.flow-chain-title { align-self: center; font-weight: bold; color: #2a6fd6;
+                    font-size: 1.05em; margin-right: .4rem;
+                    padding: .3rem .6rem; background: rgba(42,111,214,.08);
+                    border-radius: 6px; }
+.flow-cnode { display: flex; flex-direction: column; justify-content: center;
+              min-width: 5.5rem; text-align: center; }
+.flow-cnode .flow-step { margin: 0; }
+.flow-cnode .flow-note { margin-top: .2rem; }
+.flow-carr { align-self: center; color: #2a6fd6; font-weight: bold; font-size: 1.15em;
+             padding: 0 .15rem; }
+/* 并排多列对比图（flex 双列） */
+.flow-cols { display: flex; gap: 1.2rem; margin: 1rem 0;
+             padding: .9rem 1.1rem; background: rgba(128,128,128,.06);
+             border: 1px solid rgba(128,128,128,.3); border-radius: 10px; }
+.flow-col { flex: 1; min-width: 0; }
+.flow-col .flow-step { margin: .3rem 0; }
+.flow-col .flow-edge { padding-left: 0; text-align: center; color: #777; }
+@media (max-width: 600px) { .flow-cols { flex-direction: column; } }
 .flow-edge .edge-fall { color: #2a6fd6; font-weight: bold; }
 /* 行内箭头：与独立箭头同色同权重，视觉统一 */
 .flow-inline-arrow { color: #2a6fd6; font-weight: bold; margin: 0 .25em; }
@@ -350,6 +506,9 @@ a:hover { text-decoration: underline; }
   .flow { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-step { border-color: #444; background: rgba(255,255,255,.05); }
   .flow-edge { color: #999; }
+  .flow-note { color: #888; }
+  .flow-cols { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-chain { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-phase { color: #6ba4ff; }
 }
 """

@@ -122,7 +122,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 本地 RAG 以完整技能（local-rag-builder）的形式嵌入智能体，智能体不改造技能内部逻辑：
 
-```
+```text
 rag-assistant/                      # 智能体层
 ├── main.py                         # 入口（4 种模式）
 ├── rag_assistant/                  # 决策、界面、LLM 通信
@@ -190,7 +190,7 @@ LLM 在智能体中不是自由发挥的——它被三层次硬约束约束，�
 
 v0.8.0 后引入**强制结构化输出格式**，System Prompt 中嵌入以下模板约束：
 
-```
+```text
 【引用格式】每个结论后面用 [n] 标注来源的段落编号
 【输出风格】【强制输出结构】（必须严格按此格式输出，严禁只写四个段落标题）：
 
@@ -297,7 +297,7 @@ v0.8.0 后引入**强制结构化输出格式**，System Prompt 中嵌入以下�
 
 从运行日志可以看出一个典型陷阱——组合查询中 "Loading weights" tqdm 进度条重复出现：
 
-```
+```text
 Loading weights: 100% | 202/202 [00:00<00:00, 8000it/s]
 Loading weights: 100% | 202/202 [00:00<00:00, 8000it/s]
 ...（重复 30+ 次）
@@ -326,7 +326,7 @@ Loading weights: 100% | 202/202 [00:00<00:00, 8000it/s]
 
 ### 6.2 组合展开（Agent 日志）
 
-```
+```text
 组合查询: entities=['大语言模型', 'LLM', '发展极限', '性能边界'],
           attrs=['训练规模', 'Token数量', '理论上限'],
           rel=对比分析

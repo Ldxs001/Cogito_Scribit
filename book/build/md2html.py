@@ -99,6 +99,20 @@ def _inline_arrows(text):
     return re.sub(r'(→)', r'<span class="flow-inline-arrow">\1</span>', text)
 
 
+def _is_flow_block(code, lang=''):
+    """判断代码块是否为流程图（有向图）：
+    规则：代码块标注了语言（```python 等）→ 代码，不转图；
+    未标注语言且含指向性符号（→ ↓ ↑ ↔ ⇄ ▼ 等）→ 转图。
+    """
+    if lang:  # 显式标注语言 = 代码
+        return False
+    lines = [l for l in code.split('\n') if l.strip()]
+    if len(lines) < 2:
+        return False
+    dir_chars = '→↓↑↔⇄▼◀▶'
+    return any(any(c in l for c in dir_chars) for l in lines)
+
+
 def _split_first_arrow(text):
     """按第一个 → 拆分，返回 (前段, 后段)，→ 被完整保留在中间。"""
     idx = text.find('→')
@@ -118,7 +132,7 @@ def _flow_to_html(code):
     - 其他文本作为步骤卡片（按原缩进级别映射为 padding-left）
     """
     out = ['<div class="flow">']
-    box_chars = '│┌┐└┘├┤┬┴─'
+    box_chars = '│｜┌┐└┘├┤┬┴─'  # 含半角 U+2502 与全角 U+FF5C 竖线
     arrow_chars_all = '↓↑→▼'
 
     for raw in code.split('\n'):
@@ -127,10 +141,13 @@ def _flow_to_html(code):
         if not l_strip:
             continue
         if all(c in box_chars + arrow_chars_all + ' ' for c in l_strip):
-            # 纯框线（┌──┐ / └──┬──┘ / ────）：丢弃或转箭头
+            # 纯框线（┌──┐ / └──┬──┘ / ──── / │ │）：丢弃或转箭头
             if any(c in l_strip for c in '┬┴▼↓↑'):
                 out.append('<div class="flow-arrow">▼</div>' if '┬' in l_strip or '▼' in l_strip else '<div class="flow-arrow">↓</div>')
             continue
+        # 0.2) 长横线箭头归一化：────→ ／ ────┬ 等 → 统一 →
+        l_strip = re.sub(r'─+→', '→', l_strip)
+        l_strip = re.sub(r'─+', '', l_strip)
         # 0.5) 分支前缀检测（├─ / └─ 引导的说明行，非纯框线）
         if l_strip.startswith('├─') or l_strip.startswith('└─'):
             content = l_strip[2:].strip(' -─│')
@@ -159,13 +176,17 @@ def _flow_to_html(code):
             phase = l2[l2.find('【'):l2.rfind('】')+1]
             out.append(f'<div class="flow-phase">{phase}</div>')
             continue
-        # 4) 纯箭头/连接线行（剥框线后只剩箭头字符）
+        # 4) 纯箭头/连接线行（剥框线后只剩箭头字符 → 箭头；只剩框线 → 丢弃）
         if all(c in box_chars + arrow_chars_all for c in l2):
-            out.append(f'<div class="flow-arrow">{l2}</div>')
+            if any(c in l2 for c in arrow_chars_all):
+                out.append(f'<div class="flow-arrow">{l2}</div>')
             continue
         # 5) 缩进级别
         leading = len(raw) - len(raw.lstrip())
         depth = (leading // 2) * 14
+        # 5.5) 长横线箭头归一化（剥框线后）：────→ → →
+        l2 = re.sub(r'─+→', '→', l2)
+        l2 = re.sub(r'─+', '', l2)
         # 6) 行内箭头拆分
         p1, p2 = _split_first_arrow(l2)
         if p2 is not None:
@@ -186,13 +207,14 @@ def md_to_html(md_text):
         line = lines[i]
         # 代码块
         if line.strip().startswith('```'):
+            lang = line.strip()[3:].strip()  # ```python → 'python'；``` → ''
             buf = []
             i += 1
             while i < n and not lines[i].strip().startswith('```'):
                 buf.append(lines[i]); i += 1
             i += 1
             code_text = '\n'.join(buf)
-            if _is_flow_block(code_text):
+            if _is_flow_block(code_text, lang):
                 out.append(_flow_to_html(code_text))
             else:
                 out.append('<pre><code>' + html_mod.escape(code_text) + '</code></pre>')
@@ -306,12 +328,9 @@ a:hover { text-decoration: underline; }
 .flow-edge .edge-fall { color: #2a6fd6; font-weight: bold; }
 /* 行内箭头：与独立箭头同色同权重，视觉统一 */
 .flow-inline-arrow { color: #2a6fd6; font-weight: bold; margin: 0 .25em; }
-/* 箭头行：与步骤卡同底色带边框，视觉统一 */
+/* 箭头行：纯箭头无背景无边框（↓/▼ 独立行） */
 .flow-arrow { color: #2a6fd6; text-align: center; line-height: 1.4;
-              font-weight: bold; padding: .12rem 0;
-              background: rgba(128,128,128,.04);
-              border: 1px solid rgba(128,128,128,.15);
-              border-radius: 6px; margin: .2rem 0; }
+              font-weight: bold; padding: .1rem 0; }
 .flow-arrow::before { content: ""; }
 .toc { background: rgba(128,128,128,.06); border: 1px solid #ddd; border-radius: 8px;
        padding: 1.2rem 1.4rem; margin: 1rem 0 2rem; }
@@ -331,7 +350,6 @@ a:hover { text-decoration: underline; }
   .flow { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-step { border-color: #444; background: rgba(255,255,255,.05); }
   .flow-edge { color: #999; }
-  .flow-arrow { border-color: rgba(255,255,255,.12); background: rgba(255,255,255,.03); }
   .flow-phase { color: #6ba4ff; }
 }
 """

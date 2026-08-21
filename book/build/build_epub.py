@@ -132,6 +132,23 @@ hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
 .flow-step { background: #f0f4fa; border: 1px solid #ccc; border-radius: 4px;
              padding: .25em .6em; margin: .2em 0; line-height: 1.5; }
 .flow-edge { color: #555; padding: .15em 0 .15em 1.5em; font-size: .95em; }
+.flow-note { color: #777; font-size: .88em; padding: .15em 0; text-align: center; }
+.flow-chain { display: flex; align-items: stretch; justify-content: center;
+              flex-wrap: wrap; gap: .4em; margin: .8em 0;
+              padding: .7em .9em; background: #f4f6fa; border: 1px solid #ccc; border-radius: 8px; }
+.flow-chain-title { align-self: center; font-weight: bold; color: #2a6fd6;
+                    font-size: 1.05em; margin-right: .4em;
+                    padding: .3em .6em; background: #e8f0fb; border-radius: 6px; }
+.flow-cnode { display: flex; flex-direction: column; justify-content: center;
+              min-width: 5.5em; text-align: center; }
+.flow-cnode .flow-step { margin: 0; }
+.flow-cnode .flow-note { margin-top: .2em; }
+.flow-carr { align-self: center; color: #2a6fd6; font-weight: bold; font-size: 1.15em; }
+.flow-cols { display: flex; gap: 1.2em; margin: .8em 0;
+             padding: .7em .9em; background: #f4f6fa; border: 1px solid #ccc; border-radius: 8px; }
+.flow-col { flex: 1; min-width: 0; }
+.flow-col .flow-step { margin: .3em 0; }
+.flow-col .flow-edge { padding-left: 0; text-align: center; color: #777; }
 .flow-inline-arrow { color: #2a6fd6; font-weight: bold; margin: 0 .25em; }
 .flow-arrow { color: #2a6fd6; text-align: center; line-height: 1.3; font-weight: bold;
               padding: .1em 0; }

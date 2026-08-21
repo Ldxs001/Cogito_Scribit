@@ -545,6 +545,9 @@ def _flow_to_html(code):
             phase = l2[l2.find('【'):l2.rfind('】')+1]
             out.append(f'<div class="flow-phase">{phase}</div>')
             continue
+        # 3.5) 省略号占位行（... / ……）：跳过，不渲染空卡片
+        if re.fullmatch(r'[.。·…]{2,}', l2):
+            continue
         # 4) 纯箭头/连接线行（剥框线后只剩箭头字符 → 箭头；只剩框线 → 丢弃）
         if all(c in box_chars + arrow_chars_all for c in l2):
             if any(c in l2 for c in arrow_chars_all):

@@ -31,6 +31,23 @@ def _inline(text):
         t = t.replace(f'\x00CODE{i}\x00', f'<code>{c}</code>')
     return t
 
+def _format_cell(content):
+    """处理表格单元格内的多段内容：<br> 分隔的每段用 <span> 包裹，
+    让 CSS 可以对每段分别控制 nowrap/keep-all。"""
+    # _inline 已转义了 & 实体，但保留了 <br> 字符
+    if '<br>' in content:
+        parts = content.split('<br>')
+        # 注意：parts 里如果已经被 _inline 转义，里面的 < 可能被转成 &lt;
+        # 这里只需做包装，不重新转义
+        pieces = []
+        for p in parts:
+            p = p.strip()
+            if p:
+                pieces.append(f'<span class="ref-piece">{p}</span>')
+        return ''.join(pieces)
+    return content
+
+
 def _table(rows):
     """表格：rows = 分割后的行列表"""
     # 过滤分隔行（|------|、|:---:| 等整行连字符/冒号/竖线形式）
@@ -42,51 +59,85 @@ def _table(rows):
     for i, r in enumerate(body):
         cells = [c.strip() for c in r.strip().strip('|').split('|')]
         tag = 'th' if i == 0 else 'td'
-        html_rows.append('<tr>' + ''.join(f'<{tag}>{_inline(c)}</{tag}>' for c in cells) + '</tr>')
+        html_rows.append('<tr>' + ''.join(f'<{tag}>{_format_cell(_inline(c))}</{tag}>' for c in cells) + '</tr>')
     return '<table><thead>' + html_rows[0] + '</thead><tbody>' + ''.join(html_rows[1:]) + '</tbody></table>'
 
 def _is_flow_block(code):
-    """判断代码块是否为流程图：含 ↓ / → 流程箭头，且行数 >= 3"""
+    """判断代码块是否为结构化流程图：含框线字符 (│ ┌ ┐ └ ┘ ├ ┤) 或 【】 阶段标题。
+    这种代码块 ASCII 框线套娃，只用 <pre> 显示很难看清，需要 HTML 化。
+    简单文字带 → 的不算（保留 pre）。
+    """
     lines = [l for l in code.split('\n') if l.strip()]
     if len(lines) < 3:
         return False
-    arrow_count = sum(1 for l in lines if any(c in l for c in '↓↑→'))
-    return arrow_count >= 2
+    box_chars = '│┌┐└┘├┤'
+    has_box = any(any(c in l for c in box_chars) for l in lines)
+    has_phase = any('【' in l and '】' in l for l in lines)
+    return has_box or has_phase
 
 
 def _flow_to_html(code):
     """将 ASCII 流程图代码块渲染为 HTML 流程容器。
-    每行去掉前导空白，按行渲染；箭头行作为连接线。
+    规则：
+    - 跳过空行
+    - 去框线装饰字符 (│ ┌ ┐ └ ┘ ├ ┤ ─)，保留实际文本
+    - 【...】识别为阶段标题
+    - ↓ ↑ → 仅含箭头字符的行识别为箭头
+    - └─ / ├─ 等引导分支说明行识别为 flow-edge
+    - 其他文本作为步骤卡片（按原缩进级别映射为 padding-left）
     """
-    lines = [l.rstrip() for l in code.split('\n')]
-    # 计算统一缩进（去掉共同前导空白）
-    stripped = [l.strip() for l in lines if l.strip()]
-    # 识别块级结构：步骤行（含文字）与箭头行
     out = ['<div class="flow">']
-    for l in stripped:
+    box_chars = '│┌┐└┘├┤─'
+    branch_prefix = ('├─', '└─', '└', '├')
+
+    for raw in code.split('\n'):
+        # 1) 去前后空白
+        l = raw.strip()
         if not l:
             continue
-        if any(c in l for c in '↓↑→'):
-            # 箭头行
-            for c in '↓↑→':
-                if c in l:
-                    arrow = c
-                    rest = l.replace(c, '').strip(' -─|├└┌┐│')
-                    if rest:
-                        out.append(f'<div class="flow-edge">{arrow} {rest}</div>')
-                    else:
-                        out.append(f'<div class="flow-arrow">{arrow}</div>')
-                    break
-        else:
-            # 步骤行（可能是标题/阶段/文本）
-            l2 = l.strip('| ')
-            if l2.startswith('【') and l2.endswith('】'):
-                out.append(f'<div class="flow-phase">{l2}</div>')
+        # 2) 去框线装饰字符（包括 | 但不去掉 | 包围的真实文本）
+        # 先去掉行首尾的纯框线字符（如 │   │ / ┌──┐）
+        l2 = l
+        # 去掉首尾的 | / 框线
+        while l2 and l2[0] in box_chars + ' ':
+            l2 = l2[1:]
+        while l2 and l2[-1] in box_chars + ' ':
+            l2 = l2[:-1]
+        if not l2:
+            continue
+        # 去 '[' ']' ┌ 之类的两侧装饰（---┐ / └--- 等）
+        l3 = l2
+        # 3) 阶段标题
+        if l3.startswith('【') and '】' in l3:
+            phase = l3[l3.find('【'):l3.rfind('】')+1]
+            out.append(f'<div class="flow-phase">{phase}</div>')
+            continue
+        # 4) 纯箭头行
+        arrow_chars = [c for c in l3 if c in '↓↑→']
+        if arrow_chars and not any(ch.isalnum() for ch in l3 if ch not in '↓↑→│├└─ '):
+            out.append(f'<div class="flow-arrow">{l3}</div>')
+            continue
+        # 5) 分支说明（├─ └─ 开头）
+        if l3.startswith('├─') or l3.startswith('└─'):
+            content = l3[2:].strip(' -─│')
+            depth = (leading // 2) * 14
+            # 拆箭头后内容：'L1-L5全部完整 → 继续'
+            if '→' in content:
+                p1, p2 = content.split('→', 1)
+                out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{p1.strip()} → <span class="edge-fall">{p2.strip()}</span></div>')
             else:
-                # 去框线装饰：│ ┌ ─ ┐ 等
-                l3 = l2.strip('┌─┐└┘│├┤')
-                if l3:
-                    out.append(f'<div class="flow-step">{l3}</div>')
+                out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{content}</div>')
+            continue
+        # 6) 缩进级别（按前导空格数 × 2 计算 padding-left）
+        leading = len(raw) - len(raw.lstrip())
+        depth = (leading // 2) * 14
+        # 7) 行内箭头：检查是否含 → （如 "步骤N完成后：检查产出物格式" 不含箭头）
+        if '→' in l3:
+            # 拆箭头
+            p1, p2 = l3.split('→', 1)
+            out.append(f'<div class="flow-step" style="margin-left:{depth}px">{p1.strip()} → <span class="edge-fall">{p2.strip()}</span></div>')
+        else:
+            out.append(f'<div class="flow-step" style="margin-left:{depth}px">{l3}</div>')
     out.append('</div>')
     return '\n'.join(out)
 
@@ -183,6 +234,16 @@ table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .92re
 th, td { border: 1px solid #bbb; padding: .4rem .6rem; text-align: left;
          word-break: keep-all; overflow-wrap: anywhere; vertical-align: top; }
 th { background: rgba(128,128,128,.12); }
+/* 表格内多段文本（<br> 分隔）每段独立 nowrap，保证一个原子信息不会被列宽拆字 */
+table td .ref-piece, table th .ref-piece {
+  display: block;
+  white-space: nowrap;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  line-height: 1.7;
+}
+/* 出处列（末列）最小宽度保证不挤压 */
+table tbody td:last-child { min-width: 220px; }
 pre { background: rgba(128,128,128,.1); padding: .8rem; border-radius: 6px;
       overflow-x: auto; font-size: .88rem; }
 code { background: rgba(128,128,128,.12); padding: .1em .35em; border-radius: 3px; font-size: .9em; }
@@ -197,7 +258,9 @@ a:hover { text-decoration: underline; }
 .flow-step { background: rgba(128,128,128,.08); border: 1px solid #ccc;
              border-radius: 6px; padding: .3rem .7rem; margin: .25rem 0;
              line-height: 1.6; }
-.flow-edge { color: #666; padding: .1rem 0 .1rem .4rem; font-size: .95em; }
+.flow-edge { color: #555; padding: .15rem 0 .15rem 1.4rem; font-size: .92em;
+             line-height: 1.5; }
+.flow-edge .edge-fall { color: #2a6fd6; font-weight: bold; }
 .flow-arrow { color: #2a6fd6; text-align: center; line-height: 1.2;
               font-weight: bold; padding: .05rem 0; }
 .flow-arrow::before { content: ""; }

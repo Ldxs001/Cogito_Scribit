@@ -509,21 +509,26 @@ def _flow_to_html(code):
         # 0.5) 分支前缀检测（├─ / └─ 引导的说明行，可带 │ 引导线前缀）
         #      必须在本处理长横线归一化之前：├── 的 ─ 是分支标记一部分，
         #      先删 ─ 会让分支正则永远不命中
+        #      渲染为 step 卡片 + 连接线（flow-branch）——与链/列表元素
+        #      同一样式体系（树靠连接线、链靠箭头、层级靠缩进），
+        #      不再使用无样式 edge（消除同结构不同样式的分裂）
         #      层级 = 分支标记（├/└）前的列数 // 2 * 14（每 2 列 = 1 级）
         #      注意用原始行 r2（保留缩进）计算位置：l_strip 已删前导空格，
         #      纯空格缩进的分支行（无 │ 引导线）会丢失层级
         r2 = raw.rstrip()
-        bm = re.match(r'^[│｜\s]*([├└])─', r2)
+        bm = re.match(r'^([│｜\s]*)([├└])─', r2)
         if bm:
-            mark_pos = bm.start(1)
+            mark_pos = bm.start(2)
             content = r2[mark_pos+2:].strip(' -─│')
             if content:
                 depth = (mark_pos // 2) * 14
+                mark_show = '├──' if bm.group(2) == '├' else '└──'
                 p1, p2 = _split_first_arrow(content)
                 if p2 is not None:
-                    out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span></div>')
+                    body = f'{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span>'
                 else:
-                    out.append(f'<div class="flow-edge" style="margin-left:{depth}px">{content}</div>')
+                    body = _inline_arrows(content)
+                out.append(f'<div class="flow-step flow-branch" style="margin-left:{depth}px"><span class="flow-tmark">{mark_show}</span>{body}</div>')
             continue
         # 0.2) 长横线箭头归一化：────→ ／ ────┬ 等 → 统一 →
         l_strip = re.sub(r'─+→', '→', l_strip)
@@ -545,8 +550,11 @@ def _flow_to_html(code):
             phase = l2[l2.find('【'):l2.rfind('】')+1]
             out.append(f'<div class="flow-phase">{phase}</div>')
             continue
-        # 3.5) 省略号占位行（... / ……）：跳过，不渲染空卡片
+        # 3.5) 省略号占位行（... / ……）：渲染为与同级相同的 step 卡片样式
+        #      （内容"……"灰字），层级/缩进与同级内容完全一致
         if re.fullmatch(r'[.。·…]{2,}', l2):
+            depth = (len(raw) - len(raw.lstrip())) // 2 * 14
+            out.append(f'<div class="flow-step ellipsis-step" style="margin-left:{depth}px">……</div>')
             continue
         # 4) 纯箭头/连接线行（剥框线后只剩箭头字符 → 箭头；只剩框线 → 丢弃）
         if all(c in box_chars + arrow_chars_all for c in l2):
@@ -742,6 +750,11 @@ a:hover { text-decoration: underline; }
 .flow-layer-name { font-weight: bold; color: #2a6fd6; margin-bottom: .2rem; }
 .flow-layer-item { line-height: 1.6; }
 .flow-layer-key { color: #555; font-weight: bold; margin-right: .3em; }
+/* 省略号 step（... 占位行：与同级内容同卡片样式，字色灰） */
+.flow-step.ellipsis-step { color: #999; }
+/* 树分支 step（├──/└─ 连接线 + 卡片：与链/列表同一样式体系） */
+.flow-step.flow-branch .flow-tmark { color: #888; margin-right: .35rem; }
+.flow-branch { text-align: left; }
 /* 结构树形图（文件树/目录树） */
 .flow-tree { margin: 1rem 0; padding: .6rem .9rem;
              background: rgba(128,128,128,.06);
@@ -794,6 +807,7 @@ a:hover { text-decoration: underline; }
   .flow-layer-key { color: #aaa; }
   .flow-tree { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-tmark { color: #666; }
+  .flow-step.ellipsis-step { color: #777; }
   .math-block { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-phase { color: #6ba4ff; }
 }

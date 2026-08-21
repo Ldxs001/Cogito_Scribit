@@ -125,6 +125,12 @@ table td .ref-piece, table th .ref-piece { display: block; white-space: normal;
   word-break: keep-all; overflow-wrap: break-word; line-height: 1.7; }
 pre { background: #f5f5f5; padding: .6em; overflow-x: auto; font-size: .85em; }
 code { font-size: .9em; }
+.math { font-family: "Times New Roman", Georgia, serif;
+        font-style: italic; white-space: nowrap; }
+.math sup, .math sub { font-style: normal; font-size: .72em; }
+.math-block { text-align: center; margin: .8em 0; padding: .6em .9em;
+              background: #f4f6fa; border: 1px solid #ccc; border-radius: 8px; }
+.math-block .math { font-size: 1.1em; white-space: normal; }
 hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
 .flow { margin: .8em 0; padding: .7em .9em;
         background: #f4f6fa; border: 1px solid #ccc; border-radius: 8px; }

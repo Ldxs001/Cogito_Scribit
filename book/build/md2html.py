@@ -11,9 +11,68 @@ def _escape_skip_entities(text):
     """html.escape 但跳过已存在的 HTML 实体（如 &#124; &amp; &nbsp;）以避免双重转义"""
     return re.sub(r'&(?!(?:#[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);)', '&amp;', text)
 
+_GREEK = {
+    'alpha': 'α', 'beta': 'β', 'gamma': 'γ', 'delta': 'δ', 'epsilon': 'ε',
+    'theta': 'θ', 'lambda': 'λ', 'mu': 'μ', 'pi': 'π', 'sigma': 'σ',
+    'phi': 'φ', 'omega': 'ω', 'psi': 'ψ', 'rho': 'ρ', 'tau': 'τ',
+    'eta': 'η', 'kappa': 'κ', 'xi': 'ξ', 'zeta': 'ζ', 'chi': 'χ',
+    'Gamma': 'Γ', 'Delta': 'Δ', 'Theta': 'Θ', 'Lambda': 'Λ', 'Pi': 'Π',
+    'Sigma': 'Σ', 'Phi': 'Φ', 'Omega': 'Ω', 'Psi': 'Ψ',
+}
+
+def _render_math(expr):
+    r"""轻量 LaTeX 行内公式 → HTML（零依赖，无外部 CDN——用户铁律）。
+    支持：\times \approx \cdot \leq \geq \ne \pm \frac 上下标 希腊字母。
+    示例：$C \approx N \times T$ → C ≈ N×T；$4.4 \times 10^{24}$ → 4.4×10²⁴
+    """
+    s = expr.strip()
+    # 上下标（先处理，避免 \ 命令冲突）
+    s = re.sub(r'\^\{([^}]*)\}', r'<sup>\1</sup>', s)
+    s = re.sub(r'_\{([^}]*)\}', r'<sub>\1</sub>', s)
+    s = re.sub(r'\^([0-9A-Za-z])', r'<sup>\1</sup>', s)
+    s = re.sub(r'_([0-9A-Za-z])', r'<sub>\1</sub>', s)
+    # \frac{a}{b} → (a)/(b)
+    s = re.sub(r'\\frac\{([^{}]*)\}\{([^{}]*)\}', r'(\1)/(\2)', s)
+    # 运算符符号
+    for latex, uni in ((r'\times', '×'), (r'\cdot', '·'), (r'\approx', '≈'),
+                       (r'\leq', '≤'), (r'\geq', '≥'), (r'\ne', '≠'),
+                       (r'\pm', '±'), (r'\infty', '∞'), (r'\sim', '∼'),
+                       (r'\propto', '∝'), (r'\to', '→'),
+                       (r'\rightarrow', '→'), (r'\leftarrow', '←'),
+                       (r'\Rightarrow', '⇒'), (r'\Leftrightarrow', '⇔'),
+                       (r'\prod', '∏'), (r'\sum', '∑'), (r'\int', '∫'),
+                       (r'\partial', '∂'), (r'\nabla', '∇'),
+                       (r'\log', 'log'), (r'\ln', 'ln'), (r'\exp', 'exp'),
+                       (r'\min', 'min'), (r'\max', 'max'),
+                       (r'\arg', 'arg'), (r'\forall', '∀'),
+                       (r'\exists', '∃'), (r'\in', '∈'), (r'\notin', '∉'),
+                       (r'\subset', '⊂'), (r'\subseteq', '⊆'),
+                       (r'\cup', '∪'), (r'\cap', '∩')):
+        s = s.replace(latex, uni)
+    # 希腊字母
+    for name, ch in _GREEK.items():
+        s = s.replace('\\' + name, ch)
+    # 文本/罗马命令
+    s = re.sub(r'\\(?:mathrm|text|operatorname)\{([^}]*)\}', r'\1', s)
+    # 未知 \ 命令删除（防残留反斜杠）
+    s = re.sub(r'\\[a-zA-Z]+', '', s)
+    return f'<span class="math">{s}</span>'
+
+
 def _inline(text):
     """行内元素转换"""
     t = _escape_skip_entities(text)
+    # 行内公式 $...$（先于其他标记；\$ 是字面美元符，先保护）
+    dollar_spans = []
+    def _save_dollar(m):
+        dollar_spans.append(m.group(0))
+        return f'\x00DOLLAR{len(dollar_spans)-1}\x00'
+    t = re.sub(r'\\\$', _save_dollar, t)
+    math_spans = []
+    def _save_math(m):
+        math_spans.append(_render_math(m.group(1)))
+        return f'\x00MATH{len(math_spans)-1}\x00'
+    t = re.sub(r'\$([^$\n]+)\$', _save_math, t)
     # 行内代码（先转义保护）
     code_spans = []
     def _save_code(m):
@@ -26,9 +85,15 @@ def _inline(text):
     t = re.sub(r'\*\*([^*]+)\*\*', r'<strong>\1</strong>', t)
     # 斜体
     t = re.sub(r'(?<!\*)\*([^*]+)\*(?!\*)', r'<em>\1</em>', t)
+    # 恢复公式（先于代码恢复，公式内容已含 HTML 标记）
+    for i, m in enumerate(math_spans):
+        t = t.replace(f'\x00MATH{i}\x00', m)
     # 恢复行内代码
     for i, c in enumerate(code_spans):
         t = t.replace(f'\x00CODE{i}\x00', f'<code>{c}</code>')
+    # 恢复字面美元符
+    for i, d in enumerate(dollar_spans):
+        t = t.replace(f'\x00DOLLAR{i}\x00', d.replace('\\$', '$'))
     return t
 
 def _format_cell(content):
@@ -109,7 +174,10 @@ def _split_chain_cell(text):
 
 def _is_chain_main(code):
     """判断是否为"主链 + 对齐注释"结构（运用图）：
-    需多行（>=2 行）；第一行含 >=2 个 → 且箭头间隔小（连续链，无列分隔）。
+    需多行（>=2 行）；第一行含 >=2 个 → 且箭头间隔小（连续链，无列分隔）；
+    后续行必须是注释行（不含 →）——如果后续行也含 →（多行独立链，
+    如 旧价值链：A → B → C / 新价值链：A → C → D 两行对比），
+    不是主链+注释，走 flow 逐行渲染。
     对比式（差距图）第一行箭头间隔大（>=4 空格列分隔）。
     单行链（编排链 → 遍历 → 执行）只有 1 行，不算主链式。"""
     lines = [l for l in code.split('\n') if l.strip()]
@@ -122,6 +190,10 @@ def _is_chain_main(code):
     for i in range(len(idxs) - 1):
         if re.search(r'\s{4,}', first[idxs[i]:idxs[i+1]]):
             return False  # 有列分隔 = 对比式
+    # 后续行含 → = 独立链（不是注释行）→ 不是主链+注释
+    for l in lines[1:]:
+        if '→' in l:
+            return False
     return True
 
 
@@ -345,6 +417,14 @@ def _is_tree(code):
     return True
 
 
+def _math_block_to_html(code):
+    """公式块（```math）→ 居中公式块。多行合并为单行表达式，
+    内容过 _render_math（LaTeX → HTML）。"""
+    lines = [l.strip() for l in code.split('\n') if l.strip()]
+    expr = ' '.join(lines)
+    return f'<div class="math-block">{_render_math(expr)}</div>'
+
+
 def _is_flow_block(code, lang=''):
     """判断代码块类型，六态：
     'flow'   - 线性流程链 → 转 HTML 流程图
@@ -365,7 +445,7 @@ def _is_flow_block(code, lang=''):
     真实代码语言标注（python/json/yaml/bash 等）= 代码，保持 pre。
     """
     if lang:
-        if lang in ('flow', 'cols', 'chain', 'tree'):
+        if lang in ('flow', 'cols', 'chain', 'tree', 'math'):
             return lang  # 图类型标注：强制按指定类型解析
         if lang == 'ascii':
             pass  # 显式 ASCII 图标注 → 走自动检测（框线/箭头决定渲染类型）
@@ -512,6 +592,8 @@ def md_to_html(md_text):
                 out.append(_box_to_html(code_text))
             elif kind == 'tree':
                 out.append(_tree_to_html(code_text))
+            elif kind == 'math':
+                out.append(_math_block_to_html(code_text))
             else:
                 out.append('<pre><code>' + html_mod.escape(code_text) + '</code></pre>')
             continue
@@ -605,6 +687,16 @@ table td .ref-piece, table th .ref-piece {
 pre { background: rgba(128,128,128,.1); padding: .8rem; border-radius: 6px;
       overflow-x: auto; font-size: .88rem; }
 code { background: rgba(128,128,128,.12); padding: .1em .35em; border-radius: 3px; font-size: .9em; }
+/* 行内公式（LaTeX → HTML 轻量渲染） */
+.math { font-family: "Times New Roman", Georgia, "STIX Two Math", serif;
+        font-style: italic; white-space: nowrap; }
+.math sup, .math sub { font-style: normal; font-size: .72em; }
+/* 公式块（```math） */
+.math-block { text-align: center; margin: 1rem 0; padding: .7rem 1rem;
+              background: rgba(128,128,128,.06);
+              border: 1px solid rgba(128,128,128,.3); border-radius: 10px;
+              font-size: 1.05rem; }
+.math-block .math { font-size: 1.1em; white-space: normal; }
 pre code { background: none; padding: 0; }
 hr { border: none; border-top: 1px solid #ccc; margin: 2rem 0; }
 a { color: #2a6fd6; text-decoration: none; }
@@ -699,6 +791,7 @@ a:hover { text-decoration: underline; }
   .flow-layer-key { color: #aaa; }
   .flow-tree { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-tmark { color: #666; }
+  .math-block { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-phase { color: #6ba4ff; }
 }
 """

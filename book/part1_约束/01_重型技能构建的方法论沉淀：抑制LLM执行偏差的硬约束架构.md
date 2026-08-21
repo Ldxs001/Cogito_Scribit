@@ -5,8 +5,7 @@ Licensed under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-
 See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 -->
 
-# 重型技能构建的方法论沉淀：抑制LLM执行偏差的硬约束架构
-
+# 第 I 部 · 01｜重型技能构建的方法论沉淀：抑制LLM执行偏差的硬约束架构
 
 ## 一、对LLM执行行为的基本判断
 

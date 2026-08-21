@@ -5,11 +5,7 @@ Licensed under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-
 See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 -->
 
-# 重型技能构建的方法论沉淀：LLM技能构建阶段的工程化契约范式
-
-> 这是方法论的 01（抑制LLM执行偏差的硬中断架构）的配套维度。01 回答了"运行时如何阻断偏差"，02 回答"构建时如何让运行侧的阻断有参照标准"。两篇共同构成一个完整的工程闭环。
-
----
+# 第 I 部 · 02｜重型技能构建的方法论沉淀：LLM技能构建阶段的工程化契约范式
 
 ## 两篇的关系
 

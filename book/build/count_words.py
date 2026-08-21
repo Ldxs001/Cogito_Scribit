@@ -1,0 +1,16 @@
+# -*- coding: utf-8 -*-
+import io, re, sys
+sys.stdout.reconfigure(encoding='utf-8')
+t = io.open(r'C:\Users\sm001\WorkBuddy\Cogito_Scribit\book\build\output\全书.md', encoding='utf-8').read()
+total = len(t)
+no_ws = len(re.sub(r'\s', '', t))
+cjk = len(re.findall(r'[\u4e00-\u9fff]', t))
+no_md = re.sub(r'[#*|\-`>\[\]()]', '', t)
+no_md_ws = len(re.sub(r'\s', '', no_md))
+h1 = len([l for l in t.split('\n') if l.startswith('# ')])
+h2 = len([l for l in t.split('\n') if l.startswith('## ')])
+print(f'全书.md 总字符(含空白): {total:,}')
+print(f'去除空白: {no_ws:,}')
+print(f'汉字数(CJK): {cjk:,}')
+print(f'去markdown符号+空白: {no_md_ws:,}')
+print(f'H1 章节: {h1} | H2 小节: {h2}')

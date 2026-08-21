@@ -1702,7 +1702,6 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <div class="flow-step" style="margin-left:0px">执行时 LLM 的角色：</div>
 <div class="flow-step" style="margin-left:14px">子结构 1_1：LLM(节RAG + 子结构RAG + 文档元数据 + 前文) <span class="flow-inline-arrow">→</span> <span class="edge-fall">400 字正文（含引用标记）</span></div>
 <div class="flow-step" style="margin-left:14px">子结构 1_2：LLM(新子结构RAG + 累积文档元数据 + 前文(含 1_1)) <span class="flow-inline-arrow">→</span> <span class="edge-fall">400 字正文</span></div>
-<div class="flow-step" style="margin-left:14px">...</div>
 <div class="flow-step" style="margin-left:14px">所有节完成后 <span class="flow-inline-arrow">→</span> <span class="edge-fall">确定性引用后处理（LLM 不参与）:</span></div>
 <div class="flow-step" style="margin-left:28px">正则扫描 <span class="flow-inline-arrow">→</span> <span class="edge-fall">去重编号 <span class="flow-inline-arrow">→</span> [N] 替换 <span class="flow-inline-arrow">→</span> 参考文献节自动填充</span></div>
 </div>

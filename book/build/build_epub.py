@@ -116,13 +116,17 @@ h2 { font-size: 1.3em; }
 blockquote { border-left: 3px solid #999; margin: .8em 0; padding: .3em 1em; color: #666; }
 table { border-collapse: collapse; width: 100%; margin: .8em 0; }
 th, td { border: 1px solid #bbb; padding: .3em .5em; word-break: keep-all; vertical-align: top; }
-table td .ref-piece, table th .ref-piece { display: block; white-space: nowrap;
+table.ref-table { table-layout: fixed; }
+table.ref-table th:nth-child(1), table.ref-table td:nth-child(1) { width: 8%; }
+table.ref-table th:nth-child(2), table.ref-table td:nth-child(2) { width: 47%; }
+table.ref-table th:nth-child(3), table.ref-table td:nth-child(3) { width: 45%; }
+table td .ref-piece, table th .ref-piece { display: block; white-space: normal;
   word-break: keep-all; overflow-wrap: anywhere; line-height: 1.7; }
-table tbody td:last-child { min-width: 220px; }
 pre { background: #f5f5f5; padding: .6em; overflow-x: auto; font-size: .85em; }
 code { font-size: .9em; }
 hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
-.flow { margin: .8em 0; }
+.flow { margin: .8em 0; padding: .7em .9em;
+        background: #f4f6fa; border: 1px solid #ccc; border-radius: 8px; }
 .flow-phase { font-weight: bold; color: #2a6fd6; margin: .5em 0 .2em; }
 .flow-step { background: #f0f4fa; border: 1px solid #ccc; border-radius: 4px;
              padding: .25em .6em; margin: .2em 0; line-height: 1.5; }

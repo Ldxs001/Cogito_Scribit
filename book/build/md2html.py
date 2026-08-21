@@ -56,11 +56,18 @@ def _table(rows):
     if not body:
         return ''
     html_rows = []
+    ref_class = ''
+    first_cells = None
     for i, r in enumerate(body):
         cells = [c.strip() for c in r.strip().strip('|').split('|')]
+        if i == 0:
+            first_cells = cells
         tag = 'th' if i == 0 else 'td'
         html_rows.append('<tr>' + ''.join(f'<{tag}>{_format_cell(_inline(c))}</{tag}>' for c in cells) + '</tr>')
-    return '<table><thead>' + html_rows[0] + '</thead><tbody>' + ''.join(html_rows[1:]) + '</tbody></table>'
+    # 引用编号索引表（表头=编号|文献|出处）统一固定列宽比例
+    if first_cells and len(first_cells) == 3 and first_cells[0] == '编号' and first_cells[1] == '文献':
+        ref_class = ' class="ref-table"'
+    return f'<table{ref_class}><thead>' + html_rows[0] + '</thead><tbody>' + ''.join(html_rows[1:]) + '</tbody></table>'
 
 def _is_flow_block(code):
     """判断代码块是否为结构化流程图：含框线字符 (│ ┌ ┐ └ ┘ ├ ┤) 或 【】 阶段标题。
@@ -230,20 +237,24 @@ h3 { font-size: 1.15rem; margin-top: 1.5rem; }
 h4 { font-size: 1rem; }
 blockquote { border-left: 4px solid #999; margin: 1rem 0; padding: .4rem 1rem;
              background: rgba(128,128,128,.08); color: #666; }
-table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .92rem; }
+table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .92rem;
+        table-layout: auto; }
 th, td { border: 1px solid #bbb; padding: .4rem .6rem; text-align: left;
          word-break: keep-all; overflow-wrap: anywhere; vertical-align: top; }
 th { background: rgba(128,128,128,.12); }
-/* 表格内多段文本（<br> 分隔）每段独立 nowrap，保证一个原子信息不会被列宽拆字 */
+/* 引用编号索引表：三列固定列宽比例（编号≈6字符 / 文献 / 出处），与全局表格同宽 */
+table.ref-table { table-layout: fixed; }
+table.ref-table th:nth-child(1), table.ref-table td:nth-child(1) { width: 8%; }
+table.ref-table th:nth-child(2), table.ref-table td:nth-child(2) { width: 47%; }
+table.ref-table th:nth-child(3), table.ref-table td:nth-child(3) { width: 45%; }
+/* 表格内多段文本（<br> 分隔）每段独立，保证一个原子信息不会被列宽拆字 */
 table td .ref-piece, table th .ref-piece {
   display: block;
-  white-space: nowrap;
+  white-space: normal;
   word-break: keep-all;
   overflow-wrap: anywhere;
   line-height: 1.7;
 }
-/* 出处列（末列）最小宽度保证不挤压 */
-table tbody td:last-child { min-width: 220px; }
 pre { background: rgba(128,128,128,.1); padding: .8rem; border-radius: 6px;
       overflow-x: auto; font-size: .88rem; }
 code { background: rgba(128,128,128,.12); padding: .1em .35em; border-radius: 3px; font-size: .9em; }
@@ -252,7 +263,10 @@ hr { border: none; border-top: 1px solid #ccc; margin: 2rem 0; }
 a { color: #2a6fd6; text-decoration: none; }
 a:hover { text-decoration: underline; }
 /* 流程图 */
-.flow { margin: 1rem 0; padding: .4rem 0; }
+.flow { margin: 1rem 0; padding: .9rem 1.1rem;
+        background: rgba(128,128,128,.06);
+        border: 1px solid rgba(128,128,128,.3);
+        border-radius: 10px; }
 .flow-phase { font-weight: bold; color: #2a6fd6; margin: .6rem 0 .2rem;
               font-size: 1.02em; }
 .flow-step { background: rgba(128,128,128,.08); border: 1px solid #ccc;
@@ -279,6 +293,7 @@ a:hover { text-decoration: underline; }
   a { color: #6ba4ff; }
   .toc { border-color: #444; background: rgba(255,255,255,.04); }
   .toc a.toc-l2 { color: #aaa; }
+  .flow { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-step { border-color: #444; background: rgba(255,255,255,.05); }
   .flow-edge { color: #999; }
   .flow-phase { color: #6ba4ff; }

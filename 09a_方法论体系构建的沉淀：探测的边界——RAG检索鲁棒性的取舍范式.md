@@ -33,7 +33,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 我的 RAG Assistant 从一开始就采用这套范式：**检索命中某个块后，把"命中块 + 上一块 + 下一块"共三块作为元信息返回，保底覆盖文档前 1-3 块**，交给 LLM 从文本里自己提取作者、标题等 [3]。
 
-```text
+```
 命中块 5 → 返回块 4,5,6（窗口）
 保底    → 块 0-3 无条件标记为头部
 ```

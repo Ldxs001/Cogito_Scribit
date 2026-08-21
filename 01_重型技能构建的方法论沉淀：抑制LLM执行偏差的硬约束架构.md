@@ -61,7 +61,7 @@ LLM生成的内容在"意思"上是合理的（所以不是"幻觉"）。但在�
 
 **伪代码表示：**
 
-```
+```text
 Step {
     id: 唯一标识
     type: automation | manual | checkpoint
@@ -94,7 +94,7 @@ Step {
 
 **中断的执行方式**：
 
-```
+```text
 block(reason) {
     1. 输出阻断信号到stderr（避免被管道过滤）
     2. 同时输出阻断信号到stdout（双重保障）
@@ -129,7 +129,7 @@ block(reason) {
 
 **调用方的检查逻辑**：
 
-```
+```python
 output = stdout_content + stderr_content
 if "BLOCKED" in output or "阻断" in output:
     // 检测到阻断，挂起流程
@@ -145,7 +145,7 @@ if "BLOCKED" in output or "阻断" in output:
 
 **状态持久化的内容**：
 
-```
+```json
 {
     "blocked_at": "步骤X",
     "reason": "阻断原因",

@@ -144,6 +144,13 @@ hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
 .flow-cnode .flow-step { margin: 0; }
 .flow-cnode .flow-note { margin-top: .2em; }
 .flow-carr { align-self: center; color: #2a6fd6; font-weight: bold; font-size: 1.15em; }
+.flow-layers { margin: .8em 0; padding: .6em .8em;
+               background: #f4f6fa; border: 1px solid #ccc; border-radius: 8px; }
+.flow-layer { border: 1px solid #ccc; border-radius: 6px; margin: .5em 0;
+              padding: .4em .6em; background: #fafbfd; }
+.flow-layer-name { font-weight: bold; color: #2a6fd6; margin-bottom: .2em; }
+.flow-layer-item { line-height: 1.6; }
+.flow-layer-key { color: #555; font-weight: bold; margin-right: .3em; }
 .flow-cols { display: flex; gap: 1.2em; margin: .8em 0;
              padding: .7em .9em; background: #f4f6fa; border: 1px solid #ccc; border-radius: 8px; }
 .flow-col { flex: 1; min-width: 0; }

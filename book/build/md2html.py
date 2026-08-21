@@ -7,9 +7,13 @@
 """
 import re, html as html_mod
 
+def _escape_skip_entities(text):
+    """html.escape 但跳过已存在的 HTML 实体（如 &#124; &amp; &nbsp;）以避免双重转义"""
+    return re.sub(r'&(?!(?:#[0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]*);)', '&amp;', text)
+
 def _inline(text):
     """行内元素转换"""
-    t = html_mod.escape(text)
+    t = _escape_skip_entities(text)
     # 行内代码（先转义保护）
     code_spans = []
     def _save_code(m):

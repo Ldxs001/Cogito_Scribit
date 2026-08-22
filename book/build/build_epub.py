@@ -175,6 +175,16 @@ hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
 .flow-treegroup.lv4 { background: rgba(158,138,116,.10); }
 .flow-treegroup.lv5 { background: rgba(158,150,168,.10); }
 .flow-tree-row { padding: .08em 0; white-space: pre; }
+.flow-tree-row.lv1 { background: rgba(160,166,172,.07); }
+.flow-tree-row.lv2 { background: rgba(122,148,178,.07); }
+.flow-tree-row.lv3 { background: rgba(126,158,138,.07); }
+.flow-tree-row.lv4 { background: rgba(158,138,116,.07); }
+.flow-tree-row.lv5 { background: rgba(158,150,168,.07); }
+.flow-tnode.lv1 { background: rgba(160,166,172,.07); }
+.flow-tnode.lv2 { background: rgba(122,148,178,.07); }
+.flow-tnode.lv3 { background: rgba(126,158,138,.07); }
+.flow-tnode.lv4 { background: rgba(158,138,116,.07); }
+.flow-tnode.lv5 { background: rgba(158,150,168,.07); }
 .flow-tree-row .flow-tmark { color: #888; }
 .flow-cols { display: flex; gap: 1.2em; margin: .8em 0;
              padding: .7em .9em; background: #f4f6fa; border: 1px solid #ccc; border-radius: 8px; }

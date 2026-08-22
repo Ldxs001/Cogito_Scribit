@@ -231,7 +231,7 @@ def _chain_to_html(code):
     for i in range(n):
         out.append('<div class="flow-cnode">')
         if i < len(parts):
-            out.append(f'<div class="flow-step">{_split_chain_cell(parts[i])}</div>')
+            out.append(f'<div class="flow-step lv1">{_split_chain_cell(parts[i])}</div>')
         if i < len(notes):
             out.append(f'<div class="flow-note">{_inline_arrows(notes[i])}</div>')
         out.append('</div>')
@@ -315,6 +315,9 @@ def _tree_to_html(code):
             continue
         is_dir = text.endswith('/')
         cls = 'flow-tnode dir' if is_dir else 'flow-tnode'
+        # 层级色带：depth 0 = lv1（灰），每深一级 +1（全文统一层级色）
+        lv = min(depth + 1, 5)
+        cls += f' lv{lv}'
         indent = depth * 14
         out.append(f'<div class="{cls}" style="margin-left:{indent}px">'
                    f'<span class="flow-tmark">{mark_show}</span>'
@@ -348,7 +351,7 @@ def _multi_col_to_html(code):
                 cell = cells[c]
                 # 注释行（含括号）→ edge；纯文本（差距 A）→ note；含 → → step
                 if '→' in cell:
-                    out.append(f'<div class="flow-step">{_split_chain_cell(cell)}</div>')
+                    out.append(f'<div class="flow-step lv1">{_split_chain_cell(cell)}</div>')
                 elif '（' in cell or '(' in cell:
                     out.append(f'<div class="flow-edge">{_inline_arrows(cell)}</div>')
                 else:
@@ -445,8 +448,12 @@ def _is_flow_block(code, lang=''):
     真实代码语言标注（python/json/yaml/bash 等）= 代码，保持 pre。
     """
     if lang:
-        if lang in ('flow', 'cols', 'chain', 'tree', 'math'):
+        if lang in ('flow', 'cols', 'chain', 'math'):
             return lang  # 图类型标注：强制按指定类型解析
+        # 'tree'（结构树，无箭头）→ 按用户规范：保持代码块（pre）显示，
+        # 与"只有带箭头的树才渲染成图"一致；代码块本身就是整体一个框
+        if lang == 'tree':
+            return None
         if lang == 'ascii':
             pass  # 显式 ASCII 图标注 → 走自动检测（框线/箭头决定渲染类型）
         else:
@@ -467,9 +474,9 @@ def _is_flow_block(code, lang=''):
         if _is_chain_main(code):
             return 'chain'
         return 'flow'
-    # 3) 结构树形图（无箭头，含 ├──/└── 分支标记）→ HTML 树
-    if _is_tree(code):
-        return 'tree'
+    # 3) 结构树形图（无箭头，含 ├──/└── 分支标记）→ 按用户规范保持
+    #    代码块（pre）显示——只有带箭头的树才渲染成图，无箭头树是代码块
+    #    （代码块本身就是整体一个框，层级靠等宽连接线表达）
     # 4) 纯【】标记（模板/契约类，无箭头无框线）→ pre，不转图
     return None
 
@@ -498,17 +505,24 @@ def _flow_to_html(code):
 
     # 分支组聚合：同一父节点下的连续分支（可含多级）→ 一个组框
     # （层级嵌套框模型：框1{父节点} 框2{分支组}——组框背景 = 父层级+1，
-    #  框内保留连接线缩进，等宽字体，不再逐行卡片）
-    pending_group = []  # list of (html_text)
+    #  框内每行按连接线前缀列数叠加层级色带：行 lv = 组框 lv + 前缀列数//4，
+    #  树内每层一色，层级用色带表达，不逐行卡片）
+    pending_group = []  # list of (prefix_cols, html_text)
     last_step_lv = 1    # 最近一个非分支 step 的层级（组框 = 父层级+1）
 
     def flush_group():
         nonlocal last_step_lv
         if not pending_group:
             return
-        lv = min(last_step_lv + 1, 5)
-        rows = ''.join(f'<div class="flow-tree-row">{txt}</div>' for txt in pending_group)
-        out.append(f'<div class="flow-treegroup lv{lv}">{rows}</div>')
+        base_lv = min(last_step_lv + 1, 5)
+        rows = []
+        for cols, txt in pending_group:
+            lv = min(base_lv + cols // 4, 5)
+            rows.append(f'<div class="flow-tree-row lv{lv}">{txt}</div>')
+        # 组框整体按层级缩进（背景框统一缩进——框的位置表达层级，
+        # 框内行相对框顶格，与"层级 = 背景框缩进"规范一致）
+        indent = (base_lv - 1) * 14
+        out.append(f'<div class="flow-treegroup lv{base_lv}" style="margin-left:{indent}px">{"".join(rows)}</div>')
         pending_group.clear()
 
     for raw in code.split('\n'):
@@ -543,8 +557,8 @@ def _flow_to_html(code):
                     body = f'{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span>'
                 else:
                     body = _inline_arrows(content)
-                pending_group.append(
-                    f'<span class="flow-tmark">{html_mod.escape(prefix)}</span>{body}')
+                pending_group.append((mark_pos,
+                    f'<span class="flow-tmark">{html_mod.escape(prefix)}</span>{body}'))
             continue
         # 非分支行：先冲刷分支组
         flush_group()
@@ -572,7 +586,7 @@ def _flow_to_html(code):
         #      （内容"……"灰字），层级/缩进与同级内容完全一致
         if re.fullmatch(r'[.。·…]{2,}', l2):
             depth = (len(raw) - len(raw.lstrip())) // 2 * 14
-            out.append(f'<div class="flow-step ellipsis-step" style="margin-left:{depth}px">……</div>')
+            out.append(f'<div class="flow-step ellipsis-step lv{min(depth // 14 + 1, 5)}" style="margin-left:{depth}px">……</div>')
             continue
         # 4) 纯箭头/连接线行（剥框线后只剩箭头字符 → 箭头；只剩框线 → 丢弃）
         if all(c in box_chars + arrow_chars_all for c in l2):
@@ -588,10 +602,11 @@ def _flow_to_html(code):
         # 6) 行内箭头拆分（所有文本统一染色箭头）
         p1, p2 = _split_first_arrow(l2)
         last_step_lv = min(depth // 14 + 1, 5)
+        lv = last_step_lv
         if p2 is not None:
-            out.append(f'<div class="flow-step" style="margin-left:{depth}px">{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span></div>')
+            out.append(f'<div class="flow-step lv{lv}" style="margin-left:{depth}px">{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span></div>')
         else:
-            out.append(f'<div class="flow-step" style="margin-left:{depth}px">{_inline_arrows(l2)}</div>')
+            out.append(f'<div class="flow-step lv{lv}" style="margin-left:{depth}px">{_inline_arrows(l2)}</div>')
     flush_group()  # 结尾冲刷分支组
     out.append('</div>')
     return '\n'.join(out)
@@ -788,6 +803,17 @@ a:hover { text-decoration: underline; }
 .flow-tree-row { padding: .08rem 0; white-space: pre; }
 .flow-tree-row .flow-tmark { color: #888; }
 .flow-tree-row .flow-inline-arrow, .flow-tree-row .edge-fall { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+/* 树行层级色带（组框 lv + 行内前缀列数//4，每层一色） */
+.flow-tree-row.lv1 { background: rgba(160,166,172,.07); }
+.flow-tree-row.lv2 { background: rgba(122,148,178,.07); }
+.flow-tree-row.lv3 { background: rgba(126,158,138,.07); }
+.flow-tree-row.lv4 { background: rgba(158,138,116,.07); }
+.flow-tree-row.lv5 { background: rgba(158,150,168,.07); }
+.flow-tnode.lv1 { background: rgba(160,166,172,.07); }
+.flow-tnode.lv2 { background: rgba(122,148,178,.07); }
+.flow-tnode.lv3 { background: rgba(126,158,138,.07); }
+.flow-tnode.lv4 { background: rgba(158,138,116,.07); }
+.flow-tnode.lv5 { background: rgba(158,150,168,.07); }
 /* 结构树形图（文件树/目录树） */
 .flow-tree { margin: 1rem 0; padding: .6rem .9rem;
              background: rgba(128,128,128,.06);
@@ -848,6 +874,16 @@ a:hover { text-decoration: underline; }
   .flow-treegroup.lv4 { background: rgba(158,138,116,.16); }
   .flow-treegroup.lv5 { background: rgba(158,150,168,.16); }
   .flow-tree-row .flow-tmark { color: #666; }
+  .flow-tree-row.lv1 { background: rgba(160,166,172,.12); }
+  .flow-tree-row.lv2 { background: rgba(122,148,178,.12); }
+  .flow-tree-row.lv3 { background: rgba(126,158,138,.12); }
+  .flow-tree-row.lv4 { background: rgba(158,138,116,.12); }
+  .flow-tree-row.lv5 { background: rgba(158,150,168,.12); }
+  .flow-tnode.lv1 { background: rgba(160,166,172,.12); }
+  .flow-tnode.lv2 { background: rgba(122,148,178,.12); }
+  .flow-tnode.lv3 { background: rgba(126,158,138,.12); }
+  .flow-tnode.lv4 { background: rgba(158,138,116,.12); }
+  .flow-tnode.lv5 { background: rgba(158,150,168,.12); }
   .math-block { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-phase { color: #6ba4ff; }
 }

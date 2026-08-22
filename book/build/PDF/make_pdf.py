@@ -64,13 +64,6 @@ PRINT_CSS = """@page {
   hr, .flow-arrow { break-inside: avoid; break-before: avoid; break-after: avoid; }
   pre, .flow, .flow-tree, .flow-treegroup, .flow-cols, .flow-layers, table { break-inside: avoid; }
   .flow-step, .flow-layer, tr { break-inside: avoid; }
-  /* 目录点线引导 + 页码（target-counter 取各章目标页，Chromium 打印支持） */
-  .toc a { display: flex; align-items: baseline; color: inherit !important;
-           text-decoration: none !important; }
-  .toc a::before { content: ''; order: 2; flex: 1 1 auto;
-                   border-bottom: 1px dotted #999; margin: 0 .45em; }
-  .toc a::after { content: ' ' target-counter(attr(href), page);
-                  order: 3; flex-shrink: 0; color: #666; }
 }"""
 
 
@@ -182,52 +175,23 @@ def render_pdf():
     n = cover.page_count
     cover.close()
     body.close()
-    # 页码后处理：封面（第 1 页）无页码；从第 2 页起编号 1~N-1；
-    # 书籍规范——奇数页（右页）页码右下角，偶数页（左页）页码左下角
-    add_page_numbers(OUT)
-    # 目录点线引导 + 页码（Chromium 不支持 CSS target-counter，
-    # 由 PyMuPDF 后处理：提取目录行 → 搜索正文页号 → 画点线）
-    add_toc_dots(OUT)
+    # 后处理：先定位正文起始页（版权页 h1），页码从版权页 = 1 起
+    # （封面/目录无页码，书籍规范）；目录页加链接 + 点线 + PDF 书签
+    h1_page = find_h1_page(OUT)
+    add_page_numbers(OUT, h1_page)
+    add_toc_dots(OUT, h1_page)
     os.remove(BODY_PDF)
-    print(f'PDF 已生成（封面 + 正文 {n-1} 页 = 共 {n} 页，含页码 + 目录点线）:', OUT)
+    print(f'PDF 已生成（封面 + 正文 {n-1} 页 = 共 {n} 页，含页码/目录点线/书签）:', OUT)
     os.remove(TMP_HTML)  # 中间产物不留（可随时再生成）
     print('临时 HTML 已清理:', TMP_HTML)
 
 
-def add_page_numbers(path):
-    """在 PDF 底部 margin 区插入页码：奇页右下 / 偶页左下（外侧）。
-    封面页（第 1 页）不编号；页码 = 物理页号 - 1（目录起 = 1）。"""
+def find_h1_page(path):
+    """定位正文起始页：首个大字号（>15pt）"版权页"标题行。
+    标题可能被拆成单字 span，须按行合并判断。"""
     import fitz
     doc = fitz.open(path)
     total = doc.page_count
-    font = fitz.Font('helv')
-    for i in range(1, total):  # 跳过封面
-        page = doc[i]
-        n = i  # 页码 = 物理页号 - 1（i 从 1 起，物理第 2 页 = 页码 1）
-        w, h = page.rect.width, page.rect.height  # 595 x 842
-        text = str(n)
-        tw = font.text_length(text, fontsize=9)
-        y = h - 24  # 底部 margin 区（18mm≈51pt 内）
-        if n % 2 == 1:
-            x = w - 40 - tw  # 奇页（右页）右下角，靠外
-        else:
-            x = 40           # 偶页（左页）左下角，靠外
-        page.insert_text((x, y), text, fontname='helv', fontsize=9,
-                         color=(0.45, 0.45, 0.45))
-    doc.save(path, incremental=True, encryption=fitz.PDF_ENCRYPT_KEEP)
-    doc.close()
-    print(f'页码已插入（{total-1} 页，奇右偶左）')
-
-
-def add_toc_dots(path):
-    """目录点线引导 + 页码（Chromium 不支持 CSS target-counter()）。
-    流程：提取目录行（标题 + y）→ 在正文搜索各标题所在页 →
-    目录行尾部画虚线 + 页码。页码 = 物理页号 - 1（与正文页码一致）。"""
-    import fitz
-    doc = fitz.open(path)
-    total = doc.page_count
-    # 1) 找正文起始页（首个大字号"版权页"标题，>15pt 即 h1；
-    #    标题可能被拆成单字 span，须按行合并判断）
     h1_page = None
     for pi in range(1, total):
         d = doc[pi].get_text('dict')
@@ -246,12 +210,53 @@ def add_toc_dots(path):
                 break
         if h1_page:
             break
+    doc.close()
+    return h1_page
+
+
+def add_page_numbers(path, h1_page):
+    """在 PDF 底部 margin 区插入页码：奇页右下 / 偶页左下（外侧）。
+    封面 + 目录无页码；版权页 = 页码 1，之后递增。
+    页码奇偶 = 物理页奇偶（封面+目录共 8 页为偶，偏移一致）。"""
+    import fitz
+    doc = fitz.open(path)
+    total = doc.page_count
+    font = fitz.Font('helv')
+    for i in range(h1_page, total):
+        page = doc[i]
+        n = i - h1_page + 1  # 版权页 = 1
+        w, h = page.rect.width, page.rect.height  # 595 x 842
+        text = str(n)
+        tw = font.text_length(text, fontsize=9)
+        y = h - 24  # 底部 margin 区（18mm≈51pt 内）
+        if n % 2 == 1:
+            x = w - 40 - tw  # 奇页（右页）右下角，靠外
+        else:
+            x = 40           # 偶页（左页）左下角，靠外
+        page.insert_text((x, y), text, fontname='helv', fontsize=9,
+                         color=(0.45, 0.45, 0.45))
+    doc.save(path, incremental=True, encryption=fitz.PDF_ENCRYPT_KEEP)
+    doc.close()
+    print(f'页码已插入（{total-1} 页，奇右偶左）')
+
+
+def add_toc_dots(path, h1_page):
+    """目录点线引导 + 页码 + 链接 + PDF 书签。
+    Chromium 不支持 CSS target-counter() 且打印不生成内部链接/书签，
+    全部由 PyMuPDF 后处理：
+    1. 提取目录行（标题 + y）→ 在正文按"大字号标题行"匹配各标题所在页
+    2. 目录行尾部画虚线 + 页码（页码 = 目标页 - h1_page + 1，版权页 = 1）
+    3. 目录行加内部链接（点击跳转目标页）
+    4. 生成 PDF 书签大纲（l1 = 部/篇/附录，l2 = 小节；按缩进 x 判断层级）"""
+    import fitz
+    doc = fitz.open(path)
+    total = doc.page_count
     if h1_page is None:
         doc.close()
         print('目录点线：未找到正文起始页，跳过')
         return
-    # 2) 提取目录行（目录页 = 1..h1_page-1）
-    rows = []  # (page_idx, y, text)
+    # 1) 提取目录行（目录页 = 1..h1_page-1）
+    rows = []  # (page_idx, y_center, x0, x1, text)
     for pi in range(1, h1_page):
         d = doc[pi].get_text('dict')
         for b in d['blocks']:
@@ -261,17 +266,16 @@ def add_toc_dots(path):
                 s = ''.join(sp['text'] for sp in line['spans']).strip()
                 if s:
                     y = (line['bbox'][1] + line['bbox'][3]) / 2
-                    x_end = line['bbox'][2]
-                    rows.append((pi, y, x_end, s))
-    # 3) 正文标题匹配：逐行找"大字号标题行（≥12pt）以 key 开头"的页。
-    #    只匹配标题行，避免正文普通文本（9.4pt）里引用标题名造成误匹配。
-    #    顺序锚定：目录行顺序 = 正文顺序，目标页必须单调递增
-    #    （多篇共用的 l2 标题如"六、边界""延伸阅读"逐篇递增匹配）
+                    x0 = line['bbox'][0]
+                    x1 = line['bbox'][2]
+                    rows.append((pi, y, x0, x1, s))
+    # 2) 正文标题匹配（大字号标题行 + 顺序锚定）
     gray = (0.6, 0.6, 0.6)
     font = fitz.Font('helv')
     drawn = 0
-    last_target = h1_page - 1  # 允许第一个目录行匹配 h1_page
-    for pi, y, x_end, text in rows:
+    bookmarks = []  # (level, title, page_1based)
+    last_target = h1_page - 1
+    for pi, y, x0, x1, text in rows:
         key = text.replace(' ', '').replace('\u3000', '')[:14]
         if not key:
             continue
@@ -298,18 +302,29 @@ def add_toc_dots(path):
         last_target = target
         page = doc[pi]
         # 虚线：标题右端 → 页码左
-        x1 = min(x_end + 6, 400)
-        page.draw_line((x1, y), (532, y), color=gray, width=0.7,
+        dx1 = min(x1 + 6, 400)
+        page.draw_line((dx1, y), (532, y), color=gray, width=0.7,
                        dashes='[3 3] 0')
-        # 页码右对齐；target 是 0-based 页索引 = 页码（与 add_page_numbers 一致）
-        num = str(target)
+        # 页码右对齐；版权页 = 1
+        num = str(target - h1_page + 1)
         tw = font.text_length(num, fontsize=8.5)
-        page.insert_text((548 - tw, y + 3), num, fontname='helv',
+        px = 548 - tw
+        page.insert_text((px, y + 3), num, fontname='helv',
                          fontsize=8.5, color=(0.45, 0.45, 0.45))
+        # 目录行链接（点击跳转目标页顶部）
+        link_rect = fitz.Rect(x0 - 2, y - 8, 556, y + 8)
+        page.insert_link({'kind': fitz.LINK_GOTO, 'from': link_rect,
+                          'page': target, 'to': fitz.Point(0, 0)})
+        # 书签：l1 = x0 < 65（部/篇/附录），l2 = 缩进小节
+        level = 1 if x0 < 65 else 2
+        bookmarks.append([level, text, target + 1])
         drawn += 1
+    # 3) 写 PDF 书签大纲
+    if bookmarks:
+        doc.set_toc(bookmarks)
     doc.save(path, incremental=True, encryption=fitz.PDF_ENCRYPT_KEEP)
     doc.close()
-    print(f'目录点线已画（{drawn} 行）')
+    print(f'目录点线/链接/书签已生成（{drawn} 条）')
 
 
 if __name__ == '__main__':

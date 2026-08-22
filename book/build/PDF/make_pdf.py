@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 """《我思故我写》打印版 PDF 全流程生成脚本。
 
-流程：book/build/output/book.html → 打印版 HTML（去 dark / 思源黑体
-@font-face / 注入封面页 / 注入字体声明 / 打印 CSS）→ Playwright 渲染 PDF。
+流程：
+1. PIL 渲染封面 PNG（思源黑体 OTF 直接画入图片，150dpi A4）
+2. book/build/output/book.html → 打印版 HTML（去 dark / 思源黑体
+   @font-face / 打印 CSS）→ Playwright 渲染正文 PDF（@page 精确 18mm 边距）
+3. PyMuPDF 合并：封面页 + 正文页
 
-产物：book_print.pdf（思源黑体 Type3 矢量字形，零字体嵌入、零分发争议）
+产物：book_print.pdf（封面独立 PDF 页 + 正文 Type3 思源黑体矢量字形，
+零字体嵌入、零分发争议；封面与正文物理分离，不会互相污染）
 用法：cd book/build/PDF && python make_pdf.py
-前置：pip install playwright && python -m playwright install chromium
-      本目录须有 SourceHanSansSC-Regular/Medium/Bold.otf（@font-face 引用）
+前置：pip install playwright pillow pymupdf
+      python -m playwright install chromium
+      本目录须有 SourceHanSansSC-Regular/Medium/Bold.otf（封面 + @font-face）
 """
 import io
 import os
@@ -20,6 +25,7 @@ from playwright.sync_api import sync_playwright
 BASE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.normpath(os.path.join(BASE, '..', 'output', 'book.html'))
 TMP_HTML = os.path.join(BASE, 'book_print.tmp.html')
+BODY_PDF = os.path.join(BASE, 'book_print.body.pdf')
 OUT = os.path.join(BASE, 'book_print.pdf')
 
 FONT_BODY = '"SourceHanPrint", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif'
@@ -41,42 +47,76 @@ FONT_FACE = """@font-face {
   font-weight: bold;
 }"""
 
-PRINT_CSS = """@media print {
-  /* 封面独占一页（A4 内容高约 261mm，留余量防换页） */
-  .pdf-cover { min-height: 250mm; break-after: page; }
-  body { max-width: none; }
+PRINT_CSS = """@page {
+  size: A4;
+  margin: 18mm 16mm;
+}
+@media print {
+  /* 打印去掉 body padding/margin，边距由 @page 控制 */
+  body { padding: 0 !important; max-width: none; margin: 0 !important; }
   /* 书籍标准分页：版权页/序言/阅读指南/每篇/结语/附录各自独立起页 */
   h1 { break-before: page; }
+  /* 小节标题不落页末：标题与后续内容同页 */
+  h2, h3, h4 { break-after: avoid; }
+  /* 段落防孤立行（页首/页底最少 3 行） */
+  p, li { orphans: 3; widows: 3; }
+  /* 分隔线/修饰符不独占一页 */
+  hr, .flow-arrow { break-inside: avoid; break-before: avoid; break-after: avoid; }
   pre, .flow, .flow-tree, .flow-treegroup, .flow-cols, .flow-layers, table { break-inside: avoid; }
   .flow-step, .flow-layer, tr { break-inside: avoid; }
 }"""
 
-# 封面页：配色与原 cover.svg 一致（深蓝渐变 #12224A→#081630 + 金色标
-# #C9A45C + 浅字 #E8EDF8），字体全走 SourceHanPrint
-COVER = """<div class="pdf-cover">
-  <div class="pdf-cover-inner">
-    <div class="pdf-cover-kicker">COGITO · SCRIBO</div>
-    <div class="pdf-cover-title">我思故我写</div>
-    <div class="pdf-cover-sub">一本 AI 写成的书</div>
-    <div class="pdf-cover-sub2">AI 时代的方法论、边界与人类自洽</div>
-    <div class="pdf-cover-line"></div>
-    <div class="pdf-cover-meta">wUwproject · CC BY-SA 4.0 · 免费公开</div>
-    <div class="pdf-cover-ver">v1.1.0 · 2026 年 8 月</div>
-    <div class="pdf-cover-note">本书文字（含书名、标题、正文、图表标注）使用思源黑体（Source Han Sans SC）渲染，字体采用 SIL OFL 1.1 开源许可。</div>
-  </div>
-</div>"""
 
-COVER_CSS = """.pdf-cover { display: flex; align-items: center; justify-content: center; text-align: center;
-  background: linear-gradient(180deg, #12224A 0%, #081630 100%); color: #E8EDF8; }
-.pdf-cover-inner { width: 100%; }
-.pdf-cover-kicker { font-size: 22px; letter-spacing: .6em; color: #C9A45C; margin-bottom: 28px; font-weight: 500; }
-.pdf-cover-title { font-size: 64px; font-weight: bold; color: #E8EDF8; letter-spacing: .18em; margin-bottom: 20px; }
-.pdf-cover-sub { font-size: 26px; color: #D8DFEC; letter-spacing: .3em; margin-bottom: 10px; }
-.pdf-cover-sub2 { font-size: 18px; color: #96A5C3; letter-spacing: .12em; margin-bottom: 34px; }
-.pdf-cover-line { width: 200px; height: 1px; background: rgba(201,164,92,.55); margin: 0 auto 30px; }
-.pdf-cover-meta { font-size: 15px; color: #96A5C3; letter-spacing: .08em; margin-bottom: 8px; }
-.pdf-cover-ver { font-size: 13px; color: #7C8BB0; margin-bottom: 40px; }
-.pdf-cover-note { font-size: 10.5px; color: #8FA0BF; line-height: 1.7; padding: 0 8%; }"""
+def make_cover_png():
+    """PIL 渲染 A4 封面图（96dpi，794×1123，打印 72dpi 基准下已超清晰）
+    到 BASE/cover.jpg（JPEG q88 压缩，渐变图体积小 20 倍）。
+    配色与原 cover.svg 一致（深蓝渐变 #12224A→#081630 + 金色标 #C9A45C），
+    文字用思源黑体 OTF 直接画入图片（图片内文字，非字体分发）。"""
+    from PIL import Image, ImageDraw, ImageFont
+    W, H = 794, 1123  # A4 @96dpi
+    img = Image.new('RGB', (W, H))
+    draw = ImageDraw.Draw(img)
+    top = (18, 34, 74)   # #12224A
+    bot = (8, 22, 48)    # #081630
+    for y in range(H):
+        t = y / (H - 1)
+        draw.line([(0, y), (W, y)],
+                  fill=tuple(round(top[i] + (bot[i] - top[i]) * t) for i in range(3)))
+    reg = os.path.join(BASE, 'SourceHanSansSC-Regular.otf')
+    bold = os.path.join(BASE, 'SourceHanSansSC-Bold.otf')
+    medium = os.path.join(BASE, 'SourceHanSansSC-Medium.otf')
+    f_kicker = ImageFont.truetype(medium, 28)
+    f_title = ImageFont.truetype(bold, 76)
+    f_sub = ImageFont.truetype(reg, 35)
+    f_sub2 = ImageFont.truetype(reg, 24)
+    f_meta = ImageFont.truetype(reg, 19)
+    f_ver = ImageFont.truetype(reg, 17)
+    f_note = ImageFont.truetype(reg, 13)
+    GOLD = (201, 164, 92)
+    LIGHT = (232, 237, 248)
+    SUB = (216, 223, 236)
+    SUB2 = (150, 165, 195)
+    META = (150, 165, 195)
+    VER = (124, 139, 176)
+    NOTE = (143, 160, 191)
+
+    def center(text, font, y, fill):
+        w = draw.textlength(text, font=font)
+        draw.text(((W - w) / 2, y), text, font=font, fill=fill)
+
+    center('COGITO · SCRIBO', f_kicker, 166, GOLD)
+    center('我思故我写', f_title, 243, LIGHT)
+    center('一本 AI 写成的书', f_sub, 378, SUB)
+    center('AI 时代的方法论、边界与人类自洽', f_sub2, 442, SUB2)
+    draw.line([(W / 2 - 115, 512), (W / 2 + 115, 512)], fill=(201, 164, 92, 140), width=2)
+    center('wUwproject · CC BY-SA 4.0 · 免费公开', f_meta, 851, META)
+    center('v1.1.0 · 2026 年 8 月', f_ver, 909, VER)
+    note = '本书文字（含书名、标题、正文、图表标注）使用思源黑体（Source Han Sans SC）渲染，字体采用 SIL OFL 1.1 开源许可。'
+    nw = draw.textlength(note, font=f_note)
+    draw.text(((W - nw) / 2, 1037), note, font=f_note, fill=NOTE)
+    out = os.path.join(BASE, 'cover.jpg')
+    img.save(out, 'JPEG', quality=88)
+    print('封面 JPEG 已生成:', out)
 
 
 def build_print_html():
@@ -88,17 +128,14 @@ def build_print_html():
     t = t.replace('"PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif', FONT_BODY)
     t = t.replace('Consolas, "Courier New", monospace', FONT_MONO)
     t = t.replace('"PingFang SC", "Microsoft YaHei"', FONT_BODY)  # 兜底形态
-    # 3) 注入 @font-face + 封面 CSS + 打印 CSS
-    t = t.replace('</style>', FONT_FACE + '\n' + COVER_CSS + '\n' + PRINT_CSS + '\n</style>', 1)
-    # 4) 注入封面页（body 开头，TOC 之前）
-    t = re.sub(r'(<body[^>]*>)', r'\1\n' + COVER, t, count=1)
+    # 3) 注入 @font-face + 打印 CSS
+    t = t.replace('</style>', FONT_FACE + '\n' + PRINT_CSS + '\n</style>', 1)
     with io.open(TMP_HTML, 'w', encoding='utf-8', newline='\n') as f:
         f.write(t)
     print('打印版 HTML 已生成:', TMP_HTML)
     print('dark 块残留:', '@media (prefers-color-scheme: dark)' in t,
-          '| YaHei 残留:', 'Microsoft YaHei' in t,
-          '| 封面注入:', 'pdf-cover-title' in t,
-          '| 声明注入:', 'SIL OFL 1.1' in t)
+          '| YaHei 残留(回退链内):', 'Microsoft YaHei' in t,
+          '| @page CSS:', '@page {' in t)
 
 
 def render_pdf():
@@ -117,15 +154,28 @@ def render_pdf():
             return used.slice(0, 10);
         }''')
         print('已加载字体:', fonts)
-        page.pdf(path=OUT, format='A4',
-                 margin={'top': '18mm', 'bottom': '18mm', 'left': '16mm', 'right': '16mm'},
+        page.pdf(path=BODY_PDF, prefer_css_page_size=True,
                  print_background=True)
         browser.close()
-    print('PDF 已生成:', OUT)
+    # 合并：封面页（PIL PNG → A4 页）置于正文前
+    import fitz
+    cover_jpg = os.path.join(BASE, 'cover.jpg')
+    body = fitz.open(BODY_PDF)
+    cover = fitz.open()
+    page = cover.new_page(width=595, height=842)  # A4 pt
+    page.insert_image(fitz.Rect(0, 0, 595, 842), filename=cover_jpg)
+    cover.insert_pdf(body)
+    cover.save(OUT)
+    n = cover.page_count
+    cover.close()
+    body.close()
+    os.remove(BODY_PDF)
+    print(f'PDF 已生成（封面 + 正文 {n-1} 页 = 共 {n} 页）:', OUT)
     os.remove(TMP_HTML)  # 中间产物不留（可随时再生成）
     print('临时 HTML 已清理:', TMP_HTML)
 
 
 if __name__ == '__main__':
+    make_cover_png()
     build_print_html()
     render_pdf()

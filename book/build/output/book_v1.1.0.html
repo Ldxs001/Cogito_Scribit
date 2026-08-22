@@ -108,6 +108,17 @@ a:hover { text-decoration: underline; }
 .flow-tree-row { padding: .08rem 0; white-space: pre; }
 .flow-tree-row .flow-tmark { color: #888; }
 .flow-tree-row .flow-inline-arrow, .flow-tree-row .edge-fall { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+/* 树行层级色带（组框 lv + 行内前缀列数//4，每层一色） */
+.flow-tree-row.lv1 { background: rgba(160,166,172,.07); }
+.flow-tree-row.lv2 { background: rgba(122,148,178,.07); }
+.flow-tree-row.lv3 { background: rgba(126,158,138,.07); }
+.flow-tree-row.lv4 { background: rgba(158,138,116,.07); }
+.flow-tree-row.lv5 { background: rgba(158,150,168,.07); }
+.flow-tnode.lv1 { background: rgba(160,166,172,.07); }
+.flow-tnode.lv2 { background: rgba(122,148,178,.07); }
+.flow-tnode.lv3 { background: rgba(126,158,138,.07); }
+.flow-tnode.lv4 { background: rgba(158,138,116,.07); }
+.flow-tnode.lv5 { background: rgba(158,150,168,.07); }
 /* 结构树形图（文件树/目录树） */
 .flow-tree { margin: 1rem 0; padding: .6rem .9rem;
              background: rgba(128,128,128,.06);
@@ -168,6 +179,16 @@ a:hover { text-decoration: underline; }
   .flow-treegroup.lv4 { background: rgba(158,138,116,.16); }
   .flow-treegroup.lv5 { background: rgba(158,150,168,.16); }
   .flow-tree-row .flow-tmark { color: #666; }
+  .flow-tree-row.lv1 { background: rgba(160,166,172,.12); }
+  .flow-tree-row.lv2 { background: rgba(122,148,178,.12); }
+  .flow-tree-row.lv3 { background: rgba(126,158,138,.12); }
+  .flow-tree-row.lv4 { background: rgba(158,138,116,.12); }
+  .flow-tree-row.lv5 { background: rgba(158,150,168,.12); }
+  .flow-tnode.lv1 { background: rgba(160,166,172,.12); }
+  .flow-tnode.lv2 { background: rgba(122,148,178,.12); }
+  .flow-tnode.lv3 { background: rgba(126,158,138,.12); }
+  .flow-tnode.lv4 { background: rgba(158,138,116,.12); }
+  .flow-tnode.lv5 { background: rgba(158,150,168,.12); }
   .math-block { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-phase { color: #6ba4ff; }
 }
@@ -227,13 +248,13 @@ a:hover { text-decoration: underline; }
 <table><thead><tr><th>你是谁</th><th>读什么</th><th>路径</th></tr></thead><tbody><tr><td>用 LLM 构建工具的工程师</td><td>第 I 部（约束）+ 第 II 部（协作）</td><td>01→07 → 08 → 08a → 08b → 08c</td></tr><tr><td>想知道方法论能走多远的人</td><td>第 III 部（边界）</td><td>09 → 09a~09e</td></tr><tr><td>AI 时代的思考者</td><td>第 IV 部（重估）</td><td>10 → 10a</td></tr><tr><td>想一次读完整个体系的人</td><td>全部四部</td><td>01 → 10a（推荐顺序）</td></tr></tbody></table>
 <h2 id="h17">四部路线</h2>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">第 I 部 约束（01-07）   "LLM 不听话怎么办"——用架构约束它</div>
-<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 单技能可靠之后</div>
-<div class="flow-step" style="margin-left:0px">第 II 部 协作（08-08c） "多个智能体怎么配合"——LLM 只填空，不决策</div>
-<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 体系成型之后</div>
-<div class="flow-step" style="margin-left:0px">第 III 部 边界（09-09e）"这套规则能走多远"——穷举是宿命，边界由人画</div>
-<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 从工程退一步</div>
-<div class="flow-step" style="margin-left:0px">第 IV 部 重估（10-10a） "让渡之后人还剩什么"——判断与划界权</div>
+<div class="flow-step lv1" style="margin-left:0px">第 I 部 约束（01-07）   "LLM 不听话怎么办"——用架构约束它</div>
+<div class="flow-step lv3" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 单技能可靠之后</div>
+<div class="flow-step lv1" style="margin-left:0px">第 II 部 协作（08-08c） "多个智能体怎么配合"——LLM 只填空，不决策</div>
+<div class="flow-step lv3" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 体系成型之后</div>
+<div class="flow-step lv1" style="margin-left:0px">第 III 部 边界（09-09e）"这套规则能走多远"——穷举是宿命，边界由人画</div>
+<div class="flow-step lv3" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 从工程退一步</div>
+<div class="flow-step lv1" style="margin-left:0px">第 IV 部 重估（10-10a） "让渡之后人还剩什么"——判断与划界权</div>
 </div>
 <h2 id="h18">篇目速查</h2>
 <table><thead><tr><th>篇</th><th>主题</th><th>一句话</th></tr></thead><tbody><tr><td>01</td><td>硬约束架构</td><td>多步骤流程中，LLM 的"自觉"是负资产</td></tr><tr><td>02</td><td>构建时契约</td><td>用五层契约锁定技能的"正确形态"</td></tr><tr><td>03</td><td>递归自举</td><td>方法论不约束自己，就没有约束任何东西的资格</td></tr><tr><td>04</td><td>技能流水线编排</td><td>LLM 从"大脑"降级为"胶水"</td></tr><tr><td>05</td><td>链驱动执行</td><td>链是主体，LLM 只做两头（前处理+输出整理），中间确定性执行</td></tr><tr><td>06</td><td>领域智能体</td><td>LLM 承担"查询策略规划者"（规划=语义标注，策略=算法穷举），组合式检索</td></tr><tr><td>07</td><td>四条原则元逻辑</td><td>架构的减法与约束的加法</td></tr><tr><td>08</td><td>有限决策范式</td><td>LLM 只填空，不决策（三体印证）</td></tr><tr><td>08a</td><td>操作层</td><td>前置规范 > 后置验证；最小尝试次数的分工与监督</td></tr><tr><td>08b</td><td>填空的边界</td><td>空的收束、U型注意力与验证的分工——填空能填多小</td></tr><tr><td>08c</td><td>槽位的减法</td><td>三种场景的幻觉治理路径与四个论断——槽位会不会逼 LLM 编造</td></tr><tr><td>09</td><td>边界篇</td><td>穷举的宿命——稳定与随机的悖论</td></tr><tr><td>09a</td><td>检索层注脚</td><td>探测的边界——RAG 检索鲁棒性的取舍</td></tr><tr><td>09b</td><td>推动层注脚</td><td>配置推动的穷举一致性——统一推动点位与误差的哲学</td></tr><tr><td>09c</td><td>语义层注脚</td><td>天然不对等与噪音抑制——语义匹配范式的不对等困境与推理免疫</td></tr><tr><td>09d</td><td>颗粒度注脚</td><td>细碎处理与区域重构的成本切割——颗粒度与对齐的悖论</td></tr><tr><td>09e</td><td>精度层注脚</td><td>提示词拉扯的边界——概率曲线的形状工程与定性精度的空耗</td></tr><tr><td>10</td><td>认知重估</td><td>判断的让渡与翻译的打通——两种力气活的终结</td></tr><tr><td>10a</td><td>伦理牢笼</td><td>割圆术的边界——伦理牢笼与 AI 的宿命</td></tr></tbody></table>
@@ -333,11 +354,11 @@ if &quot;BLOCKED&quot; in output or &quot;阻断&quot; in output:
 }</code></pre>
 <p><strong>恢复路径</strong>：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">正常执行 <span class="flow-inline-arrow">→</span> <span class="edge-fall">发生阻断 <span class="flow-inline-arrow">→</span> 写入锁文件 <span class="flow-inline-arrow">→</span> 进程退出(2)</span></div>
+<div class="flow-step lv1" style="margin-left:0px">正常执行 <span class="flow-inline-arrow">→</span> <span class="edge-fall">发生阻断 <span class="flow-inline-arrow">→</span> 写入锁文件 <span class="flow-inline-arrow">→</span> 进程退出(2)</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">（外部修复问题）</div>
+<div class="flow-step lv1" style="margin-left:0px">（外部修复问题）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">重新执行，传入恢复参数 <span class="flow-inline-arrow">→</span> <span class="edge-fall">读取锁文件 <span class="flow-inline-arrow">→</span> 跳过已完成步骤 <span class="flow-inline-arrow">→</span> 从阻断点继续</span></div>
+<div class="flow-step lv1" style="margin-left:0px">重新执行，传入恢复参数 <span class="flow-inline-arrow">→</span> <span class="edge-fall">读取锁文件 <span class="flow-inline-arrow">→</span> 跳过已完成步骤 <span class="flow-inline-arrow">→</span> 从阻断点继续</span></div>
 </div>
 <p><strong>这要求执行引擎具备以下能力</strong>：</p>
 <ol><li>能识别"恢复执行"模式（通过特定参数）</li><li>能读取并解析锁文件中的状态</li><li>能跳过已完成步骤，不从第一步重新开始</li><li>在恢复完成后清理锁文件</li></ol>
@@ -397,17 +418,17 @@ if &quot;BLOCKED&quot; in output or &quot;阻断&quot; in output:
 <ol><li><strong>步骤原子化</strong>：把任务拆成不可再分的最小单元，LLM只负责填值</li><li><strong>硬中断替代软约束</strong>：用进程终止代替文本警告</li><li><strong>双通道信号传输</strong>：stdout + stderr + 文件系统，确保阻断信号不丢失</li><li><strong>阻断→挂起→恢复循环</strong>：避免从头重跑，降低中断成本</li><li><strong>五层准入门槛</strong>：不规范的执行单元根本进不了系统</li></ol>
 <h3 id="h47">5.3 一个完整的架构范式</h3>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">输入（自然语言）</div>
+<div class="flow-step lv1" style="margin-left:0px">输入（自然语言）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">[拆解] 将任务拆解为Step，每个Step有明确的输入输出契约</div>
+<div class="flow-step lv1" style="margin-left:0px">[拆解] 将任务拆解为Step，每个Step有明确的输入输出契约</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">[编排] 确定Step之间的顺序和依赖关系</div>
+<div class="flow-step lv1" style="margin-left:0px">[编排] 确定Step之间的顺序和依赖关系</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">[执行] 按序执行Step，每个Step执行后检查产出是否符合契约</div>
+<div class="flow-step lv1" style="margin-left:0px">[执行] 按序执行Step，每个Step执行后检查产出是否符合契约</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">[中断] 如产出不符合契约，写入锁文件，终止进程</div>
+<div class="flow-step lv1" style="margin-left:0px">[中断] 如产出不符合契约，写入锁文件，终止进程</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">[恢复] 修复问题后，通过特定参数从锁文件记录的位置继续</div>
+<div class="flow-step lv1" style="margin-left:0px">[恢复] 修复问题后，通过特定参数从锁文件记录的位置继续</div>
 </div>
 <h3 id="h48">5.4 一句可复用的话</h3>
 <blockquote><strong>把LLM的活动空间压缩到"填空题/选择题"的狭窄闸口内，用代码级硬中断在边界处拦截越界行为，用锁文件和恢复参数支持中断后的续跑。</strong></blockquote>
@@ -484,15 +505,13 @@ if &quot;BLOCKED&quot; in output or &quot;阻断&quot; in output:
 <p><strong>为什么数据必须集中管理</strong>：</p>
 <ul><li>技能可能被重新部署，内部数据会丢失</li><li>多个技能的数据需要统一清理、备份</li><li>01 的硬中断机制需要检查产出物，需要知道产出物的位置</li></ul>
 <p><strong>数据目录的固定结构</strong>：</p>
-<div class="flow-tree">
-<div class="flow-tnode dir" style="margin-left:0px"><span class="flow-tmark"></span><span class="flow-ttext">{data_dir}/</span></div>
-<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">.state.json      # 运行状态（脚本维护，不可手工编辑）</span></div>
-<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">.lock            # 锁文件（running/blocked）</span></div>
-<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">.remaining.json  # 阻断时的问题清单</span></div>
-<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">outputs/         # 最终产物</span></div>
-<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">logs/            # 运行日志</span></div>
-<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">└──</span><span class="flow-ttext">temp/            # 临时文件</span></div>
-</div>
+<pre><code>{data_dir}/
+├── .state.json      # 运行状态（脚本维护，不可手工编辑）
+├── .lock            # 锁文件（running/blocked）
+├── .remaining.json  # 阻断时的问题清单
+├── outputs/         # 最终产物
+├── logs/            # 运行日志
+└── temp/            # 临时文件</code></pre>
 <p><strong>状态文件的脚本化操作</strong>：</p>
 <ul><li>状态文件不能手工编辑，只能通过脚本操作（init、update、complete）</li><li>这保证了状态变更的可追溯性</li><li>也避免了手工编辑导致的状态不一致</li></ul>
 <h2 id="h63">四、契约的强制力来源</h2>
@@ -515,56 +534,55 @@ if &quot;BLOCKED&quot; in output or &quot;阻断&quot; in output:
 <p>完整控制循环如下：</p>
 <div class="flow">
 <div class="flow-phase">【构建阶段】</div>
-<div class="flow-step" style="margin-left:28px">开发者创建技能</div>
+<div class="flow-step lv1" style="margin-left:0px">开发者创建技能</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">按照五层契约填充结构声明</div>
+<div class="flow-step lv1" style="margin-left:0px">按照五层契约填充结构声明</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">接入校验（自动执行）</div>
-<div class="flow-treegroup lv4"><div class="flow-tree-row"><span class="flow-tmark">        ├─</span>L1-L5全部完整 <span class="flow-inline-arrow">→</span> <span class="edge-fall">继续</span></div><div class="flow-tree-row"><span class="flow-tmark">        └─</span>任何一层不完整 <span class="flow-inline-arrow">→</span> <span class="edge-fall">拒绝接入，返回修复指引</span></div></div>
+<div class="flow-step lv1" style="margin-left:0px">接入校验（自动执行）</div>
+<div class="flow-treegroup lv2" style="margin-left:14px"><div class="flow-tree-row lv2"><span class="flow-tmark">  ├─</span>L1-L5全部完整 <span class="flow-inline-arrow">→</span> <span class="edge-fall">继续</span></div><div class="flow-tree-row lv2"><span class="flow-tmark">  └─</span>任何一层不完整 <span class="flow-inline-arrow">→</span> <span class="edge-fall">拒绝接入，返回修复指引</span></div></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">技能接入系统，契约被持久化存储</div>
+<div class="flow-step lv1" style="margin-left:0px">技能接入系统，契约被持久化存储</div>
 <div class="flow-arrow">↓</div>
 <div class="flow-phase">【执行阶段】</div>
-<div class="flow-step" style="margin-left:28px">上层系统调度技能</div>
+<div class="flow-step lv1" style="margin-left:0px">上层系统调度技能</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">系统读取技能的契约声明（全部五层）</div>
+<div class="flow-step lv1" style="margin-left:0px">系统读取技能的契约声明（全部五层）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">按契约中的触发条件（L2）确认是否应该调用</div>
+<div class="flow-step lv1" style="margin-left:0px">按契约中的触发条件（L2）确认是否应该调用</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">按契约中的步骤顺序开始执行</div>
+<div class="flow-step lv1" style="margin-left:0px">按契约中的步骤顺序开始执行</div>
 <div class="flow-arrow">↓</div>
 <div class="flow-phase">【每步执行循环】</div>
-<div class="flow-step" style="margin-left:28px">步骤N开始前：</div>
-<div class="flow-step" style="margin-left:28px">检查上一步的状态（L3硬约束）</div>
-<div class="flow-treegroup lv4"><div class="flow-tree-row"><span class="flow-tmark">    │    └─</span>上一步已完成 <span class="flow-inline-arrow">→</span> <span class="edge-fall">继续</span></div><div class="flow-tree-row"><span class="flow-tmark">    │    └─</span>上一步未REVIEW <span class="flow-inline-arrow">→</span> <span class="edge-fall">触发中断</span></div></div>
-<div class="flow-step" style="margin-left:28px">执行步骤N</div>
-<div class="flow-step" style="margin-left:28px">步骤N完成后：</div>
-<div class="flow-step" style="margin-left:28px">检查产出物格式（L3硬约束）</div>
-<div class="flow-treegroup lv4"><div class="flow-tree-row"><span class="flow-tmark">    │    └─</span>符合声明格式 <span class="flow-inline-arrow">→</span> <span class="edge-fall">继续</span></div><div class="flow-tree-row"><span class="flow-tmark">    │    └─</span>不符合声明格式 <span class="flow-inline-arrow">→</span> <span class="edge-fall">触发中断</span></div></div>
-<div class="flow-step" style="margin-left:28px">检查数据位置（L5数据声明）</div>
-<div class="flow-treegroup lv4"><div class="flow-tree-row"><span class="flow-tmark">    │    └─</span>在声明的data_dir内 <span class="flow-inline-arrow">→</span> <span class="edge-fall">继续</span></div><div class="flow-tree-row"><span class="flow-tmark">    │    └─</span>在data_dir外 <span class="flow-inline-arrow">→</span> <span class="edge-fall">触发中断</span></div></div>
-<div class="flow-step" style="margin-left:28px">推进前检查：</div>
-<div class="flow-step" style="margin-left:28px">重试计数是否≥3（L3硬约束）</div>
-<div class="flow-treegroup lv4"><div class="flow-tree-row"><span class="flow-tmark">    │      └─</span><3 <span class="flow-inline-arrow">→</span> <span class="edge-fall">继续</span></div><div class="flow-tree-row"><span class="flow-tmark">    │      └─</span>≥3 <span class="flow-inline-arrow">→</span> <span class="edge-fall">触发中断</span></div></div>
-<div class="flow-step" style="margin-left:28px">空转计数是否≥3（L3硬约束）</div>
-<div class="flow-treegroup lv4"><div class="flow-tree-row"><span class="flow-tmark">    │      └─</span><3 <span class="flow-inline-arrow">→</span> <span class="edge-fall">继续</span></div><div class="flow-tree-row"><span class="flow-tmark">    │      └─</span>≥3 <span class="flow-inline-arrow">→</span> <span class="edge-fall">触发中断</span></div></div>
-<div class="flow-arrow">↓</div>
+<div class="flow-step lv1" style="margin-left:0px">步骤N开始前：</div>
+<div class="flow-step lv2" style="margin-left:14px">检查上一步的状态（L3硬约束）</div>
+<div class="flow-treegroup lv3" style="margin-left:28px"><div class="flow-tree-row lv4"><span class="flow-tmark">    ├─</span>上一步已完成 <span class="flow-inline-arrow">→</span> <span class="edge-fall">继续</span></div><div class="flow-tree-row lv4"><span class="flow-tmark">    └─</span>上一步未REVIEW <span class="flow-inline-arrow">→</span> <span class="edge-fall">触发中断</span></div></div>
+<div class="flow-step lv1" style="margin-left:0px">执行步骤N</div>
+<div class="flow-step lv1" style="margin-left:0px">步骤N完成后：</div>
+<div class="flow-step lv2" style="margin-left:14px">检查产出物格式（L3硬约束）</div>
+<div class="flow-treegroup lv3" style="margin-left:28px"><div class="flow-tree-row lv4"><span class="flow-tmark">    ├─</span>符合声明格式 <span class="flow-inline-arrow">→</span> <span class="edge-fall">继续</span></div><div class="flow-tree-row lv4"><span class="flow-tmark">    └─</span>不符合声明格式 <span class="flow-inline-arrow">→</span> <span class="edge-fall">触发中断</span></div></div>
+<div class="flow-step lv2" style="margin-left:14px">检查数据位置（L5数据声明）</div>
+<div class="flow-treegroup lv3" style="margin-left:28px"><div class="flow-tree-row lv4"><span class="flow-tmark">    ├─</span>在声明的data_dir内 <span class="flow-inline-arrow">→</span> <span class="edge-fall">继续</span></div><div class="flow-tree-row lv4"><span class="flow-tmark">    └─</span>在data_dir外 <span class="flow-inline-arrow">→</span> <span class="edge-fall">触发中断</span></div></div>
+<div class="flow-step lv1" style="margin-left:0px">推进前检查：</div>
+<div class="flow-step lv2" style="margin-left:14px">重试计数是否≥3（L3硬约束）</div>
+<div class="flow-treegroup lv3" style="margin-left:28px"><div class="flow-tree-row lv4"><span class="flow-tmark">    ├─</span><3 <span class="flow-inline-arrow">→</span> <span class="edge-fall">继续</span></div><div class="flow-tree-row lv4"><span class="flow-tmark">    └─</span>≥3 <span class="flow-inline-arrow">→</span> <span class="edge-fall">触发中断</span></div></div>
+<div class="flow-step lv2" style="margin-left:14px">空转计数是否≥3（L3硬约束）</div>
+<div class="flow-treegroup lv3" style="margin-left:28px"><div class="flow-tree-row lv4"><span class="flow-tmark">    ├─</span><3 <span class="flow-inline-arrow">→</span> <span class="edge-fall">继续</span></div><div class="flow-tree-row lv4"><span class="flow-tmark">    └─</span>≥3 <span class="flow-inline-arrow">→</span> <span class="edge-fall">触发中断</span></div></div>
 <div class="flow-phase">【硬中断触发时】</div>
-<div class="flow-step" style="margin-left:28px">写入锁文件（含阻断位置、原因、上下文）</div>
-<div class="flow-step" style="margin-left:28px">输出阻断信号到stderr（不被管道过滤）</div>
-<div class="flow-step" style="margin-left:28px">输出阻断信号到stdout（双重保障）</div>
-<div class="flow-step" style="margin-left:28px">进程退出，退出码=2</div>
+<div class="flow-step lv1" style="margin-left:0px">写入锁文件（含阻断位置、原因、上下文）</div>
+<div class="flow-step lv1" style="margin-left:0px">输出阻断信号到stderr（不被管道过滤）</div>
+<div class="flow-step lv1" style="margin-left:0px">输出阻断信号到stdout（双重保障）</div>
+<div class="flow-step lv1" style="margin-left:0px">进程退出，退出码=2</div>
 <div class="flow-arrow">↓</div>
 <div class="flow-phase">【恢复阶段】</div>
-<div class="flow-step" style="margin-left:28px">外部（开发者/上层调度器）读取锁文件</div>
-<div class="flow-step" style="margin-left:28px">修复问题</div>
-<div class="flow-step" style="margin-left:28px">传入--continue参数重新执行</div>
-<div class="flow-step" style="margin-left:28px">系统读取锁文件，跳过已完成步骤</div>
-<div class="flow-step" style="margin-left:28px">从阻断点继续执行</div>
+<div class="flow-step lv1" style="margin-left:0px">外部（开发者/上层调度器）读取锁文件</div>
+<div class="flow-step lv1" style="margin-left:0px">修复问题</div>
+<div class="flow-step lv1" style="margin-left:0px">传入--continue参数重新执行</div>
+<div class="flow-step lv1" style="margin-left:0px">系统读取锁文件，跳过已完成步骤</div>
+<div class="flow-step lv1" style="margin-left:0px">从阻断点继续执行</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">（回到"每步执行循环"，直到全部完成）</div>
+<div class="flow-step lv1" style="margin-left:0px">（回到"每步执行循环"，直到全部完成）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">全部步骤完成 <span class="flow-inline-arrow">→</span> <span class="edge-fall">清理锁文件 <span class="flow-inline-arrow">→</span> 任务结束</span></div>
+<div class="flow-step lv1" style="margin-left:0px">全部步骤完成 <span class="flow-inline-arrow">→</span> <span class="edge-fall">清理锁文件 <span class="flow-inline-arrow">→</span> 任务结束</span></div>
 </div>
 <h3 id="h69">5.2 两篇方法论的职责分工</h3>
 <table><thead><tr><th></th><th>02（契约）</th><th>01（硬中断）</th></tr></thead><tbody><tr><td><strong>作用阶段</strong></td><td>构建时</td><td>运行时</td></tr><tr><td><strong>核心动作</strong></td><td>声明、校验、存储</td><td>读取、对照、拦截</td></tr><tr><td><strong>产出</strong></td><td>技能的"规格说明书"</td><td>阻断信号+锁文件</td></tr><tr><td><strong>判断依据</strong></td><td>结构是否完整</td><td>执行是否偏离契约</td></tr><tr><td><strong>失败后果</strong></td><td>技能无法接入系统</td><td>技能中断执行</td></tr><tr><td><strong>修复方式</strong></td><td>补齐缺失的声明</td><td>修复偏离的行为</td></tr></tbody></table>
@@ -603,23 +621,23 @@ if &quot;BLOCKED&quot; in output or &quot;阻断&quot; in output:
 <h3 id="h81">7.3 两篇方法论的完整关系图</h3>
 <div class="flow">
 <div class="flow-phase">【构建阶段】</div>
-<div class="flow-step" style="margin-left:28px">开发者按照五层契约构建技能</div>
+<div class="flow-step lv3" style="margin-left:28px">开发者按照五层契约构建技能</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">契约被自动校验</div>
+<div class="flow-step lv3" style="margin-left:28px">契约被自动校验</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">通过校验 <span class="flow-inline-arrow">→</span> <span class="edge-fall">接入系统</span></div>
+<div class="flow-step lv3" style="margin-left:28px">通过校验 <span class="flow-inline-arrow">→</span> <span class="edge-fall">接入系统</span></div>
 <div class="flow-arrow">↓</div>
 <div class="flow-phase">【运行阶段】</div>
-<div class="flow-step" style="margin-left:28px">技能被调度执行</div>
+<div class="flow-step lv3" style="margin-left:28px">技能被调度执行</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">硬中断机制对照契约检查每一步</div>
+<div class="flow-step lv3" style="margin-left:28px">硬中断机制对照契约检查每一步</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">偏离契约 <span class="flow-inline-arrow">→</span> <span class="edge-fall">阻断进程 <span class="flow-inline-arrow">→</span> 挂起 <span class="flow-inline-arrow">→</span> 等待修复后恢复</span></div>
+<div class="flow-step lv3" style="margin-left:28px">偏离契约 <span class="flow-inline-arrow">→</span> <span class="edge-fall">阻断进程 <span class="flow-inline-arrow">→</span> 挂起 <span class="flow-inline-arrow">→</span> 等待修复后恢复</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:28px">全部通过 <span class="flow-inline-arrow">→</span> <span class="edge-fall">任务完成</span></div>
+<div class="flow-step lv3" style="margin-left:28px">全部通过 <span class="flow-inline-arrow">→</span> <span class="edge-fall">任务完成</span></div>
 <div class="flow-arrow">↓</div>
 <div class="flow-phase">【反馈循环】</div>
-<div class="flow-step" style="margin-left:28px">阻断时暴露的问题 <span class="flow-inline-arrow">→</span> <span class="edge-fall">回溯到契约定义不完善处 <span class="flow-inline-arrow">→</span> 调整契约</span></div>
+<div class="flow-step lv3" style="margin-left:28px">阻断时暴露的问题 <span class="flow-inline-arrow">→</span> <span class="edge-fall">回溯到契约定义不完善处 <span class="flow-inline-arrow">→</span> 调整契约</span></div>
 </div>
 <hr/>
 <h1 id="h82">第 I 部 · 03｜重型技能构建的方法论沉淀：递归自举的元验证范式</h1>
@@ -648,28 +666,28 @@ if &quot;BLOCKED&quot; in output or &quot;阻断&quot; in output:
 <p><strong>基本判断</strong>：如果一个工具审计其他技能的规则不能应用于自身，那么当这个工具被修改时，修改的质量无法被保证。审计引擎自身的退化会直接导致整个方法论体系的退化。</p>
 <p><strong>解决方案</strong>：审计引擎必须能够审计自己，且审计自身的规则与审计其他技能的规则相同。</p>
 <p><strong>实施方式</strong>：</p>
-<div class="flow-tree">
-<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark"></span><span class="flow-ttext">技能标准化审计引擎（skill-standardization）</span></div>
-<div class="flow-tnode" style="margin-left:14px"><span class="flow-tmark">├──</span><span class="flow-ttext">审计其他技能 ── 规则R-01 ~ R-26</span></div>
-<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">frontmatter完整性</span></div>
-<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">版本号一致性</span></div>
-<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">数据目录合规性</span></div>
-<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">渐进式加载合规性</span></div>
-<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">└──</span><span class="flow-ttext">权限声明完整性</span></div>
-<div class="flow-tnode" style="margin-left:14px"><span class="flow-tmark">└──</span><span class="flow-ttext">审计自身 ── 同一条规则集</span></div>
-<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">skill-standardization 自身的 frontmatter 完整吗？</span></div>
-<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">它自己的版本号三端一致吗？</span></div>
-<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">├──</span><span class="flow-ttext">它自己的数据目录合规吗？</span></div>
-<div class="flow-tnode" style="margin-left:42px"><span class="flow-tmark">└──</span><span class="flow-ttext">它自己的渐进式加载合规吗？</span></div>
-</div>
+<pre><code>技能标准化审计引擎（skill-standardization）
+  │
+  ├── 审计其他技能 ── 规则R-01 ~ R-26
+  │  ├── frontmatter完整性
+  │  ├── 版本号一致性
+  │  ├── 数据目录合规性
+  │  ├── 渐进式加载合规性
+  │  └── 权限声明完整性
+  │
+  └── 审计自身 ── 同一条规则集
+     ├── skill-standardization 自身的 frontmatter 完整吗？
+     ├── 它自己的版本号三端一致吗？
+     ├── 它自己的数据目录合规吗？
+     └── 它自己的渐进式加载合规吗？</code></pre>
 <p><strong>自我审计与普通审计的差异</strong>：规则相同，只是审计对象变成自己。不能使用"特殊豁免"，不能有"它因为是自己所以不需要遵守某条规则"。</p>
 <p><strong>自我审计的制约条件</strong>：自我审计不能无限递归。当审计引擎审计自己时，它不能要求"审计引擎的审计引擎"再来审计自己。递归终止于<strong>规则被证明在自身身上可执行</strong>，而不是"规则被另一个实体验证了"。</p>
 <p><strong>如何避免无限递归</strong>：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">第1层：审计引擎 audit 其他技能 <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出报告A</span></div>
-<div class="flow-step" style="margin-left:0px">第2层：审计引擎 audit 自身 <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出报告B</span></div>
-<div class="flow-step" style="margin-left:0px">第3层：检查报告A和报告B的格式是否一致</div>
-<div class="flow-treegroup lv2"><div class="flow-tree-row"><span class="flow-tmark">         └─</span>如果B的输出格式与A相同，且B中发现的问题被修复后重新审计通过</div><div class="flow-tree-row"><span class="flow-tmark">         └─</span>自我审计即可"自洽"——不需要第4层</div></div>
+<div class="flow-step lv1" style="margin-left:0px">第1层：审计引擎 audit 其他技能 <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出报告A</span></div>
+<div class="flow-step lv1" style="margin-left:0px">第2层：审计引擎 audit 自身 <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出报告B</span></div>
+<div class="flow-step lv1" style="margin-left:0px">第3层：检查报告A和报告B的格式是否一致</div>
+<div class="flow-treegroup lv2" style="margin-left:14px"><div class="flow-tree-row lv4"><span class="flow-tmark">         └─</span>如果B的输出格式与A相同，且B中发现的问题被修复后重新审计通过</div><div class="flow-tree-row lv4"><span class="flow-tmark">         └─</span>自我审计即可"自洽"——不需要第4层</div></div>
 </div>
 <p>关键判断：<strong>不是"谁审计审计者"，而是"审计者审计自己时，输出格式是否与被审计者一致"。</strong> 如果格式一致，说明规则在自身身上同样可执行。如果格式不一致，说明规则有隐式豁免——这正是需要修复的。</p>
 <h3 id="h90">2.2 原理二：自我约束</h3>
@@ -677,14 +695,14 @@ if &quot;BLOCKED&quot; in output or &quot;阻断&quot; in output:
 <p><strong>解决方案</strong>：执行框架在执行自身的管理操作时，使用与约束技能执行相同的约束机制。</p>
 <p><strong>实施方式</strong>：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">triphasic-execution 约束其他任务：</div>
-<div class="flow-step" style="margin-left:14px">步骤1 <span class="flow-inline-arrow">→</span> <span class="edge-fall">REVIEW <span class="flow-inline-arrow">→</span> ADVANCE <span class="flow-inline-arrow">→</span> 步骤2 <span class="flow-inline-arrow">→</span> REVIEW <span class="flow-inline-arrow">→</span> ...</span></div>
-<div class="flow-step" style="margin-left:14px">失败3次 <span class="flow-inline-arrow">→</span> <span class="edge-fall">换方案</span></div>
-<div class="flow-step" style="margin-left:14px">空转3次 <span class="flow-inline-arrow">→</span> <span class="edge-fall">换方案</span></div>
-<div class="flow-step" style="margin-left:0px">triphasic-execution 管理自身的操作（如安装、配置、升级）：</div>
-<div class="flow-step" style="margin-left:14px">同样使用三步循环</div>
-<div class="flow-step" style="margin-left:14px">同样有重试上限</div>
-<div class="flow-step" style="margin-left:14px">同样有Review后推进</div>
+<div class="flow-step lv1" style="margin-left:0px">triphasic-execution 约束其他任务：</div>
+<div class="flow-step lv2" style="margin-left:14px">步骤1 <span class="flow-inline-arrow">→</span> <span class="edge-fall">REVIEW <span class="flow-inline-arrow">→</span> ADVANCE <span class="flow-inline-arrow">→</span> 步骤2 <span class="flow-inline-arrow">→</span> REVIEW <span class="flow-inline-arrow">→</span> ...</span></div>
+<div class="flow-step lv2" style="margin-left:14px">失败3次 <span class="flow-inline-arrow">→</span> <span class="edge-fall">换方案</span></div>
+<div class="flow-step lv2" style="margin-left:14px">空转3次 <span class="flow-inline-arrow">→</span> <span class="edge-fall">换方案</span></div>
+<div class="flow-step lv1" style="margin-left:0px">triphasic-execution 管理自身的操作（如安装、配置、升级）：</div>
+<div class="flow-step lv2" style="margin-left:14px">同样使用三步循环</div>
+<div class="flow-step lv2" style="margin-left:14px">同样有重试上限</div>
+<div class="flow-step lv2" style="margin-left:14px">同样有Review后推进</div>
 </div>
 <p><strong>自我约束不是"建议执行框架遵守自己的规则"</strong>，而是执行框架的安装脚本、配置操作、升级流程直接使用同一套三步循环。同一个 <code>task_progress.py</code> 既管理用户任务的进度，也管理自身的安装进度。</p>
 <p><strong>自我约束的制约条件</strong>：框架的管理操作通常比技能执行简单，可能不需要完整的3次重试。约束可以缩放——"三步循环"的模式不变，但具体的参数（重试上限、空转上限）可以不同。<strong>模式一致，参数可调。</strong></p>
@@ -740,15 +758,15 @@ L5 数据声明
 <p><strong>解决方案</strong>：定义自举的终止条件，不追求"完全形式化验证"，追求"工程上的自洽"。</p>
 <p><strong>自举链的结构</strong>：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">方法论的定义（这套方法论文档本身）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 指导</div>
-<div class="flow-step" style="margin-left:0px">标准化审计引擎（skill-standardization）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 能够审计</div>
-<div class="flow-step" style="margin-left:0px">自身（包括它自己的代码、文档、元数据）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 自审通过</div>
-<div class="flow-step" style="margin-left:0px">方法论工具群（执行框架、测试套件、同步工具…）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 每个工具自审通过</div>
-<div class="flow-step" style="margin-left:0px">方法论体系可以声称"自洽"</div>
+<div class="flow-step lv1" style="margin-left:0px">方法论的定义（这套方法论文档本身）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 指导</div>
+<div class="flow-step lv1" style="margin-left:0px">标准化审计引擎（skill-standardization）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 能够审计</div>
+<div class="flow-step lv1" style="margin-left:0px">自身（包括它自己的代码、文档、元数据）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 自审通过</div>
+<div class="flow-step lv1" style="margin-left:0px">方法论工具群（执行框架、测试套件、同步工具…）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 每个工具自审通过</div>
+<div class="flow-step lv1" style="margin-left:0px">方法论体系可以声称"自洽"</div>
 </div>
 <p><strong>自举的终止条件</strong>：</p>
 <ol><li>每个方法论工具都能通过自己的元数据声明校验</li><li>每个方法论工具在执行核心操作前，会验证自身状态一致</li><li>方法论体系中的任何修改，都会触发自我审计</li><li>自我审计发现的任何不一致，都被视为与方法论规则同等严重的问题</li></ol>
@@ -758,36 +776,36 @@ L5 数据声明
 <h2 id="h94">三、自举链的完整路径</h2>
 <h3 id="h95">3.1 自举链的步骤</h3>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">起点：方法论文档</div>
-<div class="flow-step" style="margin-left:14px">定义 "一个重型技能应该是什么样子"</div>
-<div class="flow-step" style="margin-left:28px">例如：有SKILL.md、有_meta.json、有五层声明、有双轨测试</div>
+<div class="flow-step lv1" style="margin-left:0px">起点：方法论文档</div>
+<div class="flow-step lv2" style="margin-left:14px">定义 "一个重型技能应该是什么样子"</div>
+<div class="flow-step lv3" style="margin-left:28px">例如：有SKILL.md、有_meta.json、有五层声明、有双轨测试</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">第一环：标准化审计引擎（skill-standardization）</div>
-<div class="flow-step" style="margin-left:14px">按照方法论文档定义，实现了审计规则（R-01 ~ R-26）</div>
-<div class="flow-step" style="margin-left:14px">能够检查一个技能是否符合方法论规范</div>
+<div class="flow-step lv1" style="margin-left:0px">第一环：标准化审计引擎（skill-standardization）</div>
+<div class="flow-step lv2" style="margin-left:14px">按照方法论文档定义，实现了审计规则（R-01 ~ R-26）</div>
+<div class="flow-step lv2" style="margin-left:14px">能够检查一个技能是否符合方法论规范</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">第二环：审计引擎审计自身</div>
-<div class="flow-step" style="margin-left:14px">用R-01 ~ R-26检查skill-standardization自己</div>
-<div class="flow-step" style="margin-left:14px">它有自己的SKILL.md、_meta.json、frontmatter、data_dir</div>
-<div class="flow-step" style="margin-left:14px">它自己的版本号三端一致吗？条件字段合规吗？</div>
+<div class="flow-step lv1" style="margin-left:0px">第二环：审计引擎审计自身</div>
+<div class="flow-step lv2" style="margin-left:14px">用R-01 ~ R-26检查skill-standardization自己</div>
+<div class="flow-step lv2" style="margin-left:14px">它有自己的SKILL.md、_meta.json、frontmatter、data_dir</div>
+<div class="flow-step lv2" style="margin-left:14px">它自己的版本号三端一致吗？条件字段合规吗？</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">第三环：审计通过（或修复后通过）</div>
-<div class="flow-step" style="margin-left:14px">skill-standardization被证明符合它自己执行的规范</div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">该方法论工具"自洽"</span></div>
+<div class="flow-step lv1" style="margin-left:0px">第三环：审计通过（或修复后通过）</div>
+<div class="flow-step lv2" style="margin-left:14px">skill-standardization被证明符合它自己执行的规范</div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">该方法论工具"自洽"</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">第四环：其他方法论工具</div>
-<div class="flow-step" style="margin-left:14px">triphasic-execution：</div>
-<div class="flow-step" style="margin-left:28px">它的三步循环约束是否也约束它自己的管理操作？</div>
-<div class="flow-step" style="margin-left:28px">它能否通过标准化审计引擎的R-01~R-26审计？</div>
-<div class="flow-step" style="margin-left:14px">skill-function-test：</div>
-<div class="flow-step" style="margin-left:28px">它是否通过了它能发现和报告的测试标准？</div>
-<div class="flow-step" style="margin-left:28px">它的测试报告是否包含了对它自身的测试？</div>
-<div class="flow-step" style="margin-left:14px">git-sync：</div>
-<div class="flow-step" style="margin-left:28px">它的版本对比和敏感扫描是否也应用于自身？</div>
-<div class="flow-step" style="margin-left:28px">它同步其他人时，自己的版本和manifest是否一致？</div>
+<div class="flow-step lv1" style="margin-left:0px">第四环：其他方法论工具</div>
+<div class="flow-step lv2" style="margin-left:14px">triphasic-execution：</div>
+<div class="flow-step lv3" style="margin-left:28px">它的三步循环约束是否也约束它自己的管理操作？</div>
+<div class="flow-step lv3" style="margin-left:28px">它能否通过标准化审计引擎的R-01~R-26审计？</div>
+<div class="flow-step lv2" style="margin-left:14px">skill-function-test：</div>
+<div class="flow-step lv3" style="margin-left:28px">它是否通过了它能发现和报告的测试标准？</div>
+<div class="flow-step lv3" style="margin-left:28px">它的测试报告是否包含了对它自身的测试？</div>
+<div class="flow-step lv2" style="margin-left:14px">git-sync：</div>
+<div class="flow-step lv3" style="margin-left:28px">它的版本对比和敏感扫描是否也应用于自身？</div>
+<div class="flow-step lv3" style="margin-left:28px">它同步其他人时，自己的版本和manifest是否一致？</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">终点：方法论工具群全部自审通过</div>
-<div class="flow-step" style="margin-left:14px">不再证明"方法论有效"——而是"方法论中的每一个工具，都遵循方法论定义的规则"</div>
+<div class="flow-step lv1" style="margin-left:0px">终点：方法论工具群全部自审通过</div>
+<div class="flow-step lv2" style="margin-left:14px">不再证明"方法论有效"——而是"方法论中的每一个工具，都遵循方法论定义的规则"</div>
 </div>
 <h3 id="h96">3.2 自举不能跨越的边界</h3>
 <p>自举链不能回答以下问题：</p>
@@ -822,12 +840,12 @@ L5 数据声明
 <p>自举不是一种验证手段——它是一个架构设计原则。</p>
 <p>如果自举只在方法论体系建成后"补做"，它就不是自举。它是"补个检查"。真正的自举要求：<strong>在方法论工具的架构中，就内置了"我也可以被自己检查"的能力。</strong></p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">事后补做：</div>
-<div class="flow-step" style="margin-left:14px">造了审计引擎 <span class="flow-inline-arrow">→</span> <span class="edge-fall">其他人说"谁审计你？" <span class="flow-inline-arrow">→</span> 加个"审计自己"的hook</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">脆弱。hook可能被绕过，可能没有覆盖所有规则</span></div>
-<div class="flow-step" style="margin-left:0px">架构内置：</div>
-<div class="flow-step" style="margin-left:14px">设计审计引擎时，就把"自身也接受审计"作为第一性原理</div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">没有绕过路径。审计自己的代码路径与审计他人完全相同</span></div>
+<div class="flow-step lv1" style="margin-left:0px">事后补做：</div>
+<div class="flow-step lv2" style="margin-left:14px">造了审计引擎 <span class="flow-inline-arrow">→</span> <span class="edge-fall">其他人说"谁审计你？" <span class="flow-inline-arrow">→</span> 加个"审计自己"的hook</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">脆弱。hook可能被绕过，可能没有覆盖所有规则</span></div>
+<div class="flow-step lv1" style="margin-left:0px">架构内置：</div>
+<div class="flow-step lv2" style="margin-left:14px">设计审计引擎时，就把"自身也接受审计"作为第一性原理</div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">没有绕过路径。审计自己的代码路径与审计他人完全相同</span></div>
 </div>
 <h3 id="h104">5.2 反模式：选择性自举</h3>
 <p>最常见的自举失败形式是<strong>选择性自举</strong>——方法论工具在自己的规则中给自己留了例外。</p>
@@ -855,22 +873,22 @@ L5 数据声明
 <h3 id="h113">7.3 三篇方法论的完整关系</h3>
 <div class="flow">
 <div class="flow-phase">【02：构建时契约】</div>
-<div class="flow-step" style="margin-left:14px">定义 "一个正确的技能应该长什么样"</div>
-<div class="flow-step" style="margin-left:28px">五层结构声明 <span class="flow-inline-arrow">→</span> <span class="edge-fall">接入校验 <span class="flow-inline-arrow">→</span> 技能接入系统</span></div>
+<div class="flow-step lv2" style="margin-left:14px">定义 "一个正确的技能应该长什么样"</div>
+<div class="flow-step lv3" style="margin-left:28px">五层结构声明 <span class="flow-inline-arrow">→</span> <span class="edge-fall">接入校验 <span class="flow-inline-arrow">→</span> 技能接入系统</span></div>
 <div class="flow-phase">【01：运行时硬中断】</div>
-<div class="flow-step" style="margin-left:14px">定义 "正确的执行应该怎么被保障"</div>
-<div class="flow-step" style="margin-left:28px">步骤原子化 <span class="flow-inline-arrow">→</span> <span class="edge-fall">硬中断检查 <span class="flow-inline-arrow">→</span> 阻断/挂起/恢复</span></div>
+<div class="flow-step lv2" style="margin-left:14px">定义 "正确的执行应该怎么被保障"</div>
+<div class="flow-step lv3" style="margin-left:28px">步骤原子化 <span class="flow-inline-arrow">→</span> <span class="edge-fall">硬中断检查 <span class="flow-inline-arrow">→</span> 阻断/挂起/恢复</span></div>
 <div class="flow-phase">【03：递归自举】</div>
-<div class="flow-step" style="margin-left:14px">定义 "方法论本身如何被确保"</div>
-<div class="flow-step" style="margin-left:28px">审计引擎审计自己 <span class="flow-inline-arrow">→</span> <span class="edge-fall">框架约束自己 <span class="flow-inline-arrow">→</span> 契约系统声明自己</span></div>
-<div class="flow-step" style="margin-left:28px">同一套规则 <span class="flow-inline-arrow">→</span> <span class="edge-fall">不自欺</span></div>
-<div class="flow-step" style="margin-left:28px">不自欺 <span class="flow-inline-arrow">→</span> <span class="edge-fall">方法论完整</span></div>
+<div class="flow-step lv2" style="margin-left:14px">定义 "方法论本身如何被确保"</div>
+<div class="flow-step lv3" style="margin-left:28px">审计引擎审计自己 <span class="flow-inline-arrow">→</span> <span class="edge-fall">框架约束自己 <span class="flow-inline-arrow">→</span> 契约系统声明自己</span></div>
+<div class="flow-step lv3" style="margin-left:28px">同一套规则 <span class="flow-inline-arrow">→</span> <span class="edge-fall">不自欺</span></div>
+<div class="flow-step lv3" style="margin-left:28px">不自欺 <span class="flow-inline-arrow">→</span> <span class="edge-fall">方法论完整</span></div>
 </div>
 <p>三篇方法论各自独立，又互相依赖。它们的依赖关系不是线性的，而是环形的：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">02（契约） <span class="flow-inline-arrow">→</span> <span class="edge-fall">01（硬中断需要契约提供判断标准）</span></div>
-<div class="flow-step" style="margin-left:0px">01（硬中断） <span class="flow-inline-arrow">→</span> <span class="edge-fall">03（自举需要硬中断来保障自审不被打断）</span></div>
-<div class="flow-step" style="margin-left:0px">03（自举） <span class="flow-inline-arrow">→</span> <span class="edge-fall">02（自举的起点是契约系统）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">02（契约） <span class="flow-inline-arrow">→</span> <span class="edge-fall">01（硬中断需要契约提供判断标准）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">01（硬中断） <span class="flow-inline-arrow">→</span> <span class="edge-fall">03（自举需要硬中断来保障自审不被打断）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">03（自举） <span class="flow-inline-arrow">→</span> <span class="edge-fall">02（自举的起点是契约系统）</span></div>
 </div>
 <p>这是一个<strong>环形自洽</strong>的结构——三篇中没有哪一篇是"最终权威"。每一篇都依赖另外两篇来完成自己的功能。</p>
 <h3 id="h114">7.4 一句可复用的话</h3>
@@ -881,7 +899,7 @@ L5 数据声明
 <h3 id="h117">1.1 ReAct 循环的隐形成本</h3>
 <p>ReAct（Reasoning + Acting）循环是 LLM Agent 的主流架构：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">LLM 思考 <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 决定行动 <span class="flow-inline-arrow">→</span> 执行工具 <span class="flow-inline-arrow">→</span> 观察结果 <span class="flow-inline-arrow">→</span> LLM 再次思考 <span class="flow-inline-arrow">→</span> ...</span></div>
+<div class="flow-step lv1" style="margin-left:0px">LLM 思考 <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 决定行动 <span class="flow-inline-arrow">→</span> 执行工具 <span class="flow-inline-arrow">→</span> 观察结果 <span class="flow-inline-arrow">→</span> LLM 再次思考 <span class="flow-inline-arrow">→</span> ...</span></div>
 </div>
 <p>在技能数量较少（<5个）时，这个模式工作良好。但当技能数量增长到 20+ 个，问题显现：</p>
 <table><thead><tr><th>问题</th><th>表现</th><th>根因</th></tr></thead><tbody><tr><td><strong>决策抖动</strong></td><td>同样的任务每次走不同的技能路径</td><td>LLM 是概率模型，每次推理的路径选择不同</td></tr><tr><td><strong>循环失控</strong></td><td>LLM 在 2-3 个步骤间反复横跳</td><td>ReAct 没有天然的终止条件</td></tr><tr><td><strong>状态膨胀</strong></td><td>上下文窗口中塞满历史观察</td><td>每一步的观察都累积，但大部分对后续无用</td></tr><tr><td><strong>技能遗忘</strong></td><td>LLM 知道有某个技能但实际没用</td><td>技能列表太长 > LLM 的注意力窗口</td></tr><tr><td><strong>不可复现</strong></td><td>相同的输入可能得到完全不同的执行路径</td><td>概率生成 × 多次决策 = 结果不可控</td></tr></tbody></table>
@@ -931,20 +949,20 @@ L5 数据声明
 <h3 id="h126">4.1 决策树</h3>
 <p>判断一项能力应该被固化还是调用 LLM：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">这项能力需要理解语义吗？</div>
-<div class="flow-treegroup lv2"><div class="flow-tree-row"><span class="flow-tmark">├─</span>是 <span class="flow-inline-arrow">→</span> <span class="edge-fall">需要外部数据/模型吗？</span></div><div class="flow-tree-row"><span class="flow-tmark">│   ├─</span>是 <span class="flow-inline-arrow">→</span> <span class="edge-fall">调用 LLM（如：格式转换/内容生成）</span></div><div class="flow-tree-row"><span class="flow-tmark">│   └─</span>否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">固化 + LLM 混合（如：语义拆分中的 5W2H 提取用正则，步骤拆分用 LLM）</span></div><div class="flow-tree-row"><span class="flow-tmark">└─</span>否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">可以固化吗？</span></div><div class="flow-tree-row"><span class="flow-tmark">    ├─</span>是 <span class="flow-inline-arrow">→</span> <span class="edge-fall">硬编码（如：颜色对比度计算/文件原子写入/HTML 标签配对）</span></div><div class="flow-tree-row"><span class="flow-tmark">    └─</span>否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">保持外部调用（如：特定领域的专业脚本）</span></div></div>
+<div class="flow-step lv1" style="margin-left:0px">这项能力需要理解语义吗？</div>
+<div class="flow-treegroup lv2" style="margin-left:14px"><div class="flow-tree-row lv2"><span class="flow-tmark">├─</span>是 <span class="flow-inline-arrow">→</span> <span class="edge-fall">需要外部数据/模型吗？</span></div><div class="flow-tree-row lv3"><span class="flow-tmark">│   ├─</span>是 <span class="flow-inline-arrow">→</span> <span class="edge-fall">调用 LLM（如：格式转换/内容生成）</span></div><div class="flow-tree-row lv3"><span class="flow-tmark">│   └─</span>否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">固化 + LLM 混合（如：语义拆分中的 5W2H 提取用正则，步骤拆分用 LLM）</span></div><div class="flow-tree-row lv2"><span class="flow-tmark">└─</span>否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">可以固化吗？</span></div><div class="flow-tree-row lv3"><span class="flow-tmark">    ├─</span>是 <span class="flow-inline-arrow">→</span> <span class="edge-fall">硬编码（如：颜色对比度计算/文件原子写入/HTML 标签配对）</span></div><div class="flow-tree-row lv3"><span class="flow-tmark">    └─</span>否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">保持外部调用（如：特定领域的专业脚本）</span></div></div>
 </div>
 <h3 id="h127">4.2 本项目的固化决策</h3>
 <table><thead><tr><th>能力</th><th>固化/LLM</th><th>理由</th></tr></thead><tbody><tr><td>流水线优化（skill-sub）</td><td>固化</td><td>依赖分析/并行检测是确定图算法</td></tr><tr><td>意图拆分（semantic-split）</td><td>混合</td><td>5W2H 提取用正则，步骤拆解用 LLM</td></tr><tr><td>输出审查（triphasic）</td><td>混合</td><td>HTML/颜色校验用算法，内容深度审查用 LLM</td></tr><tr><td>颜色校验</td><td>固化</td><td>WCAG 公式是确定的</td></tr><tr><td>文件操作</td><td>固化</td><td>OS 原子操作</td></tr><tr><td>Python 自动装包</td><td>固化</td><td>pip install 是工具调用</td></tr><tr><td>HTML 校验</td><td>固化</td><td>标签配对是字符串匹配</td></tr></tbody></table>
 <h3 id="h128">4.3 "可选功能"原则</h3>
 <p>所有增强功能都必须是可选的：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">Pipeline 执行路径（无增强）：</div>
-<div class="flow-step" style="margin-left:14px">预检 <span class="flow-inline-arrow">→</span> <span class="edge-fall">执行 <span class="flow-inline-arrow">→</span> 输出</span></div>
-<div class="flow-step" style="margin-left:14px">O(1) 性能，零额外开销</div>
-<div class="flow-step" style="margin-left:0px">Pipeline 执行路径（全增强）：</div>
-<div class="flow-step" style="margin-left:14px">预检 <span class="flow-inline-arrow">→</span> <span class="edge-fall">语义拆分 <span class="flow-inline-arrow">→</span> 优化 <span class="flow-inline-arrow">→</span> 粘合 <span class="flow-inline-arrow">→</span> 执行 <span class="flow-inline-arrow">→</span> 审查 <span class="flow-inline-arrow">→</span> 重试 <span class="flow-inline-arrow">→</span> 输出</span></div>
-<div class="flow-step" style="margin-left:14px">O(n) 性能，每步增加审查开销</div>
+<div class="flow-step lv1" style="margin-left:0px">Pipeline 执行路径（无增强）：</div>
+<div class="flow-step lv2" style="margin-left:14px">预检 <span class="flow-inline-arrow">→</span> <span class="edge-fall">执行 <span class="flow-inline-arrow">→</span> 输出</span></div>
+<div class="flow-step lv2" style="margin-left:14px">O(1) 性能，零额外开销</div>
+<div class="flow-step lv1" style="margin-left:0px">Pipeline 执行路径（全增强）：</div>
+<div class="flow-step lv2" style="margin-left:14px">预检 <span class="flow-inline-arrow">→</span> <span class="edge-fall">语义拆分 <span class="flow-inline-arrow">→</span> 优化 <span class="flow-inline-arrow">→</span> 粘合 <span class="flow-inline-arrow">→</span> 执行 <span class="flow-inline-arrow">→</span> 审查 <span class="flow-inline-arrow">→</span> 重试 <span class="flow-inline-arrow">→</span> 输出</span></div>
+<div class="flow-step lv2" style="margin-left:14px">O(n) 性能，每步增加审查开销</div>
 </div>
 <p>不勾选 = 直通执行。这是设计铁律。</p>
 <hr/>
@@ -979,7 +997,7 @@ L5 数据声明
 <h3 id="h139">1.1 ReAct 循环的隐含假设</h3>
 <p>传统智能体架构的核心模式是 ReAct（Reasoning + Acting）循环：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">用户输入 <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 思考 <span class="flow-inline-arrow">→</span> 调用工具 <span class="flow-inline-arrow">→</span> 观察结果 <span class="flow-inline-arrow">→</span> LLM 再思考 <span class="flow-inline-arrow">→</span> ... <span class="flow-inline-arrow">→</span> 最终回答</span></div>
+<div class="flow-step lv1" style="margin-left:0px">用户输入 <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 思考 <span class="flow-inline-arrow">→</span> 调用工具 <span class="flow-inline-arrow">→</span> 观察结果 <span class="flow-inline-arrow">→</span> LLM 再思考 <span class="flow-inline-arrow">→</span> ... <span class="flow-inline-arrow">→</span> 最终回答</span></div>
 </div>
 <p>这条循环的隐含假设是：<strong>LLM 有能力在每一步做出正确的路径决策</strong>。</p>
 <p>但这个假设在技能编排场景中存在严重问题：</p>
@@ -987,11 +1005,11 @@ L5 数据声明
 <h3 id="h140">1.2 核心矛盾的识别</h3>
 <p>ReAct 的进化为一条自由循环：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">用户输入 <span class="flow-inline-arrow">→</span> <span class="edge-fall">[LLM 决策 <span class="flow-inline-arrow">→</span> 工具调用]^N <span class="flow-inline-arrow">→</span> 回答</span></div>
+<div class="flow-step lv1" style="margin-left:0px">用户输入 <span class="flow-inline-arrow">→</span> <span class="edge-fall">[LLM 决策 <span class="flow-inline-arrow">→</span> 工具调用]^N <span class="flow-inline-arrow">→</span> 回答</span></div>
 </div>
 <p>但技能编排需要的是：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">用户输入 <span class="flow-inline-arrow">→</span> <span class="edge-fall">编排好的技能链 <span class="flow-inline-arrow">→</span> 逐步骤执行（串行/并行/循环） <span class="flow-inline-arrow">→</span> 输出</span></div>
+<div class="flow-step lv1" style="margin-left:0px">用户输入 <span class="flow-inline-arrow">→</span> <span class="edge-fall">编排好的技能链 <span class="flow-inline-arrow">→</span> 逐步骤执行（串行/并行/循环） <span class="flow-inline-arrow">→</span> 输出</span></div>
 </div>
 <p>两者之间的鸿沟就是：<strong>LLM 做路径决策不是优势，而是负担</strong>。当技能链是确定的（用户或编排器已经定义好顺序），ReAct 循环中 LLM 的"思考"就变成了多余开销。</p>
 <hr/>
@@ -1014,21 +1032,21 @@ L5 数据声明
 <h2 id="h144">三、架构范式</h2>
 <h3 id="h145">3.1 四阶段执行流（LLM 只做两头）</h3>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">第一阶段：需求分析（Round 1，前处理）</div>
-<div class="flow-step" style="margin-left:14px">LLM(用户任务 + user_prompt + 16 工具清单 + 附件路径)</div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">用工具处理数据 <span class="flow-inline-arrow">→</span> 产出最小中间输入</span></div>
+<div class="flow-step lv1" style="margin-left:0px">第一阶段：需求分析（Round 1，前处理）</div>
+<div class="flow-step lv2" style="margin-left:14px">LLM(用户任务 + user_prompt + 16 工具清单 + 附件路径)</div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">用工具处理数据 <span class="flow-inline-arrow">→</span> 产出最小中间输入</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">第二阶段（可选）：skill-sub 优化（Round 2）</div>
-<div class="flow-step" style="margin-left:14px">读 SKILL.md <span class="flow-inline-arrow">→</span> <span class="edge-fall">算法黏连检查 <span class="flow-inline-arrow">→</span> LLM 模糊回退 <span class="flow-inline-arrow">→</span> 里程碑标记</span></div>
+<div class="flow-step lv1" style="margin-left:0px">第二阶段（可选）：skill-sub 优化（Round 2）</div>
+<div class="flow-step lv2" style="margin-left:14px">读 SKILL.md <span class="flow-inline-arrow">→</span> <span class="edge-fall">算法黏连检查 <span class="flow-inline-arrow">→</span> LLM 模糊回退 <span class="flow-inline-arrow">→</span> 里程碑标记</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">第三阶段：死执行（Round 3+）</div>
-<div class="flow-step" style="margin-left:14px">步骤 1 <span class="flow-inline-arrow">→</span> <span class="edge-fall">subprocess 跑 skill 脚本（params <span class="flow-inline-arrow">→</span> CLI 参数） <span class="flow-inline-arrow">→</span> 输出</span></div>
-<div class="flow-step" style="margin-left:14px">步骤 2 <span class="flow-inline-arrow">→</span> <span class="edge-fall">subprocess 跑 skill 脚本（输入 = 步骤 1 输出） <span class="flow-inline-arrow">→</span> 输出</span></div>
-<div class="flow-step" style="margin-left:14px">... 直到链结束（LLM 全程不参与）</div>
+<div class="flow-step lv1" style="margin-left:0px">第三阶段：死执行（Round 3+）</div>
+<div class="flow-step lv2" style="margin-left:14px">步骤 1 <span class="flow-inline-arrow">→</span> <span class="edge-fall">subprocess 跑 skill 脚本（params <span class="flow-inline-arrow">→</span> CLI 参数） <span class="flow-inline-arrow">→</span> 输出</span></div>
+<div class="flow-step lv2" style="margin-left:14px">步骤 2 <span class="flow-inline-arrow">→</span> <span class="edge-fall">subprocess 跑 skill 脚本（输入 = 步骤 1 输出） <span class="flow-inline-arrow">→</span> 输出</span></div>
+<div class="flow-step lv2" style="margin-left:14px">... 直到链结束（LLM 全程不参与）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">第四阶段：最终输出整理（Round 4，输出侧）</div>
-<div class="flow-step" style="margin-left:14px">LLM 按 user_prompt 整理交付（Markdown/表格/文件路径）</div>
-<div class="flow-step" style="margin-left:14px">明确：不保证完全按提示词——Pipeline 已产最终形态则如实呈现</div>
+<div class="flow-step lv1" style="margin-left:0px">第四阶段：最终输出整理（Round 4，输出侧）</div>
+<div class="flow-step lv2" style="margin-left:14px">LLM 按 user_prompt 整理交付（Markdown/表格/文件路径）</div>
+<div class="flow-step lv2" style="margin-left:14px">明确：不保证完全按提示词——Pipeline 已产最终形态则如实呈现</div>
 </div>
 <h3 id="h146">3.2 技能链数据模型</h3>
 <p>每个 Pipeline 节点包含：</p>
@@ -1055,12 +1073,12 @@ L5 数据声明
 <h3 id="h148">3.4 skill-sub 优化（可选层）</h3>
 <p>skill-sub 不是 ReAct 中的自由优化，而是算法主导的链分析：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">1. 读 SKILL.md <span class="flow-inline-arrow">→</span> <span class="edge-fall">提取 tags/triggers/description</span></div>
-<div class="flow-step" style="margin-left:0px">2. 算法比较步骤间输入输出兼容性</div>
-<div class="flow-step" style="margin-left:14px">- 分析类 <span class="flow-inline-arrow">→</span> <span class="edge-fall">生成类：不兼容，插入转换步骤</span></div>
-<div class="flow-step" style="margin-left:14px">- 数据类 <span class="flow-inline-arrow">→</span> <span class="edge-fall">图表类：兼容，直接传递</span></div>
-<div class="flow-step" style="margin-left:0px">3. LLM 模糊回退（仅当算法无法确定时）</div>
-<div class="flow-step" style="margin-left:0px">4. 自动标记里程碑（"完成/结果/报告"等关键词）</div>
+<div class="flow-step lv1" style="margin-left:0px">1. 读 SKILL.md <span class="flow-inline-arrow">→</span> <span class="edge-fall">提取 tags/triggers/description</span></div>
+<div class="flow-step lv1" style="margin-left:0px">2. 算法比较步骤间输入输出兼容性</div>
+<div class="flow-step lv2" style="margin-left:14px">- 分析类 <span class="flow-inline-arrow">→</span> <span class="edge-fall">生成类：不兼容，插入转换步骤</span></div>
+<div class="flow-step lv2" style="margin-left:14px">- 数据类 <span class="flow-inline-arrow">→</span> <span class="edge-fall">图表类：兼容，直接传递</span></div>
+<div class="flow-step lv1" style="margin-left:0px">3. LLM 模糊回退（仅当算法无法确定时）</div>
+<div class="flow-step lv1" style="margin-left:0px">4. 自动标记里程碑（"完成/结果/报告"等关键词）</div>
 </div>
 <hr/>
 <h2 id="h149">四、这套机制为什么能工作</h2>
@@ -1071,8 +1089,8 @@ L5 数据声明
 <h3 id="h152">4.3 配置驱动的适应性</h3>
 <p>超时和 max_tokens 从配置读取（不是硬编码）：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">配置页 <span class="flow-inline-arrow">→</span> <span class="edge-fall">llm.timeout（1800 秒）</span></div>
-<div class="flow-step" style="margin-left:42px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">llm.max_tokens（40960）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">配置页 <span class="flow-inline-arrow">→</span> <span class="edge-fall">llm.timeout（1800 秒）</span></div>
+<div class="flow-step lv4" style="margin-left:42px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">llm.max_tokens（40960）</span></div>
 </div>
 <p>配置持久化到 <code>data/config/settings.json</code>，启动时不再被硬编码覆盖（v2.5.0 修复）。</p>
 <hr/>
@@ -1101,16 +1119,16 @@ L5 数据声明
 <h3 id="h163">B. 与 04 的关系</h3>
 <p>本篇文章是 04（编排范式）的<strong>工程实现文档</strong>。04 是方法论的理论阐述，本文是具体代码架构。两者构成了编排方法的完整闭环：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">04：编排范式（理论） <span class="flow-inline-arrow">→</span> <span class="edge-fall">提出"LLM 是胶水"</span></div>
-<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 工程实现</div>
-<div class="flow-step" style="margin-left:0px">Orchestrator（链驱动执行） <span class="flow-inline-arrow">→</span> <span class="edge-fall">实现"链是主体，LLM 只做两头"</span></div>
-<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 方法论文档</div>
-<div class="flow-step" style="margin-left:0px">本文（架构范式） <span class="flow-inline-arrow">→</span> <span class="edge-fall">沉淀编排范式在工程中的实践经验</span></div>
+<div class="flow-step lv1" style="margin-left:0px">04：编排范式（理论） <span class="flow-inline-arrow">→</span> <span class="edge-fall">提出"LLM 是胶水"</span></div>
+<div class="flow-step lv3" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 工程实现</div>
+<div class="flow-step lv1" style="margin-left:0px">Orchestrator（链驱动执行） <span class="flow-inline-arrow">→</span> <span class="edge-fall">实现"链是主体，LLM 只做两头"</span></div>
+<div class="flow-step lv3" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 方法论文档</div>
+<div class="flow-step lv1" style="margin-left:0px">本文（架构范式） <span class="flow-inline-arrow">→</span> <span class="edge-fall">沉淀编排范式在工程中的实践经验</span></div>
 </div>
 <h3 id="h164">C. 链驱动模式的通用化</h3>
 <p>链驱动执行是一个通用模式，适用于任何需要将多个技能组合为确定流程的场景：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">编排链 <span class="flow-inline-arrow">→</span> <span class="edge-fall">遍历步骤 <span class="flow-inline-arrow">→</span> 执行（subprocess 跑脚本） <span class="flow-inline-arrow">→</span> 传递输出 <span class="flow-inline-arrow">→</span> 下一轮</span></div>
+<div class="flow-step lv1" style="margin-left:0px">编排链 <span class="flow-inline-arrow">→</span> <span class="edge-fall">遍历步骤 <span class="flow-inline-arrow">→</span> 执行（subprocess 跑脚本） <span class="flow-inline-arrow">→</span> 传递输出 <span class="flow-inline-arrow">→</span> 下一轮</span></div>
 </div>
 <p>这个模式在 04 中被系统化描述，Orchestrator 是它的一个具体实现案例。</p>
 <hr/>
@@ -1119,11 +1137,11 @@ L5 数据声明
 <h3 id="h167">1.1 单轮 RAG 的隐含假设</h3>
 <p>传统 RAG（Retrieval-Augmented Generation）的核心流程是一个线性管道：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">用户问题</div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">路由到知识库</span></div>
-<div class="flow-step" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">向量检索 top-K</span></div>
-<div class="flow-step" style="margin-left:42px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">拼接上下文</span></div>
-<div class="flow-step" style="margin-left:56px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 生成回答</span></div>
+<div class="flow-step lv1" style="margin-left:0px">用户问题</div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">路由到知识库</span></div>
+<div class="flow-step lv3" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">向量检索 top-K</span></div>
+<div class="flow-step lv4" style="margin-left:42px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">拼接上下文</span></div>
+<div class="flow-step lv5" style="margin-left:56px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 生成回答</span></div>
 </div>
 <p>这条流水线的隐含假设是：<strong>用户的问题本身就是最佳的检索查询</strong>。</p>
 <p>但这个假设在复杂知识库场景中存在严重问题：</p>
@@ -1131,11 +1149,11 @@ L5 数据声明
 <h3 id="h168">1.2 核心矛盾的识别</h3>
 <p>传统 RAG 的进化为一条线性流水线：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">问题 <span class="flow-inline-arrow">→</span> <span class="edge-fall">检索 <span class="flow-inline-arrow">→</span> 回答</span></div>
+<div class="flow-step lv1" style="margin-left:0px">问题 <span class="flow-inline-arrow">→</span> <span class="edge-fall">检索 <span class="flow-inline-arrow">→</span> 回答</span></div>
 </div>
 <p>但真实的知识库问答需要的是：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">问题 <span class="flow-inline-arrow">→</span> <span class="edge-fall">分解（实体/属性/关系） <span class="flow-inline-arrow">→</span> 多路检索 <span class="flow-inline-arrow">→</span> 聚合 <span class="flow-inline-arrow">→</span> 综合回答</span></div>
+<div class="flow-step lv1" style="margin-left:0px">问题 <span class="flow-inline-arrow">→</span> <span class="edge-fall">分解（实体/属性/关系） <span class="flow-inline-arrow">→</span> 多路检索 <span class="flow-inline-arrow">→</span> 聚合 <span class="flow-inline-arrow">→</span> 综合回答</span></div>
 </div>
 <p>两者之间的鸿沟就是：<strong>问题不是查询</strong>。用户的问题是一个<strong>复合指令</strong>，需要解析为检索策略再执行，而不是直接扔给向量库。</p>
 <hr/>
@@ -1156,72 +1174,72 @@ L5 数据声明
 <h2 id="h172">三、架构范式</h2>
 <h3 id="h173">3.1 双阶段流水线</h3>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">第一阶段：检索策略</div>
-<div class="flow-step" style="margin-left:14px">LLM(用户问题) <span class="flow-inline-arrow">→</span> <span class="edge-fall">entities=["A","B"], attrs=["X","Y"], rel="R"</span></div>
+<div class="flow-step lv1" style="margin-left:0px">第一阶段：检索策略</div>
+<div class="flow-step lv2" style="margin-left:14px">LLM(用户问题) <span class="flow-inline-arrow">→</span> <span class="edge-fall">entities=["A","B"], attrs=["X","Y"], rel="R"</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:14px">穷举展开：</div>
-<div class="flow-step" style="margin-left:28px">单实体 × 各属性：A X, A Y, B X, B Y</div>
-<div class="flow-step" style="margin-left:28px">联合 × 各属性：AB X, AB Y</div>
-<div class="flow-step" style="margin-left:28px">两两配对 × attrs × rel：AB X R, AB Y R, AB R</div>
-<div class="flow-step" style="margin-left:0px">第二阶段：并行检索</div>
-<div class="flow-step" style="margin-left:14px">切片 1 <span class="flow-inline-arrow">→</span> <span class="edge-fall">路由（6 种方法） <span class="flow-inline-arrow">→</span> ChromaDB（HNSW 自动修复） <span class="flow-inline-arrow">→</span> reranker（三模式） <span class="flow-inline-arrow">→</span> NLI（三向分类） <span class="flow-inline-arrow">→</span> context</span></div>
-<div class="flow-step" style="margin-left:14px">切片 2 <span class="flow-inline-arrow">→</span> <span class="edge-fall">路由 <span class="flow-inline-arrow">→</span> Chroma <span class="flow-inline-arrow">→</span> reranker <span class="flow-inline-arrow">→</span> NLI <span class="flow-inline-arrow">→</span> context</span></div>
-<div class="flow-step" style="margin-left:14px">... 共 N×M 路</div>
+<div class="flow-step lv2" style="margin-left:14px">穷举展开：</div>
+<div class="flow-step lv3" style="margin-left:28px">单实体 × 各属性：A X, A Y, B X, B Y</div>
+<div class="flow-step lv3" style="margin-left:28px">联合 × 各属性：AB X, AB Y</div>
+<div class="flow-step lv3" style="margin-left:28px">两两配对 × attrs × rel：AB X R, AB Y R, AB R</div>
+<div class="flow-step lv1" style="margin-left:0px">第二阶段：并行检索</div>
+<div class="flow-step lv2" style="margin-left:14px">切片 1 <span class="flow-inline-arrow">→</span> <span class="edge-fall">路由（6 种方法） <span class="flow-inline-arrow">→</span> ChromaDB（HNSW 自动修复） <span class="flow-inline-arrow">→</span> reranker（三模式） <span class="flow-inline-arrow">→</span> NLI（三向分类） <span class="flow-inline-arrow">→</span> context</span></div>
+<div class="flow-step lv2" style="margin-left:14px">切片 2 <span class="flow-inline-arrow">→</span> <span class="edge-fall">路由 <span class="flow-inline-arrow">→</span> Chroma <span class="flow-inline-arrow">→</span> reranker <span class="flow-inline-arrow">→</span> NLI <span class="flow-inline-arrow">→</span> context</span></div>
+<div class="flow-step lv2" style="margin-left:14px">... 共 N×M 路</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:14px">SM3 去重合并</div>
+<div class="flow-step lv2" style="margin-left:14px">SM3 去重合并</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:14px">LLM(完整上下文 + 用户问题 + 3 插槽 prompt) <span class="flow-inline-arrow">→</span> <span class="edge-fall">4 层结构化回答</span></div>
+<div class="flow-step lv2" style="margin-left:14px">LLM(完整上下文 + 用户问题 + 3 插槽 prompt) <span class="flow-inline-arrow">→</span> <span class="edge-fall">4 层结构化回答</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:14px">引用门禁校验（检查 [n] 编号是否在资料范围内）</div>
+<div class="flow-step lv2" style="margin-left:14px">引用门禁校验（检查 [n] 编号是否在资料范围内）</div>
 </div>
 <h3 id="h174">3.2 检索即服务</h3>
 <p>本地 RAG 以完整技能（local-rag-builder）的形式嵌入智能体，智能体不改造技能内部逻辑：</p>
-<div class="flow-tree">
-<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark"></span><span class="flow-ttext">rag-assistant/                      # 智能体层</span></div>
-<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">main.py                         # 入口（4 种模式）</span></div>
-<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">rag_assistant/                  # 决策、界面、LLM 通信</span></div>
-<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">├──</span><span class="flow-ttext">agent.py                    # 决策循环 + 组合查询</span></div>
-<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">├──</span><span class="flow-ttext">web_ui.py                   # HTTP 服务器 + 前端</span></div>
-<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">├──</span><span class="flow-ttext">rag_wrapper.py              # 技能封装桥接层</span></div>
-<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">├──</span><span class="flow-ttext">memory.py                   # 四层记忆 + 用户画像</span></div>
-<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">├──</span><span class="flow-ttext">llm_client.py               # Ollama + LM Studio 双后端</span></div>
-<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">├──</span><span class="flow-ttext">search.py                   # 联网搜索（3 引擎）</span></div>
-<div class="flow-tnode" style="margin-left:28px"><span class="flow-tmark">└──</span><span class="flow-ttext">engine/                     # ★ 技能层（只调用，不改造）</span></div>
-<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">rag_core.py             # 检索引擎核心</span></div>
-<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">router.py               # 两级路由</span></div>
-<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">reranker.py             # 三模式重排序 + FallbackRouter</span></div>
-<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">nli_classifier.py       # NLI 三向分类器</span></div>
-<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">knowledge_base_manager.py  # 知识库 CRUD + 容灾</span></div>
-<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">text_splitter.py        # 5 策略 + 5 守卫插件架构</span></div>
-<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">prompt_manager.py       # 3 插槽 + 预设管理</span></div>
-<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">config.py               # 配置管理 + 模型路径自动修正</span></div>
-<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">├──</span><span class="flow-ttext">embedding_model_manager.py  # 5 源并行模型下载</span></div>
-<div class="flow-tnode" style="margin-left:56px"><span class="flow-tmark">└──</span><span class="flow-ttext">utils.py                # 工具函数</span></div>
-<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">├──</span><span class="flow-ttext">vendor/                         # 内嵌第三方库</span></div>
-<div class="flow-tnode" style="margin-left:0px"><span class="flow-tmark">└──</span><span class="flow-ttext">data/                           # 运行时数据</span></div>
-</div>
+<pre><code>rag-assistant/                      # 智能体层
+├── main.py                         # 入口（4 种模式）
+├── rag_assistant/                  # 决策、界面、LLM 通信
+│   ├── agent.py                    # 决策循环 + 组合查询
+│   ├── web_ui.py                   # HTTP 服务器 + 前端
+│   ├── rag_wrapper.py              # 技能封装桥接层
+│   ├── memory.py                   # 四层记忆 + 用户画像
+│   ├── llm_client.py               # Ollama + LM Studio 双后端
+│   ├── search.py                   # 联网搜索（3 引擎）
+│   │
+│   └── engine/                     # ★ 技能层（只调用，不改造）
+│       ├── rag_core.py             # 检索引擎核心
+│       ├── router.py               # 两级路由
+│       ├── reranker.py             # 三模式重排序 + FallbackRouter
+│       ├── nli_classifier.py       # NLI 三向分类器
+│       ├── knowledge_base_manager.py  # 知识库 CRUD + 容灾
+│       ├── text_splitter.py        # 5 策略 + 5 守卫插件架构
+│       ├── prompt_manager.py       # 3 插槽 + 预设管理
+│       ├── config.py               # 配置管理 + 模型路径自动修正
+│       ├── embedding_model_manager.py  # 5 源并行模型下载
+│       └── utils.py                # 工具函数
+│
+├── vendor/                         # 内嵌第三方库
+└── data/                           # 运行时数据</code></pre>
 <p>智能体层与技能层的边界清晰——智能体只负责"查什么"，技能层负责"怎么查"：</p>
 <table><thead><tr><th>层</th><th>负责</th><th>不负责</th></tr></thead><tbody><tr><td><strong>智能体</strong></td><td>实体/属性解析、组合策略、去重合并、LLM 回答、记忆管理、用户画像</td><td>向量检索、路由决策、rerank 排序、文本切分</td></tr><tr><td><strong>技能</strong></td><td>语义路由（6 方法）、Chroma 检索、Cross-encoder 重排、NLI 分类、KB 签名、容灾</td><td>问题分解、组合策略、回答生成</td></tr></tbody></table>
 <p>这种分离意味着：底层技能升级（如换用更好的嵌入模型）不影响上层策略，上层调整检索策略不影响底层技能。</p>
 <h3 id="h175">3.3 决策循环中的硬约束</h3>
 <p>LLM 在智能体中不是自由发挥的——它被三层次硬约束约束，外加输出格式门禁和引用门禁：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">第一层：输出格式约束</div>
-<div class="flow-step" style="margin-left:14px">_parse_action() <span class="flow-inline-arrow">→</span> <span class="edge-fall">状态机解析 <<ACTION type="..." ...>></span></div>
-<div class="flow-step" style="margin-left:14px">失败 <span class="flow-inline-arrow">→</span> <span class="edge-fall">返回错误原因给 LLM <span class="flow-inline-arrow">→</span> LLM 修正重试</span></div>
-<div class="flow-step" style="margin-left:14px">特殊处理：Windows 路径反斜杠 / 文件名含引号</div>
-<div class="flow-step" style="margin-left:0px">第二层：参数合法性约束</div>
-<div class="flow-step" style="margin-left:14px">_validate_action() <span class="flow-inline-arrow">→</span> <span class="edge-fall">检查 entities/attrs 必填、rel 可选</span></div>
-<div class="flow-step" style="margin-left:14px">拒绝 <span class="flow-inline-arrow">→</span> <span class="edge-fall">返回具体拒绝原因 <span class="flow-inline-arrow">→</span> LLM 修正重试</span></div>
-<div class="flow-step" style="margin-left:14px">kb 校验：必须用户提及、系统必须存在</div>
-<div class="flow-step" style="margin-left:0px">第三层：重试次数约束</div>
-<div class="flow-step" style="margin-left:14px">agent.chat() 传 max_retries=2（实际调用值，非函数默认参数 5）</div>
-<div class="flow-step" style="margin-left:14px">超过 <span class="flow-inline-arrow">→</span> <span class="edge-fall">清上下文、全新 prompt 重新回答</span></div>
-<div class="flow-step" style="margin-left:14px">耗尽 <span class="flow-inline-arrow">→</span> <span class="edge-fall">不污染上下文、不强制回答</span></div>
-<div class="flow-step" style="margin-left:0px">第四层（新增 v0.8.0）：输出格式门禁 + 引用门禁</div>
-<div class="flow-step" style="margin-left:14px">_second_pass() <span class="flow-inline-arrow">→</span> <span class="edge-fall">build_second_pass_prompt() 强制 4 层结构</span></div>
-<div class="flow-step" style="margin-left:14px">引用校验 <span class="flow-inline-arrow">→</span> <span class="edge-fall">提取所有 [n] <span class="flow-inline-arrow">→</span> 检查编号是否在资料段落范围内</span></div>
-<div class="flow-step" style="margin-left:14px">不存在的段落编号 <span class="flow-inline-arrow">→</span> <span class="edge-fall">告警追加到回答尾部</span></div>
+<div class="flow-step lv1" style="margin-left:0px">第一层：输出格式约束</div>
+<div class="flow-step lv2" style="margin-left:14px">_parse_action() <span class="flow-inline-arrow">→</span> <span class="edge-fall">状态机解析 <<ACTION type="..." ...>></span></div>
+<div class="flow-step lv2" style="margin-left:14px">失败 <span class="flow-inline-arrow">→</span> <span class="edge-fall">返回错误原因给 LLM <span class="flow-inline-arrow">→</span> LLM 修正重试</span></div>
+<div class="flow-step lv2" style="margin-left:14px">特殊处理：Windows 路径反斜杠 / 文件名含引号</div>
+<div class="flow-step lv1" style="margin-left:0px">第二层：参数合法性约束</div>
+<div class="flow-step lv2" style="margin-left:14px">_validate_action() <span class="flow-inline-arrow">→</span> <span class="edge-fall">检查 entities/attrs 必填、rel 可选</span></div>
+<div class="flow-step lv2" style="margin-left:14px">拒绝 <span class="flow-inline-arrow">→</span> <span class="edge-fall">返回具体拒绝原因 <span class="flow-inline-arrow">→</span> LLM 修正重试</span></div>
+<div class="flow-step lv2" style="margin-left:14px">kb 校验：必须用户提及、系统必须存在</div>
+<div class="flow-step lv1" style="margin-left:0px">第三层：重试次数约束</div>
+<div class="flow-step lv2" style="margin-left:14px">agent.chat() 传 max_retries=2（实际调用值，非函数默认参数 5）</div>
+<div class="flow-step lv2" style="margin-left:14px">超过 <span class="flow-inline-arrow">→</span> <span class="edge-fall">清上下文、全新 prompt 重新回答</span></div>
+<div class="flow-step lv2" style="margin-left:14px">耗尽 <span class="flow-inline-arrow">→</span> <span class="edge-fall">不污染上下文、不强制回答</span></div>
+<div class="flow-step lv1" style="margin-left:0px">第四层（新增 v0.8.0）：输出格式门禁 + 引用门禁</div>
+<div class="flow-step lv2" style="margin-left:14px">_second_pass() <span class="flow-inline-arrow">→</span> <span class="edge-fall">build_second_pass_prompt() 强制 4 层结构</span></div>
+<div class="flow-step lv2" style="margin-left:14px">引用校验 <span class="flow-inline-arrow">→</span> <span class="edge-fall">提取所有 [n] <span class="flow-inline-arrow">→</span> 检查编号是否在资料段落范围内</span></div>
+<div class="flow-step lv2" style="margin-left:14px">不存在的段落编号 <span class="flow-inline-arrow">→</span> <span class="edge-fall">告警追加到回答尾部</span></div>
 </div>
 <p>这与 Cogito 体系 01（抑制 LLM 执行偏差）一脉相承——LLM 的每一步输出都经过校验，错误不是终点而是反馈信号。</p>
 <h3 id="h176">3.4 输出格式契约（v0.8.0+ 关键创新）</h3>
@@ -1348,15 +1366,15 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <p>多向量路由由数据驱动——<code>kb_signatures.json</code> 中有 <code>signatures</code> 列表就走多向量（每象限余弦取最高分），无则回退为单字符串余弦。不依赖条件判断。</p>
 <h3 id="h197">7.2 KB 签名生成流水线（v1.7.0b1）</h3>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">入库 <span class="flow-inline-arrow">→</span> <span class="edge-fall">文档 chunks</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">四分法采样：N<200 全量 / 200≤N<500 全域随机 / N≥500 四分+每份随机</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">4 象限各自独立计算 BCE 语义质心（非合并为 1 个全局质心）</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">每象限取距质心最近的 20 个 chunk</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">各象限独立 jieba 候选词提取 + 停用词过滤</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">各象限独立 BCE 比对原始关键词排序</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">四段拼接：Q1[:20] + Q2[:20] + Q3[:20] + Q4[:20] <span class="flow-inline-arrow">→</span> 上限 80 词</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出签名 / 反哺：(30 - count(originals)) // 4 每象限配额</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">签名同时保存为 1 个合并字符串 + 4 个分象限子字符串（多向量路由用）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">入库 <span class="flow-inline-arrow">→</span> <span class="edge-fall">文档 chunks</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">四分法采样：N<200 全量 / 200≤N<500 全域随机 / N≥500 四分+每份随机</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">4 象限各自独立计算 BCE 语义质心（非合并为 1 个全局质心）</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">每象限取距质心最近的 20 个 chunk</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">各象限独立 jieba 候选词提取 + 停用词过滤</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">各象限独立 BCE 比对原始关键词排序</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">四段拼接：Q1[:20] + Q2[:20] + Q3[:20] + Q4[:20] <span class="flow-inline-arrow">→</span> 上限 80 词</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出签名 / 反哺：(30 - count(originals)) // 4 每象限配额</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">签名同时保存为 1 个合并字符串 + 4 个分象限子字符串（多向量路由用）</span></div>
 </div>
 <p>v1.7.0b1 核心改进：四分法原来只保证"采样阶段 4 份各自抽"，质心仍合并为 1 个。大 KB 的密集区域（如政经文哲的马克思/PK 内容）拉偏质心，稀疏区域（如绿色能源）被完全压制。改为 4 个独立质心后，每个象限的独特子主题都能贡献签名词汇，政经文哲签名从 12 词（全马克思政经）扩展到 74 词（覆盖 4 个子主题）。</p>
 <p>反哺策略从全局 top-30 竞争改为四象限均分：<code>x = 30 - count(originals); y = x // 4</code>，每个象限独立取前 y 个词。原始词超额时自动跳过反哺。</p>
@@ -1364,15 +1382,15 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h2 id="h198">八、用户画像系统（v0.6.0+）</h2>
 <h3 id="h199">8.1 三层分析体系</h3>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">每轮对话</div>
+<div class="flow-step lv1" style="margin-left:0px">每轮对话</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">_classify_sentence(msg) <span class="flow-inline-arrow">→</span> <span class="edge-fall">规则级语言分析</span></div>
-<div class="flow-treegroup lv2"><div class="flow-tree-row"><span class="flow-tmark">  ├─</span>句式：statement / question / imperative / rhetorical</div><div class="flow-tree-row"><span class="flow-tmark">  ├─</span>语气：neutral / critical / curious / sarcastic / enthusiastic</div><div class="flow-tree-row"><span class="flow-tmark">  └─</span>深度：shallow / medium / deep</div></div>
+<div class="flow-step lv1" style="margin-left:0px">_classify_sentence(msg) <span class="flow-inline-arrow">→</span> <span class="edge-fall">规则级语言分析</span></div>
+<div class="flow-treegroup lv2" style="margin-left:14px"><div class="flow-tree-row lv2"><span class="flow-tmark">  ├─</span>句式：statement / question / imperative / rhetorical</div><div class="flow-tree-row lv2"><span class="flow-tmark">  ├─</span>语气：neutral / critical / curious / sarcastic / enthusiastic</div><div class="flow-tree-row lv2"><span class="flow-tmark">  └─</span>深度：shallow / medium / deep</div></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">_ocean_delta() + 衰减更新</div>
-<div class="flow-treegroup lv2"><div class="flow-tree-row"><span class="flow-tmark">  ├─</span>OCEAN 五维：openness / conscientiousness / extraversion / agreeableness / neuroticism</div><div class="flow-tree-row"><span class="flow-tmark">  └─</span>衰减机制：new = old × 0.98 + delta × 0.02（钳制 0-1）</div></div>
+<div class="flow-step lv1" style="margin-left:0px">_ocean_delta() + 衰减更新</div>
+<div class="flow-treegroup lv2" style="margin-left:14px"><div class="flow-tree-row lv2"><span class="flow-tmark">  ├─</span>OCEAN 五维：openness / conscientiousness / extraversion / agreeableness / neuroticism</div><div class="flow-tree-row lv2"><span class="flow-tmark">  └─</span>衰减机制：new = old × 0.98 + delta × 0.02（钳制 0-1）</div></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">build_persona_context() <span class="flow-inline-arrow">→</span> <span class="edge-fall">注入 LLM prompt</span></div>
+<div class="flow-step lv1" style="margin-left:0px">build_persona_context() <span class="flow-inline-arrow">→</span> <span class="edge-fall">注入 LLM prompt</span></div>
 </div>
 <h3 id="h200">8.2 人格标签映射</h3>
 <table><thead><tr><th>维度</th><th>< 0.55</th><th>≥ 0.55</th></tr></thead><tbody><tr><td>openness</td><td>守成型</td><td>探索型</td></tr><tr><td>conscientiousness</td><td>随性型</td><td>严谨型</td></tr><tr><td>extraversion</td><td>内敛型</td><td>外放型</td></tr><tr><td>agreeableness</td><td>对抗型</td><td>亲和型</td></tr><tr><td>neuroticism</td><td>稳定型（< 0.45）</td><td>敏感型（≥ 0.45）</td></tr></tbody></table>
@@ -1381,15 +1399,15 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <table><thead><tr><th>场景</th><th>行为</th></tr></thead><tbody><tr><td>写入前</td><td><code>_backup_kb()</code> 备份 chroma.sqlite3 + HNSW 索引</td></tr><tr><td>写入失败</td><td><code>_restore_kb()</code> 自动回滚到备份</td></tr><tr><td>查询 HNSW 损坏</td><td><code>_try_repair_kb()</code> 自动清理损坏索引并重建</td></tr><tr><td>配置路径无效</td><td><code>load_config()</code> 自动指向第一个已下载的同类型模型</td></tr></tbody></table>
 <h2 id="h202">十、文本切分插件架构</h2>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">文本输入</div>
+<div class="flow-step lv1" style="margin-left:0px">文本输入</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">守卫栈（多选：mermaid / code / math / table / html）</div>
+<div class="flow-step lv1" style="margin-left:0px">守卫栈（多选：mermaid / code / math / table / html）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">主策略（单选：fixed / recursive / headers / sentence / semantic）</div>
+<div class="flow-step lv1" style="margin-left:0px">主策略（单选：fixed / recursive / headers / sentence / semantic）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">后处理（单选/不选）</div>
+<div class="flow-step lv1" style="margin-left:0px">后处理（单选/不选）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">chunks 输出</div>
+<div class="flow-step lv1" style="margin-left:0px">chunks 输出</div>
 </div>
 <p>通过 <code>register_strategy()</code> / <code>register_guard()</code> 扩展自定义策略。</p>
 <hr/>
@@ -1408,21 +1426,21 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h209">B. 其他技能集成</h3>
 <p>"技能即服务"模式可迁移到任意需要调用外部技能服务的智能体：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">智能体层（策略 + 决策）</div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">技能封装层（接口适配 + 异常处理 + 资源缓存）</span></div>
-<div class="flow-step" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">外部技能层（完整逻辑）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">智能体层（策略 + 决策）</div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">技能封装层（接口适配 + 异常处理 + 资源缓存）</span></div>
+<div class="flow-step lv3" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">外部技能层（完整逻辑）</span></div>
 </div>
 <p>每次技能版本升级只需要替换 <code>engine/</code> 目录，智能体层无需改动。</p>
 <h3 id="h210">C. 强制输出格式模式的通用化</h3>
 <p>4 层分析 + 引用门禁是一个通用模式，适用于任何需要 LLM 输出可验证、可审查、可归因的场景：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">System Prompt 强制结构模板</div>
+<div class="flow-step lv1" style="margin-left:0px">System Prompt 强制结构模板</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">LLM 按格式输出</div>
+<div class="flow-step lv1" style="margin-left:0px">LLM 按格式输出</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">后处理校验（引用编号检查 / 层完整性检查）</div>
+<div class="flow-step lv1" style="margin-left:0px">后处理校验（引用编号检查 / 层完整性检查）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">不合格 <span class="flow-inline-arrow">→</span> <span class="edge-fall">告警注入 / 要求重试</span></div>
+<div class="flow-step lv1" style="margin-left:0px">不合格 <span class="flow-inline-arrow">→</span> <span class="edge-fall">告警注入 / 要求重试</span></div>
 </div>
 <hr/>
 <h2 id="h211">十二、插件系统的自举闭环与控制权分离（v2.1.0+）</h2>
@@ -1441,21 +1459,21 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <p>插件系统的第二层命题是：<strong>智能体不仅使用插件，而且参与插件的生成和验证</strong>。</p>
 <p>传统插件的生命周期是单向的：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">开发者 <span class="flow-inline-arrow">→</span> <span class="edge-fall">编写代码 <span class="flow-inline-arrow">→</span> 手动部署 <span class="flow-inline-arrow">→</span> 用户启用</span></div>
+<div class="flow-step lv1" style="margin-left:0px">开发者 <span class="flow-inline-arrow">→</span> <span class="edge-fall">编写代码 <span class="flow-inline-arrow">→</span> 手动部署 <span class="flow-inline-arrow">→</span> 用户启用</span></div>
 </div>
 <p>RAG Assistant 引入了一个可复用的闭环模式：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">能力缺口（用户描述需求）</div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">阶段 1: LLM 评估可行性（`_handle_plugin_generate` 阶段 1）</span></div>
-<div class="flow-step" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">根据 `_PLUGIN_SPEC` 上下文（Agent 生命周期 + 硬拒绝清单 + 字段池）判断</span></div>
-<div class="flow-step" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">可行 <span class="flow-inline-arrow">→</span> 返回 plan（plugin_name / type / input_fields / dependencies）</span></div>
-<div class="flow-step" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">不可行 <span class="flow-inline-arrow">→</span> 返回拒绝原因</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">阶段 2: LLM 生成代码（`_do_gen` 阶段 2）</span></div>
-<div class="flow-step" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">`plugin.json` + `plugin_xxx.py`</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">7 阶段硬校验管道</span></div>
-<div class="flow-step" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">① JSON 合法性 <span class="flow-inline-arrow">→</span> ② Python 语法 (ast.parse) <span class="flow-inline-arrow">→</span> ③ AST 结构检查（防 PluginBase 重定义）</span></div>
-<div class="flow-step" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">④ 目录规划 <span class="flow-inline-arrow">→</span> ⑤ 原子写入 (tempfile + rename) <span class="flow-inline-arrow">→</span> ⑥ SM3 签名 <span class="flow-inline-arrow">→</span> ⑦ discover_and_register</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">自动注册上线</span></div>
+<div class="flow-step lv1" style="margin-left:0px">能力缺口（用户描述需求）</div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">阶段 1: LLM 评估可行性（`_handle_plugin_generate` 阶段 1）</span></div>
+<div class="flow-step lv3" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">根据 `_PLUGIN_SPEC` 上下文（Agent 生命周期 + 硬拒绝清单 + 字段池）判断</span></div>
+<div class="flow-step lv3" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">可行 <span class="flow-inline-arrow">→</span> 返回 plan（plugin_name / type / input_fields / dependencies）</span></div>
+<div class="flow-step lv3" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">不可行 <span class="flow-inline-arrow">→</span> 返回拒绝原因</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">阶段 2: LLM 生成代码（`_do_gen` 阶段 2）</span></div>
+<div class="flow-step lv3" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">`plugin.json` + `plugin_xxx.py`</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">7 阶段硬校验管道</span></div>
+<div class="flow-step lv3" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">① JSON 合法性 <span class="flow-inline-arrow">→</span> ② Python 语法 (ast.parse) <span class="flow-inline-arrow">→</span> ③ AST 结构检查（防 PluginBase 重定义）</span></div>
+<div class="flow-step lv3" style="margin-left:28px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">④ 目录规划 <span class="flow-inline-arrow">→</span> ⑤ 原子写入 (tempfile + rename) <span class="flow-inline-arrow">→</span> ⑥ SM3 签名 <span class="flow-inline-arrow">→</span> ⑦ discover_and_register</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">自动注册上线</span></div>
 </div>
 <p>这个闭环中，AI 的角色是"受监督的代码生成器"，校验管道是"不可绕过的质量门禁"。关键设计决策是：<strong>LLM 生成的内容在写入磁盘之前必须通过全部 7 道门禁，任一道失败则拒绝写入</strong>。这与 RAG Assistant 核心架构中的"LLM 输出必须可修正"命题（命题 C）一脉相承——AI 的输出不直接生效，必须通过结构化校验层。</p>
 <h3 id="h214">12.3 两个维度的对比</h3>
@@ -1572,22 +1590,22 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <table><thead><tr><th>原则</th><th>在方法论文中的具体体现</th><th>相关篇章</th></tr></thead><tbody><tr><td>勿增实体</td><td>步骤原子化的"Step"是已经存在的最小单元，不引入多余的原语</td><td>01</td></tr><tr><td>勿增操作</td><td>五层契约确保无规则的技能无法接入</td><td>02</td></tr><tr><td>勿增限制</td><td>硬中断只检查契约声明过的约束，不凭空创造检查点</td><td>01</td></tr><tr><td>勿增承诺</td><td>锁文件机制确保恢复承诺的资源已就位</td><td>01</td></tr><tr><td>勿增实体</td><td>审计引擎不增加独立的元模块——审计规则即技能规则</td><td>03</td></tr><tr><td>勿增限制</td><td>软约束明确声明"由 LLM 自觉遵守"，不强制</td><td>02</td></tr><tr><td>勿增操作</td><td>Pipeline 编排要求每一步都有输入输出契约</td><td>04</td></tr><tr><td>勿增承诺</td><td>链驱动执行不承诺 LLM 做不到的格式转换</td><td>05</td></tr><tr><td>勿增能力</td><td>组合检索不要求单一检索覆盖全部维度</td><td>06</td></tr></tbody></table>
 <h3 id="h240">5.2 七篇构成的完整闭环</h3>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">四条元原则（07）</div>
-<div class="flow-step" style="margin-left:14px">制约架构设计的"加法冲动"</div>
-<div class="flow-step" style="margin-left:14px">提供规则投放的"精准度标准"</div>
+<div class="flow-step lv1" style="margin-left:0px">四条元原则（07）</div>
+<div class="flow-step lv2" style="margin-left:14px">制约架构设计的"加法冲动"</div>
+<div class="flow-step lv2" style="margin-left:14px">提供规则投放的"精准度标准"</div>
 <div class="flow-arrow">▼</div>
-<div class="flow-step" style="margin-left:0px">六维方法论体系（01 <span class="flow-inline-arrow">→</span> <span class="edge-fall">06）</span></div>
-<div class="flow-step" style="margin-left:0px">第一维：运行时硬中断（执行不出轨）</div>
-<div class="flow-step" style="margin-left:0px">第二维：构建时契约（结构统一）</div>
-<div class="flow-step" style="margin-left:0px">第三维：递归自举（方法论自检）</div>
-<div class="flow-step" style="margin-left:0px">第四维：编排范式（多技能组合）</div>
-<div class="flow-step" style="margin-left:0px">第五维：链驱动执行（编排工程化）</div>
-<div class="flow-step" style="margin-left:0px">第六维：领域智能体自洽（知识库应用）</div>
-<div class="flow-step" style="margin-left:0px">每一维都在已有框架内增加规则，不增加独立实体。</div>
-<div class="flow-step" style="margin-left:14px">执行中暴露新的偏差模式 <span class="flow-inline-arrow">→</span> <span class="edge-fall">回到第四维检查是否需要新规则</span></div>
-<div class="flow-step" style="margin-left:14px">新规则受四条原则的前置问询</div>
+<div class="flow-step lv1" style="margin-left:0px">六维方法论体系（01 <span class="flow-inline-arrow">→</span> <span class="edge-fall">06）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">第一维：运行时硬中断（执行不出轨）</div>
+<div class="flow-step lv1" style="margin-left:0px">第二维：构建时契约（结构统一）</div>
+<div class="flow-step lv1" style="margin-left:0px">第三维：递归自举（方法论自检）</div>
+<div class="flow-step lv1" style="margin-left:0px">第四维：编排范式（多技能组合）</div>
+<div class="flow-step lv1" style="margin-left:0px">第五维：链驱动执行（编排工程化）</div>
+<div class="flow-step lv1" style="margin-left:0px">第六维：领域智能体自洽（知识库应用）</div>
+<div class="flow-step lv1" style="margin-left:0px">每一维都在已有框架内增加规则，不增加独立实体。</div>
+<div class="flow-step lv2" style="margin-left:14px">执行中暴露新的偏差模式 <span class="flow-inline-arrow">→</span> <span class="edge-fall">回到第四维检查是否需要新规则</span></div>
+<div class="flow-step lv2" style="margin-left:14px">新规则受四条原则的前置问询</div>
 <div class="flow-arrow">▼</div>
-<div class="flow-step" style="margin-left:0px">方法论迭代闭环</div>
+<div class="flow-step lv1" style="margin-left:0px">方法论迭代闭环</div>
 </div>
 <hr/>
 <h2 id="h241">六、总结</h2>
@@ -1650,11 +1668,11 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <p><strong>命题 C：三个填空域的边界不重叠</strong></p>
 <p>Orchestrator 的填空域是"一个技能步骤的输出"，RAG Assistant 的填空域是"一个查询切片的语义标注"，Structured Writer 的填空域是"一个子结构的正文"。这三个域不重叠、不冲突、不包含关系。它们互补：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">Orchestrator（执行链）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 调用技能</div>
-<div class="flow-step" style="margin-left:0px">RAG Assistant（检索知识库） <span class="flow-inline-arrow">→</span> <span class="edge-fall">提供材料</span></div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 提供上下文</div>
-<div class="flow-step" style="margin-left:0px">Structured Writer（写作）</div>
+<div class="flow-step lv1" style="margin-left:0px">Orchestrator（执行链）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 调用技能</div>
+<div class="flow-step lv1" style="margin-left:0px">RAG Assistant（检索知识库） <span class="flow-inline-arrow">→</span> <span class="edge-fall">提供材料</span></div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 提供上下文</div>
+<div class="flow-step lv1" style="margin-left:0px">Structured Writer（写作）</div>
 </div>
 <p>Structured Writer 调用 RAG Assistant 获取材料，这是编排层（Orchestrator 模式）调用领域智能体（RAG Assistant 模式）的具体实现。三个智能体可以串联使用，形成完整的"检索→理解→生成"管线。</p>
 <p><strong>命题 D："回到当下"不是战术选择，是架构原则</strong></p>
@@ -1666,15 +1684,15 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <p><strong>确定性锚点</strong>：Pipeline 链。链在编排时确定（seq/par/loop），执行时不可修改。</p>
 <p><strong>LLM 填空内容</strong>：当前步骤的输出文本。LLM 看到的是"技能描述 + 参数 + 上一步输出"，输出的是"当前步骤的结果"。</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">链定义：</div>
-<div class="flow-step" style="margin-left:14px">[seq] 技能A</div>
-<div class="flow-step" style="margin-left:14px">[seq] 技能B</div>
-<div class="flow-step" style="margin-left:14px">[par] 技能C, 技能D</div>
-<div class="flow-step" style="margin-left:0px">执行时 LLM 的角色：</div>
-<div class="flow-step" style="margin-left:14px">步骤 A：LLM(技能A描述 + 参数) <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出 A</span></div>
-<div class="flow-step" style="margin-left:14px">步骤 B：LLM(技能B描述 + 参数 + 输出 A) <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出 B</span></div>
-<div class="flow-step" style="margin-left:14px">步骤 C：LLM(技能C描述 + 参数 + 输出 A+B) <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出 C  （并行）</span></div>
-<div class="flow-step" style="margin-left:14px">步骤 D：LLM(技能D描述 + 参数 + 输出 A+B) <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出 D  （并行）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">链定义：</div>
+<div class="flow-step lv2" style="margin-left:14px">[seq] 技能A</div>
+<div class="flow-step lv2" style="margin-left:14px">[seq] 技能B</div>
+<div class="flow-step lv2" style="margin-left:14px">[par] 技能C, 技能D</div>
+<div class="flow-step lv1" style="margin-left:0px">执行时 LLM 的角色：</div>
+<div class="flow-step lv2" style="margin-left:14px">步骤 A：LLM(技能A描述 + 参数) <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出 A</span></div>
+<div class="flow-step lv2" style="margin-left:14px">步骤 B：LLM(技能B描述 + 参数 + 输出 A) <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出 B</span></div>
+<div class="flow-step lv2" style="margin-left:14px">步骤 C：LLM(技能C描述 + 参数 + 输出 A+B) <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出 C  （并行）</span></div>
+<div class="flow-step lv2" style="margin-left:14px">步骤 D：LLM(技能D描述 + 参数 + 输出 A+B) <span class="flow-inline-arrow">→</span> <span class="edge-fall">输出 D  （并行）</span></div>
 </div>
 <p><strong>边界划定者</strong>：编排器（以及使用编排器的用户）。用户编排链，系统执行链，LLM 只填每步的输出。</p>
 <p><strong>对应原则（第七条）</strong>：如无规矩，勿增操作——链中的每个步骤必须有定义的 mode（seq/par/loop）和参数，缺少任何一项都不执行。</p>
@@ -1682,20 +1700,20 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <p><strong>确定性锚点</strong>：穷举组合策略。所有 entities × attrs 组合都查一遍，不预判哪组最优。</p>
 <p><strong>LLM 填空内容</strong>：entities/attrs/rel 的语义标注。LLM 从用户问题中提取实体、属性、关系三个维度的信息。这些标注的质量决定了后续检索的覆盖度。</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">用户问题："三个代表与无为而治的异同"</div>
+<div class="flow-step lv1" style="margin-left:0px">用户问题："三个代表与无为而治的异同"</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">LLM 填空 <span class="flow-inline-arrow">→</span> <span class="edge-fall">entities="三个代表重要思想,老子无为而治"</span></div>
-<div class="flow-step" style="margin-left:84px">attrs="核心观点,相同点,不同点"</div>
-<div class="flow-step" style="margin-left:84px">rel="思想渊源比较"</div>
+<div class="flow-step lv1" style="margin-left:0px">LLM 填空 <span class="flow-inline-arrow">→</span> <span class="edge-fall">entities="三个代表重要思想,老子无为而治"</span></div>
+<div class="flow-step lv5" style="margin-left:84px">attrs="核心观点,相同点,不同点"</div>
+<div class="flow-step lv5" style="margin-left:84px">rel="思想渊源比较"</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">穷举展开（确定性算法，LLM 不参与）：</div>
-<div class="flow-step" style="margin-left:14px">第一层：entity 单独 <span class="flow-inline-arrow">→</span> <span class="edge-fall">"三个代表重要思想", "老子无为而治"</span></div>
-<div class="flow-step" style="margin-left:14px">第二层：entity×attr <span class="flow-inline-arrow">→</span> <span class="edge-fall">"三个代表重要思想 核心观点", "老子无为而治 不同点" ...</span></div>
-<div class="flow-step" style="margin-left:14px">第三层：两两配对×rel <span class="flow-inline-arrow">→</span> <span class="edge-fall">"三个代表重要思想 老子无为而治 思想渊源比较" ...</span></div>
+<div class="flow-step lv1" style="margin-left:0px">穷举展开（确定性算法，LLM 不参与）：</div>
+<div class="flow-step lv2" style="margin-left:14px">第一层：entity 单独 <span class="flow-inline-arrow">→</span> <span class="edge-fall">"三个代表重要思想", "老子无为而治"</span></div>
+<div class="flow-step lv2" style="margin-left:14px">第二层：entity×attr <span class="flow-inline-arrow">→</span> <span class="edge-fall">"三个代表重要思想 核心观点", "老子无为而治 不同点" ...</span></div>
+<div class="flow-step lv2" style="margin-left:14px">第三层：两两配对×rel <span class="flow-inline-arrow">→</span> <span class="edge-fall">"三个代表重要思想 老子无为而治 思想渊源比较" ...</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">多路检索（每个切片独立）</div>
+<div class="flow-step lv1" style="margin-left:0px">多路检索（每个切片独立）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">SM3 去重 <span class="flow-inline-arrow">→</span> <span class="edge-fall">综合回答</span></div>
+<div class="flow-step lv1" style="margin-left:0px">SM3 去重 <span class="flow-inline-arrow">→</span> <span class="edge-fall">综合回答</span></div>
 </div>
 <p><strong>边界划定者</strong>：算法。展开策略（穷举组合）、去重策略（SM3）、检索流程（路由→检索→reranker→NLI）全部由算法确定，LLM 不参与。</p>
 <p><strong>对应原则（第七条）</strong>：如无能力，勿增限制——LLM 在分解实验中的准确率 > 90% 证明它确实有这个能力，所以"先分解再检索"是合法约束。如果准确率 < 50%，这条约束就不该存在。</p>
@@ -1704,18 +1722,18 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <p>模板定义了文章的 meta+content 结构（内置或用户自定义，代码级只读保护），大纲定义了节结构、子结构、字数、顺序、勾选状态，引用后处理将 LLM 的自然语言标记（<code>引用自{文件名}</code>）通过确定性正则替换为编号 <code>[N]</code> 并自动生成参考文献节。模板和引用后处理是锚点的两层扩展——模板约束文章框架，引用后处理约束输出格式。</p>
 <p><strong>LLM 填空内容</strong>：每个子结构的 500 字正文 + 引用标记。LLM 看到的是标题 + 写作要点 + 前文上下文 + 两级 RAG 材料 + 文档元数据，输出的是该子结构的正文（含 <code>引用自{文件名}</code> 标记）。</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">模板定义（用户选择，内置只读 / 用户自定义可编辑）：</div>
-<div class="flow-step" style="margin-left:14px">meta: [标题, 作者, 单位, ...]</div>
-<div class="flow-step" style="margin-left:14px">content: [摘要(leaf), 引言(section), 方法(section), ...]</div>
-<div class="flow-step" style="margin-left:0px">大纲定义（生成或用户编排时确定）：</div>
-<div class="flow-step" style="margin-left:14px">节 1：引言</div>
-<div class="flow-treegroup lv3"><div class="flow-tree-row"><span class="flow-tmark">    ├─</span>子结构 1_1：技术演进背景（400 字）</div><div class="flow-tree-row"><span class="flow-tmark">    ├─</span>子结构 1_2：研究动机与目标（400 字）</div><div class="flow-tree-row"><span class="flow-tmark">    └─</span>子结构 1_3：文章结构与安排（400 字）</div></div>
-<div class="flow-step" style="margin-left:0px">执行时 LLM 的角色：</div>
-<div class="flow-step" style="margin-left:14px">子结构 1_1：LLM(节RAG + 子结构RAG + 文档元数据 + 前文) <span class="flow-inline-arrow">→</span> <span class="edge-fall">400 字正文（含引用标记）</span></div>
-<div class="flow-step" style="margin-left:14px">子结构 1_2：LLM(新子结构RAG + 累积文档元数据 + 前文(含 1_1)) <span class="flow-inline-arrow">→</span> <span class="edge-fall">400 字正文</span></div>
-<div class="flow-step ellipsis-step" style="margin-left:14px">……</div>
-<div class="flow-step" style="margin-left:14px">所有节完成后 <span class="flow-inline-arrow">→</span> <span class="edge-fall">确定性引用后处理（LLM 不参与）:</span></div>
-<div class="flow-step" style="margin-left:28px">正则扫描 <span class="flow-inline-arrow">→</span> <span class="edge-fall">去重编号 <span class="flow-inline-arrow">→</span> [N] 替换 <span class="flow-inline-arrow">→</span> 参考文献节自动填充</span></div>
+<div class="flow-step lv1" style="margin-left:0px">模板定义（用户选择，内置只读 / 用户自定义可编辑）：</div>
+<div class="flow-step lv2" style="margin-left:14px">meta: [标题, 作者, 单位, ...]</div>
+<div class="flow-step lv2" style="margin-left:14px">content: [摘要(leaf), 引言(section), 方法(section), ...]</div>
+<div class="flow-step lv1" style="margin-left:0px">大纲定义（生成或用户编排时确定）：</div>
+<div class="flow-step lv2" style="margin-left:14px">节 1：引言</div>
+<div class="flow-treegroup lv3" style="margin-left:28px"><div class="flow-tree-row lv4"><span class="flow-tmark">    ├─</span>子结构 1_1：技术演进背景（400 字）</div><div class="flow-tree-row lv4"><span class="flow-tmark">    ├─</span>子结构 1_2：研究动机与目标（400 字）</div><div class="flow-tree-row lv4"><span class="flow-tmark">    └─</span>子结构 1_3：文章结构与安排（400 字）</div></div>
+<div class="flow-step lv1" style="margin-left:0px">执行时 LLM 的角色：</div>
+<div class="flow-step lv2" style="margin-left:14px">子结构 1_1：LLM(节RAG + 子结构RAG + 文档元数据 + 前文) <span class="flow-inline-arrow">→</span> <span class="edge-fall">400 字正文（含引用标记）</span></div>
+<div class="flow-step lv2" style="margin-left:14px">子结构 1_2：LLM(新子结构RAG + 累积文档元数据 + 前文(含 1_1)) <span class="flow-inline-arrow">→</span> <span class="edge-fall">400 字正文</span></div>
+<div class="flow-step ellipsis-step lv2" style="margin-left:14px">……</div>
+<div class="flow-step lv2" style="margin-left:14px">所有节完成后 <span class="flow-inline-arrow">→</span> <span class="edge-fall">确定性引用后处理（LLM 不参与）:</span></div>
+<div class="flow-step lv3" style="margin-left:28px">正则扫描 <span class="flow-inline-arrow">→</span> <span class="edge-fall">去重编号 <span class="flow-inline-arrow">→</span> [N] 替换 <span class="flow-inline-arrow">→</span> 参考文献节自动填充</span></div>
 </div>
 <p><strong>文档元数据全局累积</strong>：各节 RAG 查询返回的文档元数据（标题/作者）累积到全局字典，后面任何节都可以引用前面节见过的文档。语义检索内容逐节独立，元数据全文共享。</p>
 <p><strong>边界划定者</strong>：用户 + 模板系统 + 大纲规划器。用户选择模板（内置只读边界不可突破），通过交互式大纲调整勾选/排序/字数/RAG，大纲规划器（也是 LLM）生成初始结构——但规划器的输出可被用户否决。模板的引用字段配置决定是否启用引用后处理。</p>
@@ -1770,13 +1788,13 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h272">3.2 错误的时间累积与自我繁殖</h3>
 <p>LLM 的错误不是孤立的，它<strong>自我繁殖</strong>。Structured Writer 的前文回顾机制是繁殖通道的典型：每一节写作都注入"已写内容回顾"，后续节基于前文继续生成。</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">节 1 生成（捏造了一个不存在的引用来源）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 写入 context_buffer</div>
-<div class="flow-step" style="margin-left:0px">节 2 生成（前文回顾包含节 1，基于错误继续）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 引用该来源</div>
-<div class="flow-step" style="margin-left:0px">节 3 生成（前文回顾包含节 1+2，错误链条加长）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> ...</div>
-<div class="flow-step" style="margin-left:0px">节 N：错误已经在 N-1 处被"引用"过</div>
+<div class="flow-step lv1" style="margin-left:0px">节 1 生成（捏造了一个不存在的引用来源）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 写入 context_buffer</div>
+<div class="flow-step lv1" style="margin-left:0px">节 2 生成（前文回顾包含节 1，基于错误继续）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 引用该来源</div>
+<div class="flow-step lv1" style="margin-left:0px">节 3 生成（前文回顾包含节 1+2，错误链条加长）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> ...</div>
+<div class="flow-step lv1" style="margin-left:0px">节 N：错误已经在 N-1 处被"引用"过</div>
 </div>
 <table><thead><tr><th>错误被发现的时间</th><th>修复成本</th><th>影响范围</th></tr></thead><tbody><tr><td>节 1 生成时</td><td>重写一节</td><td>1 处</td></tr><tr><td>全文生成后</td><td>重写全部引用链路</td><td>N 处 + 参考文献节</td></tr><tr><td>交付后（用户发现）</td><td>全文重写 + 信任损失</td><td>不可逆</td></tr></tbody></table>
 <p><strong>后期修正意味着全文重写。</strong> 这不是修辞，是前文回顾机制决定的算术：错误进入 context_buffer 之后，后续所有节都基于它生成，单点修复无法抹去已经写入的引用链条。</p>
@@ -1789,13 +1807,13 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h275">4.1 后验证的成本结构</h3>
 <p>后验证的成本不是常数，是四段式：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">检测（发现异常）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 概率衰减</div>
-<div class="flow-step" style="margin-left:0px">定位（找到异常源头）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 概率衰减</div>
-<div class="flow-step" style="margin-left:0px">修复（修正源头）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 概率衰减</div>
-<div class="flow-step" style="margin-left:0px">回归（确认不再复发）</div>
+<div class="flow-step lv1" style="margin-left:0px">检测（发现异常）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 概率衰减</div>
+<div class="flow-step lv1" style="margin-left:0px">定位（找到异常源头）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 概率衰减</div>
+<div class="flow-step lv1" style="margin-left:0px">修复（修正源头）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 概率衰减</div>
+<div class="flow-step lv1" style="margin-left:0px">回归（确认不再复发）</div>
 </div>
 <p>每一段都是概率衰减。错误越晚被发现，累计需要穿越的衰减段越多，修复成本指数上升。而后验证的终极形态，不是"更好的验证器"，而是<strong>验证器的自我淘汰</strong>。</p>
 <h3 id="h276">4.2 代码铁证：validate 的死亡</h3>
@@ -1807,21 +1825,21 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h277">4.3 引用后处理：完整机制剖析（活例）</h3>
 <p>引用是"前置规范"最完整的实现。它的管线是：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">LLM 写作约束：正文只允许输出「引用自来源N」/「引自来源N」标记</div>
-<div class="flow-step" style="margin-left:14px">（prompt 硬约束：不要直接使用编号格式）</div>
+<div class="flow-step lv1" style="margin-left:0px">LLM 写作约束：正文只允许输出「引用自来源N」/「引自来源N」标记</div>
+<div class="flow-step lv2" style="margin-left:14px">（prompt 硬约束：不要直接使用编号格式）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">Python 归一化：连续列举「引用自来源1、来源2、来源4」 <span class="flow-inline-arrow">→</span> <span class="edge-fall">每个来源补上标记</span></div>
+<div class="flow-step lv1" style="margin-left:0px">Python 归一化：连续列举「引用自来源1、来源2、来源4」 <span class="flow-inline-arrow">→</span> <span class="edge-fall">每个来源补上标记</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">Python 扫描：提取全部真实引用 <span class="flow-inline-arrow">→</span> <span class="edge-fall">按首次出现顺序去重</span></div>
+<div class="flow-step lv1" style="margin-left:0px">Python 扫描：提取全部真实引用 <span class="flow-inline-arrow">→</span> <span class="edge-fall">按首次出现顺序去重</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">Python 建映射：旧编号 <span class="flow-inline-arrow">→</span> <span class="edge-fall">新编号（未用到的来源不参与编号）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">Python 建映射：旧编号 <span class="flow-inline-arrow">→</span> <span class="edge-fall">新编号（未用到的来源不参与编号）</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">Python 替换：真实引用 <span class="flow-inline-arrow">→</span> <span class="edge-fall">新编号格式；不存在的来源 <span class="flow-inline-arrow">→</span> 标记直接删除</span></div>
+<div class="flow-step lv1" style="margin-left:0px">Python 替换：真实引用 <span class="flow-inline-arrow">→</span> <span class="edge-fall">新编号格式；不存在的来源 <span class="flow-inline-arrow">→</span> 标记直接删除</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">Python 建参考文献节：只用真实引用来源，悬空条目消失</div>
+<div class="flow-step lv1" style="margin-left:0px">Python 建参考文献节：只用真实引用来源，悬空条目消失</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">LLM 仅做格式美化：拿到「已编号的元信息 + desc」 <span class="flow-inline-arrow">→</span> <span class="edge-fall">GB/T 7714 规范化</span></div>
-<div class="flow-step" style="margin-left:14px">（格式错误自动回退 Python 版本）</div>
+<div class="flow-step lv1" style="margin-left:0px">LLM 仅做格式美化：拿到「已编号的元信息 + desc」 <span class="flow-inline-arrow">→</span> <span class="edge-fall">GB/T 7714 规范化</span></div>
+<div class="flow-step lv2" style="margin-left:14px">（格式错误自动回退 Python 版本）</div>
 </div>
 <p>为什么说<strong>假引用零生成通道</strong>：</p>
 <ol><li>LLM 声称的"来源 N"，其合法性由 Python 的 <code>all_rag_headers</code>（真实 RAG 文档元数据）决定；</li><li>不存在的 N，Python 直接删除标记（<code>return ""</code>），参考文献节里对应条目<strong>根本不出现</strong>；</li><li>未使用的来源不参与编号——LLM 无法通过"列一堆来源"来虚增参考文献；</li><li>LLM 在最后一步只能<strong>美化格式</strong>，不能增删条目，且失败自动回退。</li></ol>
@@ -1859,16 +1877,16 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <blockquote><strong>检出即上报——错误的生成通道封不死，就在生成后立即检出、标记、上报人工，不让它静默进入交付物。</strong></blockquote>
 <p>Structured Writer 1.2.0 的实现：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">注入表格时：extract_numbers(rows) <span class="flow-inline-arrow">→</span> <span class="edge-fall">收集数据源全部数值（float 集合）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">注入表格时：extract_numbers(rows) <span class="flow-inline-arrow">→</span> <span class="edge-fall">收集数据源全部数值（float 集合）</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">生成后：verify_article_numbers(text, data_nums) <span class="flow-inline-arrow">→</span> <span class="edge-fall">扫描正文带单位数值</span></div>
-<div class="flow-step" style="margin-left:14px">（正则：数字 + %/亿/万/元/人次/吨/户/个/人/公里/㎡ 等单位）</div>
+<div class="flow-step lv1" style="margin-left:0px">生成后：verify_article_numbers(text, data_nums) <span class="flow-inline-arrow">→</span> <span class="edge-fall">扫描正文带单位数值</span></div>
+<div class="flow-step lv2" style="margin-left:14px">（正则：数字 + %/亿/万/元/人次/吨/户/个/人/公里/㎡ 等单位）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">过滤合法例外：4 位年份（1000-2999）、明显编号 <span class="flow-inline-arrow">→</span> <span class="edge-fall">跳过</span></div>
+<div class="flow-step lv1" style="margin-left:0px">过滤合法例外：4 位年份（1000-2999）、明显编号 <span class="flow-inline-arrow">→</span> <span class="edge-fall">跳过</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">未命中数据源（容差 0.5） <span class="flow-inline-arrow">→</span> <span class="edge-fall">追加"建议人工复审"清单</span></div>
+<div class="flow-step lv1" style="margin-left:0px">未命中数据源（容差 0.5） <span class="flow-inline-arrow">→</span> <span class="edge-fall">追加"建议人工复审"清单</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">人工兜底：清单随文章交付，人是最终校验者</div>
+<div class="flow-step lv1" style="margin-left:0px">人工兜底：清单随文章交付，人是最终校验者</div>
 </div>
 <p>关键设计：<strong>它不是验证器，是上报器</strong>。validate() 被淘汰是因为它"检查后放行"（后验证）；数值校验"检查后上报"（检出即上报）——它不宣称"正文没问题"，它宣称"这些数字我没法确认，请人工看"。这是监督责任从系统向人类的<strong>显式转移</strong>，而不是系统的失职。</p>
 <h3 id="h288">7.3 三态谱系：前置规范不是一元论</h3>
@@ -1929,16 +1947,16 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h301">4.2 3 个 token 的 U 型 vs 11 个 token 的 U 型</h3>
 <p>把 4.1 翻译成填空工程的语言：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">空长 3 token：整个空 = 开头 + 结尾，无中间 <span class="flow-inline-arrow">→</span> <span class="edge-fall">注意力全覆盖，偏离概率低</span></div>
-<div class="flow-step" style="margin-left:0px">空长 11 token：开头 3 + 结尾 3 = 6 个 token 可靠，中间 5 个在谷底 <span class="flow-inline-arrow">→</span> <span class="edge-fall">偏离概率高</span></div>
+<div class="flow-step lv1" style="margin-left:0px">空长 3 token：整个空 = 开头 + 结尾，无中间 <span class="flow-inline-arrow">→</span> <span class="edge-fall">注意力全覆盖，偏离概率低</span></div>
+<div class="flow-step lv1" style="margin-left:0px">空长 11 token：开头 3 + 结尾 3 = 6 个 token 可靠，中间 5 个在谷底 <span class="flow-inline-arrow">→</span> <span class="edge-fall">偏离概率高</span></div>
 </div>
 <p><strong>空越长，中间盲区越大；空越短，中间盲区越小——直至消失。</strong> 3 个 token 的 U 型总比 11 个 token 的 U 型偏离概率要小得多，不是比喻，是 U 型曲线的直接几何推论。</p>
 <p>这也解释了为什么"多阶段前置规范"在注意力层面天然正确：<strong>把一个大空拆成 N 个小空，每段都是新的开头——内容天然落在注意力两端，规避中间丢失。</strong> 分段填空不只因为监督前移（08a 的理由），还因为每一段都是"开头"（U 型的理由）。两个理由同向叠加。</p>
 <h3 id="h302">4.3 双向张力的交点</h3>
 <p>把第二、三、四节叠起来，空的设计露出真面目——<strong>两个方向相反的力：</strong></p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">空越小 <span class="flow-inline-arrow">→</span> <span class="edge-fall">容错带窄（重试概率<span class="flow-inline-arrow">↑</span>，越界成本<span class="flow-inline-arrow">↑</span>）        ← 第三节</span></div>
-<div class="flow-step" style="margin-left:0px">空越小 <span class="flow-inline-arrow">→</span> <span class="edge-fall">注意力窗口小（U 型谷底小，偏离概率<span class="flow-inline-arrow">↓</span>）    ← 第四节</span></div>
+<div class="flow-step lv1" style="margin-left:0px">空越小 <span class="flow-inline-arrow">→</span> <span class="edge-fall">容错带窄（重试概率<span class="flow-inline-arrow">↑</span>，越界成本<span class="flow-inline-arrow">↑</span>）        ← 第三节</span></div>
+<div class="flow-step lv1" style="margin-left:0px">空越小 <span class="flow-inline-arrow">→</span> <span class="edge-fall">注意力窗口小（U 型谷底小，偏离概率<span class="flow-inline-arrow">↓</span>）    ← 第四节</span></div>
 </div>
 <ul><li>想要<strong>少重试</strong> → 空应该大（容错带宽）；</li><li>想要<strong>少偏离</strong> → 空应该小（注意力集中）。</li></ul>
 <p><strong>空的收束是这两个判据的交点，不是单目标优化。</strong> 这就是"填空的边界"的严格含义：不是"能收多紧"，而是"在容错与注意力之间取平衡点"。而这个平衡点，正是验证分工的出发点。</p>
@@ -1972,9 +1990,9 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h309">6.2 structured-writer 的蓝皮书：多阶段前置的实证</h3>
 <p>structured-writer 的大表取数就是多阶段前置规范的活样本 [13]：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">小表（≤100 行）：py 全量注入，0 次 LLM</div>
-<div class="flow-step" style="margin-left:0px">中表：蓝皮书（py 统计生成列/行概览） <span class="flow-inline-arrow">→</span> <span class="edge-fall">1 次 LLM 选列选行 <span class="flow-inline-arrow">→</span> py 精确取数</span></div>
-<div class="flow-step" style="margin-left:0px">大表：粗筛（py 统计 <span class="flow-inline-arrow">→</span> <span class="edge-fall">蓝皮书 <span class="flow-inline-arrow">→</span> LLM 选维度分段）<span class="flow-inline-arrow">→</span> 精取（段内全量行标识 <span class="flow-inline-arrow">→</span> LLM 选列行）<span class="flow-inline-arrow">→</span> py 全量精确切</span></div>
+<div class="flow-step lv1" style="margin-left:0px">小表（≤100 行）：py 全量注入，0 次 LLM</div>
+<div class="flow-step lv1" style="margin-left:0px">中表：蓝皮书（py 统计生成列/行概览） <span class="flow-inline-arrow">→</span> <span class="edge-fall">1 次 LLM 选列选行 <span class="flow-inline-arrow">→</span> py 精确取数</span></div>
+<div class="flow-step lv1" style="margin-left:0px">大表：粗筛（py 统计 <span class="flow-inline-arrow">→</span> <span class="edge-fall">蓝皮书 <span class="flow-inline-arrow">→</span> LLM 选维度分段）<span class="flow-inline-arrow">→</span> 精取（段内全量行标识 <span class="flow-inline-arrow">→</span> LLM 选列行）<span class="flow-inline-arrow">→</span> py 全量精确切</span></div>
 </div>
 <p><strong>每一次 LLM 调用都只填一个小空</strong>（选维度、选列行、选分段），每段之间是 py 的确定性处理（统计、切分、定位）。结果是："2016 年在第 10 万行也取得到"——多阶段前置规范让长任务变得可靠，不是靠更大的模型，而是靠把大空拆成小空。</p>
 <h3 id="h310">6.3 U 型注意力下的工程含义</h3>
@@ -2049,26 +2067,26 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <p>两个 skill 的分工：</p>
 <p><strong>semantic-split</strong>（语义理解）三管线 [18]：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">Pipeline B（纯正则，零 LLM）：5W2H 七维 / 主语 / 约束等级 / 分块 / 注意力锚定</div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">覆盖率 <80% 时升级到 Pipeline A（bge 语义层）</span></div>
-<div class="flow-step" style="margin-left:0px">Pipeline A（bge-small embedding + bge-reranker）：模板库扫描 / 相似度匹配</div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">命中 ≥0.6 <span class="flow-inline-arrow">→</span> 模板作为 few-shot 参考或直接复用（0 LLM）</span></div>
-<div class="flow-step" style="margin-left:0px">Pipeline C（智能体推理）：拿到 5W2H + 约束 + 结构分析 + 模板参考</div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">三段步骤规划：聚焦（保守）<span class="flow-inline-arrow">→</span> 发散（创新）<span class="flow-inline-arrow">→</span> 整合（单一方案）</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">10 门禁钩子锁定：focus_reasoning <span class="flow-inline-arrow">→</span> divergent_reasoning <span class="flow-inline-arrow">→</span> integration_reasoning</span></div>
+<div class="flow-step lv1" style="margin-left:0px">Pipeline B（纯正则，零 LLM）：5W2H 七维 / 主语 / 约束等级 / 分块 / 注意力锚定</div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">覆盖率 <80% 时升级到 Pipeline A（bge 语义层）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">Pipeline A（bge-small embedding + bge-reranker）：模板库扫描 / 相似度匹配</div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">命中 ≥0.6 <span class="flow-inline-arrow">→</span> 模板作为 few-shot 参考或直接复用（0 LLM）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">Pipeline C（智能体推理）：拿到 5W2H + 约束 + 结构分析 + 模板参考</div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">三段步骤规划：聚焦（保守）<span class="flow-inline-arrow">→</span> 发散（创新）<span class="flow-inline-arrow">→</span> 整合（单一方案）</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">10 门禁钩子锁定：focus_reasoning <span class="flow-inline-arrow">→</span> divergent_reasoning <span class="flow-inline-arrow">→</span> integration_reasoning</span></div>
 </div>
 <p><strong>triphasic-execution</strong>（三段步骤规划）[21]：</p>
 <div class="flow-chain">
 <div class="flow-cnode">
-<div class="flow-step">Execute</div>
+<div class="flow-step lv1">Execute</div>
 </div>
 <div class="flow-carr">→</div>
 <div class="flow-cnode">
-<div class="flow-step">Review</div>
+<div class="flow-step lv1">Review</div>
 </div>
 <div class="flow-carr">→</div>
 <div class="flow-cnode">
-<div class="flow-step">Advance 三步循环</div>
+<div class="flow-step lv1">Advance 三步循环</div>
 </div>
 </div>
 <ul><li><strong>"通过提示词槽位限定"</strong> = semantic-split Pipeline C 三槽位双视角：FOCUS_SYSTEM / DIVERGENT_SYSTEM / INTEGRATION_SYSTEM，三个 system prompt 把 LLM 的推理限定在三个槽位里 [18]；</li><li><strong>"后置验证查多余槽位编造"</strong> = semantic-split 10 门禁钩子：<code>HOOK_STATUS</code> 十个布尔门禁，LLM 跳过任何子步骤、编造任何槽位，门禁 Fail [18]；</li><li><strong>"槽位内是否编造我没办法验证"</strong> = 门禁查"槽位有没有被填"（可枚举），查不了"填的对不对"（不可枚举）[11]；</li><li><strong>"被确认的步骤越多，出现语义偏离的可能性越大"</strong> = triphasic-execution 每步 Review 都是一次确认，每次确认都是一次采样——幻觉累积公式 <code>1-(1-p)^N</code>（09d [16]）的工程形态。</li></ul>
@@ -2082,11 +2100,11 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h335">7.1 路径机制</h3>
 <blockquote>"RAG 用了子集，并且也用了槽位……好在 RAG 设定并不存在特别复杂的语义，基本上只牵扯很明确的对比关系或单问题，多头语义被我限制在了开端。"</blockquote>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">用户问题 <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 三槽位分解（entities/attrs/rel + evidence 原文出处）</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">短词/长词凝练（锚定，凝缩而非泛化）</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">代码固定枚举拼接（entities × attrs 穷举 + SM3 去重）</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">多路检索（bge 余弦断点切分 + 多级签名路由）</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 综合回答（4 层结构化）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">用户问题 <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 三槽位分解（entities/attrs/rel + evidence 原文出处）</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">短词/长词凝练（锚定，凝缩而非泛化）</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">代码固定枚举拼接（entities × attrs 穷举 + SM3 去重）</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">多路检索（bge 余弦断点切分 + 多级签名路由）</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 综合回答（4 层结构化）</span></div>
 </div>
 <p>多头语义被限制在开端的三槽位里，后面的检索全是确定性穷举 [19]。</p>
 <h3 id="h336">7.2 适用与代价</h3>
@@ -2108,10 +2126,10 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h341">8.4 反查询 = 表格行列标题反应用户语言</h3>
 <p>场景三的反查询不只是小说里的资料检索——structured-writer 的通用线里，反查询指的是<strong>辅助资料表格的行列标题反应用户语言</strong>：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">表头定位（启发式：文本单元格占比 ≥50% 且下一行含数字；失败 <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 看原始前 N 行定位）</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">列标题直接给 LLM（"列标题：{json}" + 用户指令）</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 返回要抽取的列 + 行范围（在行列坐标上回答，不接触数据本身）</span></div>
-<div class="flow-step" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">py 在全量数据精确切（LLM 失败 py 兜底取前 N 行）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">表头定位（启发式：文本单元格占比 ≥50% 且下一行含数字；失败 <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 看原始前 N 行定位）</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">列标题直接给 LLM（"列标题：{json}" + 用户指令）</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">LLM 返回要抽取的列 + 行范围（在行列坐标上回答，不接触数据本身）</span></div>
+<div class="flow-step lv2" style="margin-left:14px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">py 在全量数据精确切（LLM 失败 py 兜底取前 N 行）</span></div>
 </div>
 <p>这是 <code>aux_parser.py</code> 的 <code>select_table</code> 实现 [22]：</p>
 <table><thead><tr><th>表规模</th><th>策略</th><th>LLM 调用次数</th></tr></thead><tbody><tr><td>小表 ≤100 行</td><td>py 全量注入</td><td>0 次</td></tr><tr><td>中表</td><td>蓝皮书（py 统计列/行概览）+ 全量行标识 → LLM 选列行 → py 精确切</td><td>1 次</td></tr><tr><td>大表</td><td>粗筛（蓝皮书 → LLM 选维度分段）→ 精取（段内全量行标识 → LLM 选列行）→ py 全量精确切</td><td>2 次</td></tr></tbody></table>
@@ -2128,11 +2146,11 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h2 id="h344">九、三条路径的选择判据</h2>
 <p>把三条路径放在一起，选择判据就清晰了：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">语义复杂度低 + 需要确定性高 <span class="flow-inline-arrow">→</span> <span class="edge-fall">场景二（RAG Assistant：子集+槽位+凝练+代码拼接）</span></div>
-<div class="flow-step" style="margin-left:56px"><span class="flow-inline-arrow">↓</span> 语义复杂度上升、需要 LLM 判断</div>
-<div class="flow-step" style="margin-left:0px">语义复杂度中 + 需要结构化步骤 <span class="flow-inline-arrow">→</span> <span class="edge-fall">场景一（semantic-split + triphasic-execution：提示词槽位限定+后置验证+模型调校）</span></div>
-<div class="flow-step" style="margin-left:56px"><span class="flow-inline-arrow">↓</span> 语义复杂度继续上升、需要创作自由</div>
-<div class="flow-step" style="margin-left:0px">语义复杂度高 + 需要发散 <span class="flow-inline-arrow">→</span> <span class="edge-fall">场景三（novel-weaver + structured-writer：发散+纠偏+前置规范+人类兜底）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">语义复杂度低 + 需要确定性高 <span class="flow-inline-arrow">→</span> <span class="edge-fall">场景二（RAG Assistant：子集+槽位+凝练+代码拼接）</span></div>
+<div class="flow-step lv5" style="margin-left:56px"><span class="flow-inline-arrow">↓</span> 语义复杂度上升、需要 LLM 判断</div>
+<div class="flow-step lv1" style="margin-left:0px">语义复杂度中 + 需要结构化步骤 <span class="flow-inline-arrow">→</span> <span class="edge-fall">场景一（semantic-split + triphasic-execution：提示词槽位限定+后置验证+模型调校）</span></div>
+<div class="flow-step lv5" style="margin-left:56px"><span class="flow-inline-arrow">↓</span> 语义复杂度继续上升、需要创作自由</div>
+<div class="flow-step lv1" style="margin-left:0px">语义复杂度高 + 需要发散 <span class="flow-inline-arrow">→</span> <span class="edge-fall">场景三（novel-weaver + structured-writer：发散+纠偏+前置规范+人类兜底）</span></div>
 </div>
 <table><thead><tr><th>判据</th><th>场景一</th><th>场景二</th><th>场景三</th></tr></thead><tbody><tr><td>语义自由度</td><td>低-中</td><td>低</td><td>最高</td></tr><tr><td>多头语义处理</td><td>槽位限定在开端 + 后置验证</td><td><strong>钉死在开端</strong></td><td>让渡给创作</td></tr><tr><td>幻觉治理主力</td><td>后置验证（可枚举）+ 模型调校</td><td>evidence + 代码确定性</td><td>分阶段前置规范 + 纠偏</td></tr><tr><td>确定性程度</td><td>中</td><td><strong>最高</strong></td><td>前置强、后置弱</td></tr><tr><td>后置验证优先级</td><td>中</td><td>高</td><td><strong>最低（可跳过）</strong></td></tr><tr><td>残余风险</td><td>槽位内编造无法验证</td><td>复杂句式分解错误</td><td>后置验证是软承诺</td></tr></tbody></table>
 <p><strong>一个统一观察：三条路径都没有消灭幻觉，而是把幻觉安置在各自"最不致命"的位置——场景二用代码钉死（幻觉空间最小），场景一用后置验证拦截（可枚举部分），场景三用前置规范 + 纠偏（发散任务幻觉不是主要风险）。这正对应 09"把随机误差转化为被约束在确定性边界内的波动" [12]。</strong></p>
@@ -2162,11 +2180,11 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h350">1.1 重型技能阶段：完整的 if/elif 门禁钩子</h3>
 <p>回望重型技能阶段，我做的第一件事是给 LLM 的执行行为装门禁。从"步骤原子化 + 硬中断"（01），到"五层契约 + 接入校验"（02），到"递归自举 + 自我审计"（03）——每一层都是一排 if/elif 钩子：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">if 输出格式不合法 <span class="flow-inline-arrow">→</span> <span class="edge-fall">硬中断</span></div>
-<div class="flow-step" style="margin-left:0px">elif 路径越界 <span class="flow-inline-arrow">→</span> <span class="edge-fall">阻断</span></div>
-<div class="flow-step" style="margin-left:0px">elif 状态丢失 <span class="flow-inline-arrow">→</span> <span class="edge-fall">挂起恢复</span></div>
-<div class="flow-step" style="margin-left:0px">elif 无规则可依 <span class="flow-inline-arrow">→</span> <span class="edge-fall">拒绝执行</span></div>
-<div class="flow-step" style="margin-left:0px">else <span class="flow-inline-arrow">→</span> <span class="edge-fall">放行</span></div>
+<div class="flow-step lv1" style="margin-left:0px">if 输出格式不合法 <span class="flow-inline-arrow">→</span> <span class="edge-fall">硬中断</span></div>
+<div class="flow-step lv1" style="margin-left:0px">elif 路径越界 <span class="flow-inline-arrow">→</span> <span class="edge-fall">阻断</span></div>
+<div class="flow-step lv1" style="margin-left:0px">elif 状态丢失 <span class="flow-inline-arrow">→</span> <span class="edge-fall">挂起恢复</span></div>
+<div class="flow-step lv1" style="margin-left:0px">elif 无规则可依 <span class="flow-inline-arrow">→</span> <span class="edge-fall">拒绝执行</span></div>
+<div class="flow-step lv1" style="margin-left:0px">else <span class="flow-inline-arrow">→</span> <span class="edge-fall">放行</span></div>
 </div>
 <p>这套东西的本质，是<strong>穷举"越界行为"</strong>：把 LLM 可能犯的每一种错，事先枚举成门禁条件，在边界处拦截。它工作得很好——因为错误空间在可控范围内可以枚举，钩子越密，越界越难。</p>
 <p>这个阶段的核心假设是：<strong>LLM 的所有错误都可以被预测和分类</strong>。这在小范围、强约束的任务中是成立的——一个写作技能可能犯的格式错误、路径错误、状态错误，确实是有限且可枚举的。但一旦任务域扩张，这个假设就开始松动。</p>
@@ -2273,15 +2291,15 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <p>但立刻遇到同一个问题：<strong>谁来定义这个世界模型的范畴和边界？不还得是人吗？</strong> 上海 AI Lab 自己的路线图把终点定为"物理 AGI 的三位一体架构（Agent-Evaluator-World Model）"[9]——三位一体中的 Evaluator（评估者）是谁定义的？Agent 的初始边界条件是谁设定的？在目前可见的框架内，答案仍然是：人。</p>
 <h3 id="h369">5.3 循环：穷举的宿主在转移，人类永远站在最后</h3>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">穷举的宿主：门禁钩子（if/elif，重型技能）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 转移</div>
-<div class="flow-step" style="margin-left:0px">穷举的宿主：画围栏（Prompt 分类 / 路由签名，智能体）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 转移</div>
-<div class="flow-step" style="margin-left:0px">穷举的宿主：奖励定义（RL 工程）</div>
-<div class="flow-step" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 转移</div>
-<div class="flow-step" style="margin-left:0px">穷举的宿主：世界模型与评估者的边界（架构师）</div>
+<div class="flow-step lv1" style="margin-left:0px">穷举的宿主：门禁钩子（if/elif，重型技能）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 转移</div>
+<div class="flow-step lv1" style="margin-left:0px">穷举的宿主：画围栏（Prompt 分类 / 路由签名，智能体）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 转移</div>
+<div class="flow-step lv1" style="margin-left:0px">穷举的宿主：奖励定义（RL 工程）</div>
+<div class="flow-step lv2" style="margin-left:14px"><span class="flow-inline-arrow">↓</span> 转移</div>
+<div class="flow-step lv1" style="margin-left:0px">穷举的宿主：世界模型与评估者的边界（架构师）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">回到原点：谁来定义？</div>
+<div class="flow-step lv1" style="margin-left:0px">回到原点：谁来定义？</div>
 </div>
 <p>每一次技术跃迁，都让穷举<strong>更便宜、更抽象、更靠近本质</strong>，但都没有让"定义场景/定义边界"这件事消失。穷举的宿主在转移——从代码到 Prompt，从 Prompt 到奖励函数，从奖励函数到世界模型的边界条件——但穷举本身没有消失。<strong>除非有一天，模型能自己构建稳定的世界模型、能从第一性原理应对未见过的组合——那是 AGI 的问题，不是今天工程能到达的地方。</strong></p>
 <p>这个循环不是上升的螺旋，而是一次次的劳动分工重组：每一次技术跃迁都在改变"谁来穷举"和"穷举的粒度"，但"需要穷举"这个事实本身岿然不动。人类始终是那个最终承担"定义边界"这一认知劳动的角色。</p>
@@ -2318,8 +2336,8 @@ Loading weights: 100% | 202/202 [00:00&lt;00:00, 8000it/s]
 <h3 id="h379">2.1 范式 B：三块窗口——我一直在用的</h3>
 <p>我的 RAG Assistant 从一开始就采用这套范式：<strong>检索命中某个块后，把"命中块 + 上一块 + 下一块"共三块作为元信息返回，保底覆盖文档前 1-3 块</strong>，交给 LLM 从文本里自己提取作者、标题等 [3]。</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">命中块 5 <span class="flow-inline-arrow">→</span> <span class="edge-fall">返回块 4,5,6（窗口）</span></div>
-<div class="flow-step" style="margin-left:0px">保底 <span class="flow-inline-arrow">→</span> <span class="edge-fall">块 0-3 无条件标记为头部</span></div>
+<div class="flow-step lv1" style="margin-left:0px">命中块 5 <span class="flow-inline-arrow">→</span> <span class="edge-fall">返回块 4,5,6（窗口）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">保底 <span class="flow-inline-arrow">→</span> <span class="edge-fall">块 0-3 无条件标记为头部</span></div>
 </div>
 <p>这套范式的哲学是：<strong>不假设元信息在哪、不假设文档长什么样</strong>。作者可能在第一行，可能在页脚，可能只写名字没有"作者："前缀——窗口不关心，它把判断交给 LLM 的语义能力。</p>
 <p>代价是：每次查询都让 LLM 现提取一次，同样的提取重复做，还每次都带着幻觉概率。</p>
@@ -2442,9 +2460,9 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>误差抵消要求偏差方向可设计；不是所有偏差都能设计方向。这时走第二条路：<strong>误差补正——接受偏差存在，用一张校准表把它拉回来。</strong></p>
 <p>补正的前提，恰恰是"有限枚举 + 一致"。因为：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">偏差有限（枚举得到） <span class="flow-inline-arrow">→</span> <span class="edge-fall">校准表有界（一张表装得下）</span></div>
-<div class="flow-step" style="margin-left:0px">偏差一致（同一规则产生） <span class="flow-inline-arrow">→</span> <span class="edge-fall">校准规则统一（一行规则校准一族偏差）</span></div>
-<div class="flow-step" style="margin-left:0px">偏差可回归（改配置全系统同步变） <span class="flow-inline-arrow">→</span> <span class="edge-fall">校准可迭代（每次校准的结果可复用）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">偏差有限（枚举得到） <span class="flow-inline-arrow">→</span> <span class="edge-fall">校准表有界（一张表装得下）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">偏差一致（同一规则产生） <span class="flow-inline-arrow">→</span> <span class="edge-fall">校准规则统一（一行规则校准一族偏差）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">偏差可回归（改配置全系统同步变） <span class="flow-inline-arrow">→</span> <span class="edge-fall">校准可迭代（每次校准的结果可复用）</span></div>
 </div>
 <p>分散点位的偏差无法补正，因为它不满足第二条：每处偏差的来源不同，一张校准表套不上去。<strong>补正是一种批量操作，只对一族一致的偏差有效。</strong></p>
 <p>structured-writer 里有一个现成的例子：子结构字数。早期每个子结构的字数显示都取档位上限（短篇全 1500），因为显示层的 fallback 是"取 word_count_target.max"。这是一个<strong>一致的偏差</strong>——不是某个字段错了，是所有字段以同一规则偏向了上限。修复它只需要改一个点位：让 LLM 在规划时给出每段的目标字数，显示层优先用 LLM 的值。<strong>一处改动，校准了所有章节、所有段落的字数偏差。</strong> 如果当初每段的字数逻辑散落在不同代码里（有的取 max、有的取中值、有的写死），这次校准就得逐段进行——而那正是分散点位的宿命。</p>
@@ -2466,16 +2484,16 @@ if seq &lt;= 3: is_header = True</code></pre>
 <blockquote><strong>大多数时候，误差受控比靶心偏差几毫米更值得关注。</strong></blockquote>
 <p>展开说——这里"误差受控"说的是<strong>精密度</strong>，"靶心偏差几毫米"说的是<strong>正确度</strong>：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">精密度差（每次乱跳）：均值漂移不可控 <span class="flow-inline-arrow">→</span> <span class="edge-fall">准确度观测不可靠 <span class="flow-inline-arrow">→</span> 正确度评估不准 <span class="flow-inline-arrow">→</span> 不可校准</span></div>
-<div class="flow-step" style="margin-left:0px">精密度好（每次同一点）：均值稳定 <span class="flow-inline-arrow">→</span> <span class="edge-fall">准确度可观测 <span class="flow-inline-arrow">→</span> 正确度可间接逼近 <span class="flow-inline-arrow">→</span> 可收敛</span></div>
+<div class="flow-step lv1" style="margin-left:0px">精密度差（每次乱跳）：均值漂移不可控 <span class="flow-inline-arrow">→</span> <span class="edge-fall">准确度观测不可靠 <span class="flow-inline-arrow">→</span> 正确度评估不准 <span class="flow-inline-arrow">→</span> 不可校准</span></div>
+<div class="flow-step lv1" style="margin-left:0px">精密度好（每次同一点）：均值稳定 <span class="flow-inline-arrow">→</span> <span class="edge-fall">准确度可观测 <span class="flow-inline-arrow">→</span> 正确度可间接逼近 <span class="flow-inline-arrow">→</span> 可收敛</span></div>
 </div>
 <p>精密度好的系统可能"偏"（平均落点离真值有固定距离——正确度差），但它是<strong>可治理</strong>的：你可以声明它的偏差，校准它的偏差，甚至设计它的偏差（第三章的抵消与补正）。精密度差的系统看起来"准"（某一次碰巧接近真值），但它是<strong>不可治理</strong>的——你无法对它做任何系统性改进，每次修修补补都是打地鼠。</p>
 <p>标准化的意义正在于此。标准化不是"把偏差消灭到零"——那是正确度崇拜。<strong>标准化是把精密度先钉住：统一的推动点位、统一的字段语义、统一的枚举表，让每次落点可预测</strong>——然后正确度才谈得上校准（补正）或设计（抵消）。标准化的产物不是"准"，是"稳"——而稳是通往准的唯一可行路径，因为只有稳，校准才有落点。</p>
 <h3 id="h409">4.4 校准的终点：声明偏差，而非消灭偏差</h3>
 <p>最后一步是心态转换。配置推动的系统，最终形态不是"没有偏差"，而是<strong>"偏差被声明"</strong>：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">未标准化的系统：有偏差，但偏差不可见 <span class="flow-inline-arrow">→</span> <span class="edge-fall">出问题时只能猜</span></div>
-<div class="flow-step" style="margin-left:0px">标准化的系统：有偏差，但偏差在配置表里 <span class="flow-inline-arrow">→</span> <span class="edge-fall">出问题时先看表</span></div>
+<div class="flow-step lv1" style="margin-left:0px">未标准化的系统：有偏差，但偏差不可见 <span class="flow-inline-arrow">→</span> <span class="edge-fall">出问题时只能猜</span></div>
+<div class="flow-step lv1" style="margin-left:0px">标准化的系统：有偏差，但偏差在配置表里 <span class="flow-inline-arrow">→</span> <span class="edge-fall">出问题时先看表</span></div>
 </div>
 <p>我写 08a 时强调的是"前置规范大于后置验证"——那是在流程维度上把问题提前。这里是在<strong>偏差维度</strong>上把问题提前：与其等偏差在运行中显现，不如在配置声明时就知道它会在哪里出现、以什么形态出现。<strong>声明偏差，是比消灭偏差更高明的工程姿态——前者是管理现实，后者是否认现实。</strong></p>
 <blockquote><strong>核心判断：精密度优先于正确度，误差受控优先于靶心偏差。因为正确度是不可观测的理论量（无穷多次均值才定义），可观测的只有准确度——而准确度 = 精密度 + 正确度，被精密度锁死。标准化 = 先把精密度钉住（统一点位、一致偏差），让正确度谈得上校准；把偏差从"不可见的漂移"转化为"可声明的资产"。</strong></blockquote>
@@ -2497,9 +2515,9 @@ if seq &lt;= 3: is_header = True</code></pre>
 <h3 id="h413">5.3 两个实证的共同结构</h3>
 <p>两个实证看起来不同（一个管字段、一个管视角），结构完全一致：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">发现问题 <span class="flow-inline-arrow">→</span> <span class="edge-fall">偏差不可见（分散点位 / 翻译层在概率里）</span></div>
-<div class="flow-step" style="margin-left:0px">统一点位 <span class="flow-inline-arrow">→</span> <span class="edge-fall">偏差变成声明（meta 数组 / writing_style 配置）</span></div>
-<div class="flow-step" style="margin-left:0px">校准一致 <span class="flow-inline-arrow">→</span> <span class="edge-fall">一处改动全系统生效（三模式统一 / 视角强指令）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">发现问题 <span class="flow-inline-arrow">→</span> <span class="edge-fall">偏差不可见（分散点位 / 翻译层在概率里）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">统一点位 <span class="flow-inline-arrow">→</span> <span class="edge-fall">偏差变成声明（meta 数组 / writing_style 配置）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">校准一致 <span class="flow-inline-arrow">→</span> <span class="edge-fall">一处改动全系统生效（三模式统一 / 视角强指令）</span></div>
 </div>
 <p>这正是第二章到第四章的完整演绎。配置推动不是一个"更好的实现"，它是<strong>一个更可治理的偏差结构</strong>。</p>
 <hr/>
@@ -2610,8 +2628,8 @@ if seq &lt;= 3: is_header = True</code></pre>
 <h2 id="h433">六、五确定决策树：细碎是代码的特权，重构是 LLM 的正道</h2>
 <p>把前面的论证收拢成一张决策树。对任何一个检出的问题：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">问题检出</div>
-<div class="flow-treegroup lv2"><div class="flow-tree-row"><span class="flow-tmark">  ├─</span>① 问题分级清晰？ ── 否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">重构 / 人工</span></div><div class="flow-tree-row"><span class="flow-tmark">  ├─</span>② 问题原因清晰？ ── 否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">重构（原因未知，细碎无从下刀）</span></div><div class="flow-tree-row"><span class="flow-tmark">  ├─</span>③ 问题位置清晰？ ── 否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">重构（没有坐标）</span></div><div class="flow-tree-row"><span class="flow-tmark">  ├─</span>④ 修复方式清晰？ ── 否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">重构（修复动作是创作）</span></div><div class="flow-tree-row"><span class="flow-tmark">  ├─</span>⑤ 执行者能保证确定？ ── 否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">重构（概率执行者 = 噪声累积）</span></div><div class="flow-tree-row"><span class="flow-tmark">  └─</span>全 YES <span class="flow-inline-arrow">→</span> <span class="edge-fall">细碎处理 <span class="flow-inline-arrow">→</span> 执行者：代码（零噪声）</span></div></div>
+<div class="flow-step lv1" style="margin-left:0px">问题检出</div>
+<div class="flow-treegroup lv2" style="margin-left:14px"><div class="flow-tree-row lv2"><span class="flow-tmark">  ├─</span>① 问题分级清晰？ ── 否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">重构 / 人工</span></div><div class="flow-tree-row lv2"><span class="flow-tmark">  ├─</span>② 问题原因清晰？ ── 否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">重构（原因未知，细碎无从下刀）</span></div><div class="flow-tree-row lv2"><span class="flow-tmark">  ├─</span>③ 问题位置清晰？ ── 否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">重构（没有坐标）</span></div><div class="flow-tree-row lv2"><span class="flow-tmark">  ├─</span>④ 修复方式清晰？ ── 否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">重构（修复动作是创作）</span></div><div class="flow-tree-row lv2"><span class="flow-tmark">  ├─</span>⑤ 执行者能保证确定？ ── 否 <span class="flow-inline-arrow">→</span> <span class="edge-fall">重构（概率执行者 = 噪声累积）</span></div><div class="flow-tree-row lv2"><span class="flow-tmark">  └─</span>全 YES <span class="flow-inline-arrow">→</span> <span class="edge-fall">细碎处理 <span class="flow-inline-arrow">→</span> 执行者：代码（零噪声）</span></div></div>
 </div>
 <p>这里把原来说的"验证确定"替换为"执行者能保证确定"——更准确：细碎处理的本质是<strong>执行确定性</strong>，执行者必须是零噪声的（代码），验证只是执行确定性的下游确认。五个条件全满足，细碎处理才合法；任何一项不满足，就重构。</p>
 <p>这个决策树不是纸面推演——它已经在我的 skill-standardization 审计技能里落地验证过了。那个技能对 skill 文件做 26 类规则审计，每条规则输出：<strong>独立 ID、规则 ID、severity、问题描述、修复指引、上下文行</strong>——这就是问题侧四确定的输出协议 [4]。配套的 <code>fix.py</code> 里有 <strong>30 多个确定性修复函数</strong>：<code>fix_name</code>、<code>fix_version</code>、<code>fix_h1</code>、<code>fix_section_trigger</code>、<code>fix_permission_weight</code>……每个函数对应一个问题侧四确定全满足的问题类型，全部用代码执行——执行者侧确定由"代码不会出错"天然满足，五确定完整闭合 [4]。而 <code>safe_patch_by_line</code> 提供了<strong>行号级定位修复</strong>——不依赖字符串匹配，只依赖行号，比任何模糊匹配都鲁棒 [5]。这才是细碎处理的正确姿势：<strong>把问题压到五确定 + 行号级坐标，然后交给代码。</strong> 修复引擎里那几个能代码修的格式问题（末行编号、禁用模式），走的就是同一条路。</p>
@@ -2680,9 +2698,9 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p><strong>例证三：softmax 自回归——语言模型本身就是定性-定量循环的机器。</strong> 回到第二节的公式：logits（定量）→ softmax 分布（定量）→ 采样决策（定性：选哪个 token）→ 选中的 token 成为下一个 logits 的条件（定量）[1][2]。<strong>每一次生成都是一次完整的循环：定量喂给定性，定性又变成定量的新条件。</strong> 提示词拉扯之所以能工作，正是因为它站在这个循环的入口：改变条件（定量 logits 的结构），改变采样（定性的选择），改变下一个条件（新的 logits 结构）。</p>
 <p>三个例证指向同一个结构：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">定性（划界/决策） <span class="flow-inline-arrow">⇄</span> 定量（阈值/概率/测量）</div>
-<div class="flow-step" style="margin-left:14px">定性撑起定量的方向与意义</div>
-<div class="flow-step" style="margin-left:14px">定量撑起定性的边界与位置</div>
+<div class="flow-step lv1" style="margin-left:0px">定性（划界/决策） <span class="flow-inline-arrow">⇄</span> 定量（阈值/概率/测量）</div>
+<div class="flow-step lv2" style="margin-left:14px">定性撑起定量的方向与意义</div>
+<div class="flow-step lv2" style="margin-left:14px">定量撑起定性的边界与位置</div>
 </div>
 <p>落到提示词工程，这个循环给出了一条"有效提示词"的完整配方：<strong>有效的提示词 = 定性结构 × 定量边界。</strong> 定性结构（分类、格式、步骤）定义"拉出什么形状"；定量边界（阈值、范围上下界）定义"边界立在哪个位置"。两个例子：</p>
 <ul><li><strong>"相似度低于 0.5 判为偏离"</strong>——定性划界（偏离/不偏离）× 定量边界（0.5）——可执行；<strong>"语义不符合判偏离"</strong>——只有划界没有边界——不可执行。</li><li><strong>"字数 ±15%，保留末行编号"</strong>——定性划界（合规/越界）× 定量边界（±15%）——structured-writer 的真实约束 [5]；<strong>"你必须写得好"</strong>——既无划界也无边界——死板废话。</li></ul>
@@ -2733,22 +2751,22 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>先把"知识活动"拆成一条链：</p>
 <div class="flow-chain">
 <div class="flow-cnode">
-<div class="flow-step">记住（人形图书馆）</div>
+<div class="flow-step lv1">记住（人形图书馆）</div>
 <div class="flow-note">存量</div>
 </div>
 <div class="flow-carr">→</div>
 <div class="flow-cnode">
-<div class="flow-step">说出（纸上谈兵）</div>
+<div class="flow-step lv1">说出（纸上谈兵）</div>
 <div class="flow-note">复述</div>
 </div>
 <div class="flow-carr">→</div>
 <div class="flow-cnode">
-<div class="flow-step">合适引用（画龙点睛）</div>
+<div class="flow-step lv1">合适引用（画龙点睛）</div>
 <div class="flow-note">说的质量（非做）</div>
 </div>
 <div class="flow-carr">→</div>
 <div class="flow-cnode">
-<div class="flow-step">运用（落地生根）</div>
+<div class="flow-step lv1">运用（落地生根）</div>
 <div class="flow-note">实践</div>
 </div>
 </div>
@@ -2768,13 +2786,13 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>但把认知链摆开，会发现真正的鸿沟在别处：</p>
 <div class="flow-cols">
 <div class="flow-col">
-<div class="flow-step">记住 <span class="flow-inline-arrow">→</span> <span class="edge-fall">合适引用</span></div>
-<div class="flow-step">（人形图书馆） <span class="flow-inline-arrow">→</span> <span class="edge-fall">（画龙点睛）</span></div>
+<div class="flow-step lv1">记住 <span class="flow-inline-arrow">→</span> <span class="edge-fall">合适引用</span></div>
+<div class="flow-step lv1">（人形图书馆） <span class="flow-inline-arrow">→</span> <span class="edge-fall">（画龙点睛）</span></div>
 <div class="flow-note">差距 A</div>
 </div>
 <div class="flow-col">
-<div class="flow-step">说出 <span class="flow-inline-arrow">→</span> <span class="edge-fall">运用</span></div>
-<div class="flow-step">（纸上谈兵） <span class="flow-inline-arrow">→</span> <span class="edge-fall">（落地生根）</span></div>
+<div class="flow-step lv1">说出 <span class="flow-inline-arrow">→</span> <span class="edge-fall">运用</span></div>
+<div class="flow-step lv1">（纸上谈兵） <span class="flow-inline-arrow">→</span> <span class="edge-fall">（落地生根）</span></div>
 <div class="flow-note">差距 B</div>
 </div>
 </div>
@@ -2813,22 +2831,22 @@ if seq &lt;= 3: is_header = True</code></pre>
 <div class="flow-chain">
 <div class="flow-chain-title">运用 =</div>
 <div class="flow-cnode">
-<div class="flow-step">规划</div>
+<div class="flow-step lv1">规划</div>
 <div class="flow-note">做判断</div>
 </div>
 <div class="flow-carr">→</div>
 <div class="flow-cnode">
-<div class="flow-step">执行</div>
+<div class="flow-step lv1">执行</div>
 <div class="flow-note">行动</div>
 </div>
 <div class="flow-carr">→</div>
 <div class="flow-cnode">
-<div class="flow-step">验证</div>
+<div class="flow-step lv1">验证</div>
 <div class="flow-note">闭环</div>
 </div>
 <div class="flow-carr">→</div>
 <div class="flow-cnode">
-<div class="flow-step">承担</div>
+<div class="flow-step lv1">承担</div>
 <div class="flow-note">负责</div>
 </div>
 </div>
@@ -2847,9 +2865,9 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>低代码的历史是一部反复失败的编年史：VB 表单、4GL、模型驱动架构（MDA）、可视化编程……每一轮都声势浩大，每一轮都黯然收场。业界把这归咎于技术不成熟，但这篇文章要给出另一个解释：<strong>低代码的根本障碍不是技术，是翻译——表层与底层之间那条不对称的翻译链路，人类的精力扛不住。</strong></p>
 <p>先看低代码的本质。一个低代码平台让用户在前端搭一个"简单的东西"——一个按钮、一个报表、一个审批流。用户看到的表层是简单性。但在这层简单性背后，是成倍的复杂性：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">表层（前端表象）                底层（后端实现）</div>
-<div class="flow-step" style="margin-left:0px">用户看到"一个按钮"       <span class="flow-inline-arrow">↔</span>      服务、数据库、权限、事务、架构决策</div>
-<div class="flow-step" style="margin-left:0px">简单性                         复杂性</div>
+<div class="flow-step lv1" style="margin-left:0px">表层（前端表象）                底层（后端实现）</div>
+<div class="flow-step lv1" style="margin-left:0px">用户看到"一个按钮"       <span class="flow-inline-arrow">↔</span>      服务、数据库、权限、事务、架构决策</div>
+<div class="flow-step lv1" style="margin-left:0px">简单性                         复杂性</div>
 </div>
 <p><strong>低代码 = 前端表象的假简单 + 后端实现的真复杂。</strong> 表层的任何一个"简单实现"，都要求底层不成比例的大量工作——甚至架构更改。一个拖拽出来的表单，背后是数据建模、接口设计、状态管理、权限体系；一次"这里加个字段"，背后可能是一场数据库迁移。</p>
 <p>传统低代码平台试图让"表层的人"直接生成"底层的实现"。但这里有一个死结：</p>
@@ -2882,8 +2900,8 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>两条线共享同一个底层事实：<strong>AI 终结了两种"力气活"。</strong> 判断是认知的力气活（把存量炼成恰当），翻译是工程的力气活（把表层译成底层）。两者都符合"力气活"的定义：成本高、回报不对称、依赖人类精力去扛——而精力，恰恰是 AI 唯一不稀缺的东西。</p>
 <p>于是人类的认知价值链被重排了：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">旧价值链：  记住（贵） <span class="flow-inline-arrow">→</span> <span class="edge-fall">说出 <span class="flow-inline-arrow">→</span> 合适引用（最贵）<span class="flow-inline-arrow">→</span> 运用</span></div>
-<div class="flow-step" style="margin-left:0px">新价值链：  记住（免费） <span class="flow-inline-arrow">→</span> <span class="edge-fall">合适引用（免费）<span class="flow-inline-arrow">→</span> 运用（唯一还贵的东西）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">旧价值链：  记住（贵） <span class="flow-inline-arrow">→</span> <span class="edge-fall">说出 <span class="flow-inline-arrow">→</span> 合适引用（最贵）<span class="flow-inline-arrow">→</span> 运用</span></div>
+<div class="flow-step lv1" style="margin-left:0px">新价值链：  记住（免费） <span class="flow-inline-arrow">→</span> <span class="edge-fall">合适引用（免费）<span class="flow-inline-arrow">→</span> 运用（唯一还贵的东西）</span></div>
 </div>
 <p><strong>判断的让渡把"思"从认知链的中段抹掉了，翻译的打通把"翻译"从工程链的中段抹掉了。</strong> 两条链都只剩下两端：输入（说人话/定表层）和输出（落地/对齐）。中间那段曾经最贵、也曾经最能定义"专业"的部分，变成了免费的。</p>
 <p>这带来的认知冲击是巨大的：<strong>过去我们以为"专业"= 记得多 + 译得准（图书馆 + 翻译者），现在这两样都免费了。</strong> 专业还剩下什么？剩下运用——真实约束下的决策、执行、验证、负责。而运用恰恰是人类历史上最不擅长、最不愿被考核的部分。<strong>AI 没有抢走人类的饭碗，它抢走的是人类的舒适区。</strong></p>
@@ -2895,13 +2913,13 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p>在我的结构化写作系统（Structured Writer）里，辅助资料会挂到文章的每个子结构上。数据源可能是十几万行的数据库表。过去的问题是：<strong>用户想要"2016 年的财务趋势"，但系统只把前 50 行行标识喂给 LLM——2016 年的数据如果排在第 50 行之后，就永远取不到。</strong></p>
 <p>解法正是"以调用条件为索引"：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">用户指令："16 年财务趋势"（表层，浅薄）</div>
+<div class="flow-step lv1" style="margin-left:0px">用户指令："16 年财务趋势"（表层，浅薄）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">系统生成"蓝皮书"（数据表的结构压缩：列分布、日期分段、类别分布）</div>
+<div class="flow-step lv1" style="margin-left:0px">系统生成"蓝皮书"（数据表的结构压缩：列分布、日期分段、类别分布）</div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">LLM 看蓝皮书 + 指令 <span class="flow-inline-arrow">→</span> <span class="edge-fall">判断"该取 2016 段"（合适引用）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">LLM 看蓝皮书 + 指令 <span class="flow-inline-arrow">→</span> <span class="edge-fall">判断"该取 2016 段"（合适引用）</span></div>
 <div class="flow-arrow">↓</div>
-<div class="flow-step" style="margin-left:0px">py 在全量 10 万行上精确切出 2016 年的数据（运用/执行）</div>
+<div class="flow-step lv1" style="margin-left:0px">py 在全量 10 万行上精确切出 2016 年的数据（运用/执行）</div>
 </div>
 <p>注意这里的角色分工，它精确复刻了这篇文章的两个论点：</p>
 <ul><li><strong>LLM 负责"合适引用"</strong>：它不说"我记住了所有数据"，而是按概率判断"此刻该取哪一段"。这是判断的让渡——用户不需要自己记住表结构，不需要自己写检索条件。</li><li><strong>py 负责"运用"</strong>：LLM 说的再对，切表也是 py 用确定性代码做的——校验存在性、精确切分、防造数据。<strong>LLM 说取什么，py 保证取到、取准。</strong></li><li><strong>知识以调用条件为索引</strong>：用户不按"表名"组织知识，按"指令"组织知识。"16 年"是调用条件，系统按条件取数——不是按"这个表叫什么"去翻。</li></ul>
@@ -3011,7 +3029,7 @@ if seq &lt;= 3: is_header = True</code></pre>
 <p><strong>在封闭系统里，失效之后是停止。在开放复杂系统里，失效之后是失控。</strong></p>
 <p>为什么？因为开放系统里存在<strong>误差自激</strong>的回路：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">AI 的近似判断（错） <span class="flow-inline-arrow">→</span> <span class="edge-fall">进入行动 <span class="flow-inline-arrow">→</span> 行动改变世界 <span class="flow-inline-arrow">→</span> 世界反馈改变输入 <span class="flow-inline-arrow">→</span> 误差被放大 <span class="flow-inline-arrow">→</span> 下一个判断更错</span></div>
+<div class="flow-step lv1" style="margin-left:0px">AI 的近似判断（错） <span class="flow-inline-arrow">→</span> <span class="edge-fall">进入行动 <span class="flow-inline-arrow">→</span> 行动改变世界 <span class="flow-inline-arrow">→</span> 世界反馈改变输入 <span class="flow-inline-arrow">→</span> 误差被放大 <span class="flow-inline-arrow">→</span> 下一个判断更错</span></div>
 </div>
 <p>圆里没有这个回路——割错了只是重割，误差不改变圆。但做工的世界里，<strong>每一个判断都会改写它下一次判断的依据</strong>。这就是失控的机制。</p>
 <h3 id="h492">5.2 失控的现实案例</h3>
@@ -3065,7 +3083,7 @@ if seq &lt;= 3: is_header = True</code></pre>
 <h3 id="h504">7.5 点题</h3>
 <p>医学研究画圈的完整路径是：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">失控（纳粹人体实验） <span class="flow-inline-arrow">→</span> <span class="edge-fall">原则（纽伦堡法典：自愿同意）<span class="flow-inline-arrow">→</span> 制度（赫尔辛基宣言：受试者优先 + IRB）<span class="flow-inline-arrow">→</span> 演进（9 次修订，圈随能力扩张，2013 纳入数据）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">失控（纳粹人体实验） <span class="flow-inline-arrow">→</span> <span class="edge-fall">原则（纽伦堡法典：自愿同意）<span class="flow-inline-arrow">→</span> 制度（赫尔辛基宣言：受试者优先 + IRB）<span class="flow-inline-arrow">→</span> 演进（9 次修订，圈随能力扩张，2013 纳入数据）</span></div>
 </div>
 <p><strong>AI 正在重演这个剧本——判断让渡、翻译打通、能力扩张、责任悬空——区别是：这次我们提前知道结局。</strong> 医学用了二十年（1947-1964）从失控走到画圈，AI 没有二十年可以浪费。赫尔辛基宣言证明的不只是"应该画圈"，而是<strong>画圈是可行的、是有效的、是文明自我保存的机制</strong>——人类已经这么干过一次了，干得很好。</p>
 <hr/>
@@ -3106,8 +3124,8 @@ if seq &lt;= 3: is_header = True</code></pre>
 <h2 id="h515">这本书走完了一条什么路</h2>
 <p>从第 I 部的"怎么让 LLM 不犯错"，到第 IV 部的"人还剩什么"——这本书走完了一条从工程到哲学的弧线：</p>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">约束（让 LLM 可靠） <span class="flow-inline-arrow">→</span> <span class="edge-fall">协作（让多个智能体分工）<span class="flow-inline-arrow">→</span> 边界（承认穷举的宿命）</span></div>
-<div class="flow-step" style="margin-left:0px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">重估（判断的让渡与翻译的打通）<span class="flow-inline-arrow">→</span> 画圈（伦理牢笼与划界权）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">约束（让 LLM 可靠） <span class="flow-inline-arrow">→</span> <span class="edge-fall">协作（让多个智能体分工）<span class="flow-inline-arrow">→</span> 边界（承认穷举的宿命）</span></div>
+<div class="flow-step lv1" style="margin-left:0px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">重估（判断的让渡与翻译的打通）<span class="flow-inline-arrow">→</span> 画圈（伦理牢笼与划界权）</span></div>
 </div>
 <p>回头看，前四部做的其实是同一件事的不同表述：<strong>人用判断划定 AI 的边界。</strong></p>
 <ul><li>第 I 部的契约，是"输出格式的边界"</li><li>第 II 部的分工，是"决策权的边界"</li><li>第 III 部的穷举，是"场景的边界"</li><li>第 IV 部的牢笼，是"伦理的边界"</li></ul>
@@ -3179,47 +3197,47 @@ if seq &lt;= 3: is_header = True</code></pre>
 <blockquote>一图看懂本书体系。从上到下：<strong>四部弧线 → 每部核心命题 → 支撑工具</strong>。</blockquote>
 <h2 id="h542">一、全书全景（四部弧线）</h2>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">第 IV 部 重估（人怎么自处）</div>
-<div class="flow-step" style="margin-left:0px">10 判断的让渡与翻译的打通 <span class="flow-inline-arrow">→</span> <span class="edge-fall">10a 割圆术的边界（伦理牢笼）</span></div>
-<div class="flow-step" style="margin-left:0px">"AI 终结力气活，人靠判断活；划界权必须留在人手里"</div>
+<div class="flow-step lv1" style="margin-left:0px">第 IV 部 重估（人怎么自处）</div>
+<div class="flow-step lv1" style="margin-left:0px">10 判断的让渡与翻译的打通 <span class="flow-inline-arrow">→</span> <span class="edge-fall">10a 割圆术的边界（伦理牢笼）</span></div>
+<div class="flow-step lv1" style="margin-left:0px">"AI 终结力气活，人靠判断活；划界权必须留在人手里"</div>
 <div class="flow-arrow">▼</div>
-<div class="flow-step" style="margin-left:182px">从工程退一步，问人还剩什么</div>
+<div class="flow-step lv5" style="margin-left:182px">从工程退一步，问人还剩什么</div>
 <div class="flow-arrow">▼</div>
-<div class="flow-step" style="margin-left:0px">第 III 部 边界（规则能走多远）</div>
-<div class="flow-step" style="margin-left:0px">09 穷举的宿命 <span class="flow-inline-arrow">→</span> <span class="edge-fall">09a 探测的边界 <span class="flow-inline-arrow">→</span> 09b 配置推动 <span class="flow-inline-arrow">→</span> 09c 语义免疫</span></div>
-<div class="flow-step" style="margin-left:0px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">09d 粒度切割 <span class="flow-inline-arrow">→</span> 09e 精度空耗</span></div>
-<div class="flow-step" style="margin-left:0px">"穷举是统计本质的定价，边界由人来画"</div>
+<div class="flow-step lv1" style="margin-left:0px">第 III 部 边界（规则能走多远）</div>
+<div class="flow-step lv1" style="margin-left:0px">09 穷举的宿命 <span class="flow-inline-arrow">→</span> <span class="edge-fall">09a 探测的边界 <span class="flow-inline-arrow">→</span> 09b 配置推动 <span class="flow-inline-arrow">→</span> 09c 语义免疫</span></div>
+<div class="flow-step lv1" style="margin-left:0px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">09d 粒度切割 <span class="flow-inline-arrow">→</span> 09e 精度空耗</span></div>
+<div class="flow-step lv1" style="margin-left:0px">"穷举是统计本质的定价，边界由人来画"</div>
 <div class="flow-arrow">▼</div>
-<div class="flow-step" style="margin-left:182px">划定方法论体系的能力上限</div>
+<div class="flow-step lv5" style="margin-left:182px">划定方法论体系的能力上限</div>
 <div class="flow-arrow">▼</div>
-<div class="flow-step" style="margin-left:0px">第 II 部 协作（多个智能体怎么配合）</div>
-<div class="flow-step" style="margin-left:0px">08 有限决策范式 <span class="flow-inline-arrow">→</span> <span class="edge-fall">08a 前置规范 <span class="flow-inline-arrow">→</span> 08b 填空的边界 <span class="flow-inline-arrow">→</span> 08c 槽位的减法</span></div>
-<div class="flow-step" style="margin-left:0px">"LLM 只填空，不决策；槽位要敢承认自己填不了"</div>
+<div class="flow-step lv1" style="margin-left:0px">第 II 部 协作（多个智能体怎么配合）</div>
+<div class="flow-step lv1" style="margin-left:0px">08 有限决策范式 <span class="flow-inline-arrow">→</span> <span class="edge-fall">08a 前置规范 <span class="flow-inline-arrow">→</span> 08b 填空的边界 <span class="flow-inline-arrow">→</span> 08c 槽位的减法</span></div>
+<div class="flow-step lv1" style="margin-left:0px">"LLM 只填空，不决策；槽位要敢承认自己填不了"</div>
 <div class="flow-arrow">▼</div>
-<div class="flow-step" style="margin-left:182px">单技能可靠之后，解决多体协作</div>
+<div class="flow-step lv5" style="margin-left:182px">单技能可靠之后，解决多体协作</div>
 <div class="flow-arrow">▼</div>
-<div class="flow-step" style="margin-left:0px">第 I 部 约束（LLM 不听话怎么办）</div>
-<div class="flow-step" style="margin-left:0px">01 硬约束 <span class="flow-inline-arrow">→</span> <span class="edge-fall">02 契约 <span class="flow-inline-arrow">→</span> 03 自举 <span class="flow-inline-arrow">→</span> 04 编排 <span class="flow-inline-arrow">→</span> 05 链驱动</span></div>
-<div class="flow-step" style="margin-left:0px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">06 领域智能体 <span class="flow-inline-arrow">→</span> 07 四条原则</span></div>
-<div class="flow-step" style="margin-left:0px">"LLM 的自觉是负资产，用架构约束它"</div>
+<div class="flow-step lv1" style="margin-left:0px">第 I 部 约束（LLM 不听话怎么办）</div>
+<div class="flow-step lv1" style="margin-left:0px">01 硬约束 <span class="flow-inline-arrow">→</span> <span class="edge-fall">02 契约 <span class="flow-inline-arrow">→</span> 03 自举 <span class="flow-inline-arrow">→</span> 04 编排 <span class="flow-inline-arrow">→</span> 05 链驱动</span></div>
+<div class="flow-step lv1" style="margin-left:0px"> <span class="flow-inline-arrow">→</span> <span class="edge-fall">06 领域智能体 <span class="flow-inline-arrow">→</span> 07 四条原则</span></div>
+<div class="flow-step lv1" style="margin-left:0px">"LLM 的自觉是负资产，用架构约束它"</div>
 </div>
 <h2 id="h543">二、每篇一句话命题</h2>
 <table><thead><tr><th>篇</th><th>命题</th></tr></thead><tbody><tr><td>01 硬约束架构</td><td>多步骤确定性流程中，LLM 的"自觉"是负资产</td></tr><tr><td>02 构建时契约</td><td>用五层声明锁定技能的"正确形态"</td></tr><tr><td>03 递归自举</td><td>方法论不约束自己，就没有约束任何东西的资格</td></tr><tr><td>04 技能流水线编排</td><td>LLM 从"大脑"降级为"胶水"</td></tr><tr><td>05 链驱动执行</td><td>链是主体，LLM 只做两头（前处理+输出整理），中间确定性执行</td></tr><tr><td>06 领域智能体</td><td>LLM 承担"查询策略规划者"（规划=语义标注，策略=算法穷举），组合式检索</td></tr><tr><td>07 四条原则元逻辑</td><td>架构的减法与约束的加法</td></tr><tr><td>08 有限决策范式</td><td>LLM 只填空，不决策（三体印证）</td></tr><tr><td>08a 操作层</td><td>前置规范 > 后置验证；最小尝试次数的分工与监督</td></tr><tr><td>08b 填空的边界</td><td>空的收束、U型注意力与验证的分工——填空的边界 = 容错宽度 × 注意力窗口 × 验证分工</td></tr><tr><td>08c 槽位的减法</td><td>三种场景的幻觉治理路径与四个论断——槽位是减法：语义损失可恢复，幻觉不可恢复</td></tr><tr><td>09 边界篇</td><td>穷举的宿命——稳定与随机的悖论</td></tr><tr><td>09a 检索层注脚</td><td>探测的边界——RAG 检索鲁棒性的取舍</td></tr><tr><td>09b 推动层注脚</td><td>配置推动的穷举一致性——统一推动点位与误差的哲学（精密度优先于正确度）</td></tr><tr><td>09c 语义层注脚</td><td>天然不对等与噪音抑制——语义匹配范式的不对等困境与推理免疫</td></tr><tr><td>09d 颗粒度注脚</td><td>细碎处理与区域重构的成本切割——颗粒度与对齐的悖论（细碎=确定性特权，重构=成本切割）</td></tr><tr><td>09e 精度层注脚</td><td>提示词拉扯的边界——概率曲线的形状工程与定性精度的空耗（结构指令重塑形状，精度调优是噪声级空耗）</td></tr><tr><td>10 认知重估</td><td>判断的让渡与翻译的打通——两种力气活的终结</td></tr><tr><td>10a 伦理牢笼</td><td>割圆术的边界——伦理牢笼与 AI 的宿命</td></tr></tbody></table>
 <h2 id="h544">三、工具支撑层（方法论落地）</h2>
 <div class="flow">
-<div class="flow-step" style="margin-left:0px">方法论体系（19 篇命题）</div>
-<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 由谁承载</div>
-<div class="flow-step" style="margin-left:0px">元方法论工具（9 个）：skill-standardization / triphasic-execution / git-sync /</div>
-<div class="flow-step" style="margin-left:28px">skill-function-test / skill-sub / semantic-split / universal-file-ops /</div>
-<div class="flow-step" style="margin-left:28px">Orchestrator / RAG Assistant</div>
-<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 应用到哪</div>
-<div class="flow-step" style="margin-left:0px">领域工具（14 个）：drawiodo / hug-html / latex-modular / Structured Writer /</div>
-<div class="flow-step" style="margin-left:28px">simulated-peak-plot / analysis-toolkit / local-rag-builder / activity-duration-estimation /</div>
-<div class="flow-step" style="margin-left:28px">color-toolkit / round-robin-allocator / svg-composer / workday-calendar /</div>
-<div class="flow-step" style="margin-left:28px">everything-search-breadmemory / memory-pet</div>
-<div class="flow-step" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 三体印证</div>
-<div class="flow-step" style="margin-left:0px">智能体三体：Orchestrator（编排） / RAG Assistant（检索） / Structured Writer（写作）</div>
-<div class="flow-step" style="margin-left:28px">——三个独立系统，同一个架构选择：LLM 只填空，不决策</div>
+<div class="flow-step lv1" style="margin-left:0px">方法论体系（19 篇命题）</div>
+<div class="flow-step lv3" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 由谁承载</div>
+<div class="flow-step lv1" style="margin-left:0px">元方法论工具（9 个）：skill-standardization / triphasic-execution / git-sync /</div>
+<div class="flow-step lv3" style="margin-left:28px">skill-function-test / skill-sub / semantic-split / universal-file-ops /</div>
+<div class="flow-step lv3" style="margin-left:28px">Orchestrator / RAG Assistant</div>
+<div class="flow-step lv3" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 应用到哪</div>
+<div class="flow-step lv1" style="margin-left:0px">领域工具（14 个）：drawiodo / hug-html / latex-modular / Structured Writer /</div>
+<div class="flow-step lv3" style="margin-left:28px">simulated-peak-plot / analysis-toolkit / local-rag-builder / activity-duration-estimation /</div>
+<div class="flow-step lv3" style="margin-left:28px">color-toolkit / round-robin-allocator / svg-composer / workday-calendar /</div>
+<div class="flow-step lv3" style="margin-left:28px">everything-search-breadmemory / memory-pet</div>
+<div class="flow-step lv3" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 三体印证</div>
+<div class="flow-step lv1" style="margin-left:0px">智能体三体：Orchestrator（编排） / RAG Assistant（检索） / Structured Writer（写作）</div>
+<div class="flow-step lv3" style="margin-left:28px">——三个独立系统，同一个架构选择：LLM 只填空，不决策</div>
 </div>
 <h2 id="h545">四、全书一句话</h2>
 <blockquote><strong>人用判断划定 AI 的边界：圈内让 AI 做工，圈外由人负责。</strong> ——从第 I 部"约束 LLM 的输出"，到第 IV 部"约束 LLM 的能力"，本质是同一件事：划界权在人。</blockquote>

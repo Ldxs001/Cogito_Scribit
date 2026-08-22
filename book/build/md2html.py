@@ -274,10 +274,12 @@ def _box_to_html(code):
             cur_layer.append(text)
     if cur_layer:
         layers.append(cur_layer)
-    for layer in layers:
+    for li, layer in enumerate(layers, 1):
         if not layer:
             continue
-        out.append('<div class="flow-layer">')
+        # 层序号 → 层级色（第 1 层灰、第 2 层蓝、第 3 层绿……全文统一）
+        lv = min(li, 5)
+        out.append(f'<div class="flow-layer lv{lv}">')
         name = layer[0]
         out.append(f'<div class="flow-layer-name">{_inline_arrows(name)}</div>')
         for item in layer[1:]:
@@ -557,8 +559,11 @@ def _flow_to_html(code):
                     body = f'{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span>'
                 else:
                     body = _inline_arrows(content)
+                # 行前缀去前导空格：层级缩进只由组框 margin-left 表达
+                # （背景框统一缩进），框内行顶格，连接线结构字符保留
+                prefix_show = prefix.lstrip()
                 pending_group.append((mark_pos,
-                    f'<span class="flow-tmark">{html_mod.escape(prefix)}</span>{body}'))
+                    f'<span class="flow-tmark">{html_mod.escape(prefix_show)}</span>{body}'))
             continue
         # 非分支行：先冲刷分支组
         flush_group()
@@ -757,6 +762,12 @@ a:hover { text-decoration: underline; }
 .flow-step { background: rgba(128,128,128,.08); border: 1px solid #ccc;
              border-radius: 6px; padding: .3rem .7rem; margin: .25rem 0;
              line-height: 1.6; }
+/* 层级色（全文统一：单图内同级同色、全文同层级同色） */
+.flow-step.lv1 { background: rgba(160,166,172,.10); }
+.flow-step.lv2 { background: rgba(122,148,178,.10); }
+.flow-step.lv3 { background: rgba(126,158,138,.10); }
+.flow-step.lv4 { background: rgba(158,138,116,.10); }
+.flow-step.lv5 { background: rgba(158,150,168,.10); }
 .flow-edge { color: #555; padding: .15rem 0 .15rem 1.4rem; font-size: .92em;
              line-height: 1.5; }
 .flow-note { color: #777; font-size: .88em; padding: .15rem 0; text-align: center; }
@@ -780,6 +791,11 @@ a:hover { text-decoration: underline; }
                background: rgba(128,128,128,.06);
                border: 1px solid rgba(128,128,128,.3); border-radius: 10px; }
 .flow-layer { border: 1px solid rgba(128,128,128,.28); border-radius: 8px;
+.flow-layer.lv1 { background: rgba(160,166,172,.10); }
+.flow-layer.lv2 { background: rgba(122,148,178,.10); }
+.flow-layer.lv3 { background: rgba(126,158,138,.10); }
+.flow-layer.lv4 { background: rgba(158,138,116,.10); }
+.flow-layer.lv5 { background: rgba(158,150,168,.10); }
               margin: .5rem 0; padding: .45rem .75rem;
               background: rgba(128,128,128,.04); }
 .flow-layer-name { font-weight: bold; color: #2a6fd6; margin-bottom: .2rem; }
@@ -856,12 +872,22 @@ a:hover { text-decoration: underline; }
   .toc a.toc-l2 { color: #aaa; }
   .flow { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-step { border-color: #444; background: rgba(255,255,255,.05); }
+  .flow-step.lv1 { background: rgba(160,166,172,.16); }
+  .flow-step.lv2 { background: rgba(122,148,178,.16); }
+  .flow-step.lv3 { background: rgba(126,158,138,.16); }
+  .flow-step.lv4 { background: rgba(158,138,116,.16); }
+  .flow-step.lv5 { background: rgba(158,150,168,.16); }
   .flow-edge { color: #999; }
   .flow-note { color: #888; }
   .flow-cols { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-chain { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-layers { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-layer { border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.03); }
+  .flow-layer.lv1 { background: rgba(160,166,172,.16); }
+  .flow-layer.lv2 { background: rgba(122,148,178,.16); }
+  .flow-layer.lv3 { background: rgba(126,158,138,.16); }
+  .flow-layer.lv4 { background: rgba(158,138,116,.16); }
+  .flow-layer.lv5 { background: rgba(158,150,168,.16); }
   .flow-layer-name { color: #6ba4ff; }
   .flow-layer-key { color: #aaa; }
   .flow-tree { border-color: #444; background: rgba(255,255,255,.04); }

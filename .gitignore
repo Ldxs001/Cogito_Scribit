@@ -5,3 +5,7 @@ commit_msg.txt
 push_github_api.py
 scan_arrows.py
 scan_math_text.py
+# 打印版 PDF（本地产物 + 字体，不进仓；make_pdf.py 除外）
+book/build/PDF/*.otf
+book/build/PDF/book_print*.html
+book/build/PDF/book_*.pdf

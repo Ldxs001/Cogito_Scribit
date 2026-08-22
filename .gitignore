@@ -9,3 +9,4 @@ scan_math_text.py
 book/build/PDF/*.otf
 book/build/PDF/book_print*.html
 book/build/PDF/book_*.pdf
+book/build/PDF/cover.*

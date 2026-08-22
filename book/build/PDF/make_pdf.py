@@ -69,11 +69,13 @@ PRINT_CSS = """@page {
 
 def make_cover_png():
     """PIL 渲染 A4 封面图（300dpi 印刷标准，2480×3508）
-    到 BASE/cover.jpg（JPEG q88 压缩）。
+    到 BASE/cover.png（PNG 无损——渐变数据是平滑插值，PNG 预测滤波
+    压缩率极高，实测 0.17MB 比 JPEG q88 还小，且文字无振铃、
+    渐变无 DCT 块伪影）。
     配色与原 cover.svg 一致（深蓝渐变 #12224A→#081630 + 金色标 #C9A45C），
     文字用思源黑体 OTF 直接画入图片（图片内文字，非字体分发）。
-    注意：封面是位图，打印分辨率 = 像素 ÷ 8.27 英寸——96/150ppi 会糊，
-    300ppi 为印刷行业标准（600ppi 在 A4 阅读距离无感知增益）。"""
+    注意：封面是位图，打印分辨率 = 像素 ÷ 8.27 英寸——300ppi 为印刷
+    行业标准；600ppi 在 A4 阅读距离无感知增益。"""
     from PIL import Image, ImageDraw, ImageFont
     W, H = 2480, 3508  # A4 @300dpi
     img = Image.new('RGB', (W, H))
@@ -116,9 +118,9 @@ def make_cover_png():
     note = '本书文字（含书名、标题、正文、图表标注）使用思源黑体（Source Han Sans SC）渲染，字体采用 SIL OFL 1.1 开源许可。'
     nw = draw.textlength(note, font=f_note)
     draw.text(((W - nw) / 2, 3241), note, font=f_note, fill=NOTE)
-    out = os.path.join(BASE, 'cover.jpg')
-    img.save(out, 'JPEG', quality=88)
-    print('封面 JPEG 已生成（300dpi 2480×3508）:', out)
+    out = os.path.join(BASE, 'cover.png')
+    img.save(out, 'PNG', optimize=True)
+    print('封面 PNG 已生成（300dpi 2480×3508 无损）:', out)
 
 
 def build_print_html():
@@ -161,13 +163,15 @@ def render_pdf():
         browser.close()
     # 合并：封面页（PIL PNG → A4 页）置于正文前
     import fitz
-    cover_jpg = os.path.join(BASE, 'cover.jpg')
+    cover_png = os.path.join(BASE, 'cover.png')
     body = fitz.open(BODY_PDF)
     cover = fitz.open()
     page = cover.new_page(width=595, height=842)  # A4 pt
-    page.insert_image(fitz.Rect(0, 0, 595, 842), filename=cover_jpg)
+    page.insert_image(fitz.Rect(0, 0, 595, 842), filename=cover_png)
     cover.insert_pdf(body)
-    cover.save(OUT)
+    # deflate=True：PyMuPDF 嵌入 PNG 时存未压缩像素（~25MB），
+    # Flate 重压后 ~3.9MB（垂直渐变行间重复，压缩率极高）
+    cover.save(OUT, garbage=3, deflate=True)
     n = cover.page_count
     cover.close()
     body.close()

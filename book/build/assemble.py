@@ -42,6 +42,7 @@ STRUCTURE = [
     ("appendix/工具索引.md", "附录 B 工具索引"),
     ("appendix/参考文献.md", "附录 C 参考文献"),
     ("appendix/方法论地图.md", "附录 D 方法论地图"),
+    ("appendix/提示词示例.md", "附录 E 提示词示例"),
 ]
 
 def strip_spdx(text):

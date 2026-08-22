@@ -496,12 +496,30 @@ def _flow_to_html(code):
     box_chars = '│｜┌┐└┘├┤┬┴─'  # 含半角 U+2502 与全角 U+FF5C 竖线
     arrow_chars_all = '↓↑→▼'
 
+    # 分支组聚合：同一父节点下的连续分支（可含多级）→ 一个组框
+    # （层级嵌套框模型：框1{父节点} 框2{分支组}——组框背景 = 父层级+1，
+    #  框内保留连接线缩进，等宽字体，不再逐行卡片）
+    pending_group = []  # list of (html_text)
+    last_step_lv = 1    # 最近一个非分支 step 的层级（组框 = 父层级+1）
+
+    def flush_group():
+        nonlocal last_step_lv
+        if not pending_group:
+            return
+        lv = min(last_step_lv + 1, 5)
+        rows = ''.join(f'<div class="flow-tree-row">{txt}</div>' for txt in pending_group)
+        out.append(f'<div class="flow-treegroup lv{lv}">{rows}</div>')
+        pending_group.clear()
+
     for raw in code.split('\n'):
         # 0) 框线行预判：整行只由框线/箭头字符组成 → 连接线
         l_strip = raw.strip()
         if not l_strip:
             continue
         if all(c in box_chars + arrow_chars_all + ' ' for c in l_strip):
+            # 纯框线/箭头行是"非分支内容"，先冲刷分支组，
+            # 保证箭头 ↓ 渲染在分支组之后（原图：步骤 → 分支组 → ↓）
+            flush_group()
             # 纯框线（┌──┐ / └──┬──┘ / ──── / │ │）：丢弃或转箭头
             if any(c in l_strip for c in '┬┴▼↓↑'):
                 out.append('<div class="flow-arrow">▼</div>' if '┬' in l_strip or '▼' in l_strip else '<div class="flow-arrow">↓</div>')
@@ -509,10 +527,7 @@ def _flow_to_html(code):
         # 0.5) 分支前缀检测（├─ / └─ 引导的说明行，可带 │ 引导线前缀）
         #      必须在本处理长横线归一化之前：├── 的 ─ 是分支标记一部分，
         #      先删 ─ 会让分支正则永远不命中
-        #      渲染为 step 卡片 + 连接线（flow-branch）——与链/列表元素
-        #      同一样式体系（树靠连接线、链靠箭头、层级靠缩进），
-        #      不再使用无样式 edge（消除同结构不同样式的分裂）
-        #      层级 = 分支标记（├/└）前的列数 // 2 * 14（每 2 列 = 1 级）
+        #      聚合到分支组框（层级嵌套框模型），组框层级 = 分支起始层级+1
         #      注意用原始行 r2（保留缩进）计算位置：l_strip 已删前导空格，
         #      纯空格缩进的分支行（无 │ 引导线）会丢失层级
         r2 = raw.rstrip()
@@ -521,15 +536,18 @@ def _flow_to_html(code):
             mark_pos = bm.start(2)
             content = r2[mark_pos+2:].strip(' -─│')
             if content:
-                depth = (mark_pos // 2) * 14
-                mark_show = '├──' if bm.group(2) == '├' else '└──'
+                # 连接线前缀（含 │ 缩进 + ├─），等宽字体下保留原始层级视觉
+                prefix = r2[:mark_pos+2]
                 p1, p2 = _split_first_arrow(content)
                 if p2 is not None:
                     body = f'{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span>'
                 else:
                     body = _inline_arrows(content)
-                out.append(f'<div class="flow-step flow-branch" style="margin-left:{depth}px"><span class="flow-tmark">{mark_show}</span>{body}</div>')
+                pending_group.append(
+                    f'<span class="flow-tmark">{html_mod.escape(prefix)}</span>{body}')
             continue
+        # 非分支行：先冲刷分支组
+        flush_group()
         # 0.2) 长横线箭头归一化：────→ ／ ────┬ 等 → 统一 →
         l_strip = re.sub(r'─+→', '→', l_strip)
         l_strip = re.sub(r'─+', '', l_strip)
@@ -569,10 +587,12 @@ def _flow_to_html(code):
         l2 = re.sub(r'─+', '', l2)
         # 6) 行内箭头拆分（所有文本统一染色箭头）
         p1, p2 = _split_first_arrow(l2)
+        last_step_lv = min(depth // 14 + 1, 5)
         if p2 is not None:
             out.append(f'<div class="flow-step" style="margin-left:{depth}px">{_inline_arrows(p1)} <span class="flow-inline-arrow">→</span> <span class="edge-fall">{_inline_arrows(p2)}</span></div>')
         else:
             out.append(f'<div class="flow-step" style="margin-left:{depth}px">{_inline_arrows(l2)}</div>')
+    flush_group()  # 结尾冲刷分支组
     out.append('</div>')
     return '\n'.join(out)
 
@@ -755,6 +775,19 @@ a:hover { text-decoration: underline; }
 /* 树分支 step（├──/└─ 连接线 + 卡片：与链/列表同一样式体系） */
 .flow-step.flow-branch .flow-tmark { color: #888; margin-right: .35rem; }
 .flow-branch { text-align: left; }
+/* 分支组框（层级嵌套框模型：框1{父节点} 框2{分支组}，组背景=层级色） */
+.flow-treegroup { border: 1px solid rgba(128,128,128,.28); border-radius: 8px;
+                  margin: .25rem 0; padding: .35rem .7rem;
+                  font-family: Consolas, "Courier New", monospace;
+                  font-size: .92rem; line-height: 1.7; overflow-x: auto; }
+.flow-treegroup.lv1 { background: rgba(160,166,172,.10); }
+.flow-treegroup.lv2 { background: rgba(122,148,178,.10); }
+.flow-treegroup.lv3 { background: rgba(126,158,138,.10); }
+.flow-treegroup.lv4 { background: rgba(158,138,116,.10); }
+.flow-treegroup.lv5 { background: rgba(158,150,168,.10); }
+.flow-tree-row { padding: .08rem 0; white-space: pre; }
+.flow-tree-row .flow-tmark { color: #888; }
+.flow-tree-row .flow-inline-arrow, .flow-tree-row .edge-fall { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
 /* 结构树形图（文件树/目录树） */
 .flow-tree { margin: 1rem 0; padding: .6rem .9rem;
              background: rgba(128,128,128,.06);
@@ -808,6 +841,13 @@ a:hover { text-decoration: underline; }
   .flow-tree { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-tmark { color: #666; }
   .flow-step.ellipsis-step { color: #777; }
+  .flow-treegroup { border-color: rgba(255,255,255,.15); }
+  .flow-treegroup.lv1 { background: rgba(160,166,172,.16); }
+  .flow-treegroup.lv2 { background: rgba(122,148,178,.16); }
+  .flow-treegroup.lv3 { background: rgba(126,158,138,.16); }
+  .flow-treegroup.lv4 { background: rgba(158,138,116,.16); }
+  .flow-treegroup.lv5 { background: rgba(158,150,168,.16); }
+  .flow-tree-row .flow-tmark { color: #666; }
   .math-block { border-color: #444; background: rgba(255,255,255,.04); }
   .flow-phase { color: #6ba4ff; }
 }

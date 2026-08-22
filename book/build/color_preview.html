@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>层级配色方案展示（亮/暗）</title>
+<style>
+:root { color-scheme: light dark; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+       max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem;
+       line-height: 1.8; color: #222; background: #fff; }
+h1 { font-size: 1.5rem; margin-bottom: .3rem; }
+.subtitle { color: #666; font-size: .95rem; margin-bottom: 1.5rem; }
+.switch-row { display: flex; gap: .6rem; margin: 1rem 0 2rem; align-items: center; }
+.switch-row button { padding: .45rem 1.1rem; border-radius: 6px; border: 1px solid #ccc;
+                     background: rgba(128,128,128,.08); color: inherit; cursor: pointer; font-size: .9rem; }
+.switch-row button.active { background: #2a6fd6; color: #fff; border-color: #2a6fd6; }
+section { margin-bottom: 2.2rem; }
+section h2 { font-size: 1.05rem; border-left: 4px solid #2a6fd6; padding-left: .6rem; margin-bottom: .8rem; }
+.legend { display: flex; gap: .8rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.legend span { padding: .2rem .7rem; border-radius: 6px; font-size: .82rem;
+               border: 1px solid #ccc; }
+/* ===== 与 book.html 一致的参数 ===== */
+.flow { margin: 1rem 0; padding: .9rem 1.1rem;
+        background: rgba(128,128,128,.06);
+        border: 1px solid rgba(128,128,128,.3);
+        border-radius: 10px; }
+.flow-step { background: rgba(128,128,128,.08); border: 1px solid #ccc;
+             border-radius: 6px; padding: .3rem .7rem; margin: .25rem 0;
+             line-height: 1.6; }
+/* 层级色板（莫兰迪浅化透明） */
+.flow-step.lv1 { background: rgba(160,166,172,.10); }
+.flow-step.lv2 { background: rgba(122,148,178,.10); }
+.flow-step.lv3 { background: rgba(126,158,138,.10); }
+.flow-step.lv4 { background: rgba(158,138,116,.10); }
+.flow-step.lv5 { background: rgba(158,150,168,.10); }
+.flow-step.ellipsis-step { color: #999; }
+.flow-branch { text-align: left; }
+.flow-step.flow-branch .flow-tmark { color: #888; margin-right: .35rem; }
+/* 分支组框（层级嵌套框模型：框1{父} → 框2{组}，背景=层级色） */
+.flow-treegroup { border: 1px solid rgba(128,128,128,.28); border-radius: 8px;
+                  margin: .25rem 0; padding: .35rem .7rem;
+                  font-family: Consolas, "Courier New", monospace;
+                  font-size: .92rem; line-height: 1.7; overflow-x: auto; }
+.flow-treegroup.lv1 { background: rgba(160,166,172,.10); }
+.flow-treegroup.lv2 { background: rgba(122,148,178,.10); }
+.flow-treegroup.lv3 { background: rgba(126,158,138,.10); }
+.flow-treegroup.lv4 { background: rgba(158,138,116,.10); }
+.flow-treegroup.lv5 { background: rgba(158,150,168,.10); }
+.flow-tree-row { padding: .08rem 0; white-space: pre; }
+.flow-tree-row .flow-tmark { color: #888; }
+.flow-inline-arrow { color: #2a6fd6; font-weight: bold; }
+.edge-fall { color: #2a6fd6; font-weight: bold; }
+/* 纯文本 */
+p.normal { margin: .4rem 0; }
+code.inline { background: rgba(128,128,128,.12); padding: .1em .35em; border-radius: 3px; font-size: .9em; }
+/* 代码框 */
+pre.codebox { background: rgba(128,128,128,.08); border: 1px solid #ccc;
+              border-radius: 6px; padding: .8rem 1rem; overflow-x: auto;
+              font-size: .9rem; line-height: 1.6; }
+/* 公式 */
+.math { font-family: "Times New Roman", Georgia, "STIX Two Math", serif;
+        font-style: italic; white-space: nowrap; }
+.math sup, .math sub { font-style: normal; font-size: .72em; }
+.math-block { text-align: center; margin: 1rem 0; padding: .7rem 1rem;
+              background: rgba(128,128,128,.06);
+              border: 1px solid rgba(128,128,128,.3); border-radius: 10px;
+              font-size: 1.05rem; }
+.math-block .math { font-size: 1.1em; white-space: normal; }
+/* tree 整体框 */
+.flow-tree { margin: 1rem 0; padding: .6rem .9rem;
+             background: rgba(128,128,128,.06);
+             border: 1px solid rgba(128,128,128,.3); border-radius: 10px;
+             font-family: Consolas, "Courier New", monospace;
+             font-size: .92rem; line-height: 1.7; }
+.flow-tmark { color: #888; margin-right: .35rem; }
+.flow-tnode.dir .flow-ttext { font-weight: bold; }
+/* 盒子分层 */
+.flow-layers { margin: 1rem 0; padding: .6rem .9rem;
+               background: rgba(128,128,128,.06);
+               border: 1px solid rgba(128,128,128,.3); border-radius: 10px; }
+.flow-layer { border: 1px solid rgba(128,128,128,.28); border-radius: 8px;
+              margin: .5rem 0; padding: .45rem .75rem;
+              background: rgba(128,128,128,.04); }
+.flow-layer.lv1 { background: rgba(160,166,172,.10); }
+.flow-layer.lv2 { background: rgba(122,148,178,.10); }
+.flow-layer.lv3 { background: rgba(126,158,138,.10); }
+.flow-layer-name { font-weight: bold; color: #2a6fd6; margin-bottom: .2rem; }
+.flow-layer-item { line-height: 1.6; }
+.flow-layer-key { color: #555; font-weight: bold; margin-right: .3em; }
+
+/* dark 模式 */
+@media (prefers-color-scheme: dark) {
+  body { background: #1a1a1a; color: #ddd; }
+  .subtitle { color: #aaa; }
+  .switch-row button { border-color: #444; background: rgba(255,255,255,.05); }
+  .switch-row button.active { background: #2a6fd6; color: #fff; border-color: #2a6fd6; }
+  .legend span { border-color: #444; }
+  .flow { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-step { border-color: #444; background: rgba(255,255,255,.05); }
+  .flow-step.lv1 { background: rgba(160,166,172,.16); }
+  .flow-step.lv2 { background: rgba(122,148,178,.16); }
+  .flow-step.lv3 { background: rgba(126,158,138,.16); }
+  .flow-step.lv4 { background: rgba(158,138,116,.16); }
+  .flow-step.lv5 { background: rgba(158,150,168,.16); }
+  .flow-step.flow-branch .flow-tmark { color: #666; }
+  .flow-step.ellipsis-step { color: #777; }
+  .flow-treegroup { border-color: rgba(255,255,255,.15); }
+  .flow-treegroup.lv1 { background: rgba(160,166,172,.16); }
+  .flow-treegroup.lv2 { background: rgba(122,148,178,.16); }
+  .flow-treegroup.lv3 { background: rgba(126,158,138,.16); }
+  .flow-treegroup.lv4 { background: rgba(158,138,116,.16); }
+  .flow-treegroup.lv5 { background: rgba(158,150,168,.16); }
+  .flow-tree-row .flow-tmark { color: #666; }
+  pre.codebox { border-color: #444; background: rgba(255,255,255,.05); }
+  code.inline { background: rgba(255,255,255,.12); }
+  .math-block { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-tree { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-tmark { color: #666; }
+  .flow-layers { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-layer { border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.03); }
+  .flow-layer.lv1 { background: rgba(160,166,172,.16); }
+  .flow-layer.lv2 { background: rgba(122,148,178,.16); }
+  .flow-layer.lv3 { background: rgba(126,158,138,.16); }
+  .flow-layer-name { color: #6ba4ff; }
+  .flow-layer-key { color: #aaa; }
+  .flow-inline-arrow, .edge-fall { color: #6ba4ff; }
+}
+/* 手动切换（js 加 html[data-theme]） */
+html[data-theme="light"] { color-scheme: light; }
+html[data-theme="light"] body { background: #fff; color: #222; }
+html[data-theme="light"] .subtitle { color: #666; }
+html[data-theme="light"] .switch-row button { border-color: #ccc; background: rgba(128,128,128,.08); }
+html[data-theme="light"] .switch-row button.active { background: #2a6fd6; color: #fff; }
+html[data-theme="light"] .legend span { border-color: #ccc; }
+html[data-theme="light"] .flow { border-color: rgba(128,128,128,.3); background: rgba(128,128,128,.06); }
+html[data-theme="light"] .flow-step { border-color: #ccc; background: rgba(128,128,128,.08); }
+html[data-theme="light"] .flow-step.lv1 { background: rgba(160,166,172,.10); }
+html[data-theme="light"] .flow-step.lv2 { background: rgba(122,148,178,.10); }
+html[data-theme="light"] .flow-step.lv3 { background: rgba(126,158,138,.10); }
+html[data-theme="light"] .flow-step.lv4 { background: rgba(158,138,116,.10); }
+html[data-theme="light"] .flow-step.lv5 { background: rgba(158,150,168,.10); }
+html[data-theme="light"] .flow-step.ellipsis-step { color: #999; }
+html[data-theme="light"] .flow-treegroup { border-color: rgba(128,128,128,.28); }
+html[data-theme="light"] .flow-treegroup.lv1 { background: rgba(160,166,172,.10); }
+html[data-theme="light"] .flow-treegroup.lv2 { background: rgba(122,148,178,.10); }
+html[data-theme="light"] .flow-treegroup.lv3 { background: rgba(126,158,138,.10); }
+html[data-theme="light"] .flow-treegroup.lv4 { background: rgba(158,138,116,.10); }
+html[data-theme="light"] .flow-treegroup.lv5 { background: rgba(158,150,168,.10); }
+html[data-theme="light"] .flow-tree-row .flow-tmark { color: #888; }
+html[data-theme="light"] .flow-step.flow-branch .flow-tmark { color: #888; }
+html[data-theme="light"] pre.codebox { border-color: #ccc; background: rgba(128,128,128,.08); }
+html[data-theme="light"] code.inline { background: rgba(128,128,128,.12); }
+html[data-theme="light"] .math-block { border-color: rgba(128,128,128,.3); background: rgba(128,128,128,.06); }
+html[data-theme="light"] .flow-tree { border-color: rgba(128,128,128,.3); background: rgba(128,128,128,.06); }
+html[data-theme="light"] .flow-tmark { color: #888; }
+html[data-theme="light"] .flow-layers { border-color: rgba(128,128,128,.3); background: rgba(128,128,128,.06); }
+html[data-theme="light"] .flow-layer { border-color: rgba(128,128,128,.28); background: rgba(128,128,128,.04); }
+html[data-theme="light"] .flow-layer.lv1 { background: rgba(160,166,172,.10); }
+html[data-theme="light"] .flow-layer.lv2 { background: rgba(122,148,178,.10); }
+html[data-theme="light"] .flow-layer.lv3 { background: rgba(126,158,138,.10); }
+html[data-theme="light"] .flow-layer-name { color: #2a6fd6; }
+html[data-theme="light"] .flow-layer-key { color: #555; }
+html[data-theme="light"] .flow-inline-arrow, html[data-theme="light"] .edge-fall { color: #2a6fd6; }
+html[data-theme="dark"] { color-scheme: dark; }
+html[data-theme="dark"] body { background: #1a1a1a; color: #ddd; }
+html[data-theme="dark"] .subtitle { color: #aaa; }
+html[data-theme="dark"] .switch-row button { border-color: #444; background: rgba(255,255,255,.05); }
+html[data-theme="dark"] .switch-row button.active { background: #2a6fd6; color: #fff; }
+html[data-theme="dark"] .legend span { border-color: #444; }
+html[data-theme="dark"] .flow { border-color: #444; background: rgba(255,255,255,.04); }
+html[data-theme="dark"] .flow-step { border-color: #444; background: rgba(255,255,255,.05); }
+html[data-theme="dark"] .flow-step.lv1 { background: rgba(160,166,172,.16); }
+html[data-theme="dark"] .flow-step.lv2 { background: rgba(122,148,178,.16); }
+html[data-theme="dark"] .flow-step.lv3 { background: rgba(126,158,138,.16); }
+html[data-theme="dark"] .flow-step.lv4 { background: rgba(158,138,116,.16); }
+html[data-theme="dark"] .flow-step.lv5 { background: rgba(158,150,168,.16); }
+html[data-theme="dark"] .flow-step.ellipsis-step { color: #777; }
+html[data-theme="dark"] .flow-treegroup { border-color: rgba(255,255,255,.15); }
+html[data-theme="dark"] .flow-treegroup.lv1 { background: rgba(160,166,172,.16); }
+html[data-theme="dark"] .flow-treegroup.lv2 { background: rgba(122,148,178,.16); }
+html[data-theme="dark"] .flow-treegroup.lv3 { background: rgba(126,158,138,.16); }
+html[data-theme="dark"] .flow-treegroup.lv4 { background: rgba(158,138,116,.16); }
+html[data-theme="dark"] .flow-treegroup.lv5 { background: rgba(158,150,168,.16); }
+html[data-theme="dark"] .flow-tree-row .flow-tmark { color: #666; }
+html[data-theme="dark"] .flow-step.flow-branch .flow-tmark { color: #666; }
+html[data-theme="dark"] pre.codebox { border-color: #444; background: rgba(255,255,255,.05); }
+html[data-theme="dark"] code.inline { background: rgba(255,255,255,.12); }
+html[data-theme="dark"] .math-block { border-color: #444; background: rgba(255,255,255,.04); }
+html[data-theme="dark"] .flow-tree { border-color: #444; background: rgba(255,255,255,.04); }
+html[data-theme="dark"] .flow-tmark { color: #666; }
+html[data-theme="dark"] .flow-layers { border-color: #444; background: rgba(255,255,255,.04); }
+html[data-theme="dark"] .flow-layer { border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.03); }
+html[data-theme="dark"] .flow-layer.lv1 { background: rgba(160,166,172,.16); }
+html[data-theme="dark"] .flow-layer.lv2 { background: rgba(122,148,178,.16); }
+html[data-theme="dark"] .flow-layer.lv3 { background: rgba(126,158,138,.16); }
+html[data-theme="dark"] .flow-layer-name { color: #6ba4ff; }
+html[data-theme="dark"] .flow-layer-key { color: #aaa; }
+html[data-theme="dark"] .flow-inline-arrow, html[data-theme="dark"] .edge-fall { color: #6ba4ff; }
+</style>
+</head>
+<body>
+<h1>层级配色方案（莫兰迪 · 浅化透明 · 全文统一）</h1>
+<p class="subtitle">相同层级相同颜色，文字颜色不变，亮暗自适应。全部对比度 WCAG AAA（light 14.4~14.7:1 / dark 9.7~10.2:1）</p>
+
+<div class="switch-row">
+  <button id="btn-auto" class="active">跟随系统</button>
+  <button id="btn-light">亮色</button>
+  <button id="btn-dark">暗色</button>
+  <span style="font-size:.85rem; color:#888;">当前：跟随系统（可手动切换预览）</span>
+</div>
+
+<section>
+  <h2>一、整图背景框 + 层级卡片（flow 容器）</h2>
+  <div class="legend">
+    <span class="lv1" style="background:rgba(160,166,172,.10);border:1px solid #ccc">层1 灰</span>
+    <span class="lv2" style="background:rgba(122,148,178,.10);border:1px solid #ccc">层2 蓝</span>
+    <span class="lv3" style="background:rgba(126,158,138,.10);border:1px solid #ccc">层3 绿</span>
+    <span class="lv4" style="background:rgba(158,138,116,.10);border:1px solid #ccc">层4 褐</span>
+    <span class="lv5" style="background:rgba(158,150,168,.10);border:1px solid #ccc">层5 紫灰(兜底)</span>
+  </div>
+  <div class="flow">
+    <div class="flow-step lv1">问题检出  <span class="edge-fall">[层1 灰]</span></div>
+    <div class="flow-treegroup lv2">
+      <div class="flow-tree-row"><span class="flow-tmark">├─</span>① 问题分级清晰？ <span class="flow-inline-arrow">── 否 →</span> <span class="edge-fall">重构 / 人工</span></div>
+      <div class="flow-tree-row"><span class="flow-tmark">├─</span>② 问题原因清晰？ <span class="flow-inline-arrow">── 否 →</span> <span class="edge-fall">重构（原因未知，细碎无从下刀）</span></div>
+      <div class="flow-tree-row"><span class="flow-tmark">├─</span>③ 问题位置清晰？ <span class="flow-inline-arrow">── 否 →</span> <span class="edge-fall">重构（没有坐标）</span></div>
+      <div class="flow-tree-row"><span class="flow-tmark">└─</span>全 YES <span class="flow-inline-arrow">→</span> <span class="edge-fall">细碎处理 → 执行者：代码（零噪声）</span></div>
+    </div>
+    <div class="flow-step lv1" style="margin-top:.6rem">大纲定义（生成或用户编排时确定）：  <span class="edge-fall">[层1 灰]</span></div>
+    <div class="flow-step lv2">节 1：引言  <span class="edge-fall">[层2 蓝]</span></div>
+    <div class="flow-treegroup lv3">
+      <div class="flow-tree-row"><span class="flow-tmark">├──</span>子结构 1_1：技术演进背景（400 字）</div>
+      <div class="flow-tree-row"><span class="flow-tmark">└──</span>子结构 1_2：研究动机与目标（400 字）</div>
+    </div>
+    <div class="flow-step lv4"><span class="flow-inline-arrow">→</span> 确定性引用后处理（LLM 不参与）<span class="edge-fall"> [层4 褐]</span></div>
+    <div class="flow-step lv5">兜底层级（极少出现）<span class="edge-fall"> [层5 紫灰]</span></div>
+    <div class="flow-step lv2 ellipsis-step">……  <span class="edge-fall">[省略号=同级色，字灰]</span></div>
+  </div>
+  <p class="normal" style="font-size:.9rem;color:#888">分支组框 = 层级嵌套框模型：框1{父节点}(层N卡片) → 框2{分支组}(层N+1背景框，框内等宽连接线缩进 + 箭头染色，不逐行卡片)</p>
+</section>
+
+<section>
+  <h2>二、盒子分层（三层分离 flow-layers）</h2>
+  <div class="flow-layers">
+    <div class="flow-layer lv1"><div class="flow-layer-name">规划层（蓝图）</div>
+      <div class="flow-layer-item">用户编排 / 固化算法优化 / 语义拆分</div>
+      <div class="flow-layer-item"><span class="flow-layer-key">输出</span>Pipeline JSON</div></div>
+    <div class="flow-layer lv2"><div class="flow-layer-name">执行层（引擎）</div>
+      <div class="flow-layer-item">遍历 Pipeline 节点 / 粘合 / 脚本或 LLM 执行</div>
+      <div class="flow-layer-item"><span class="flow-layer-key">输出</span>步骤结果</div></div>
+    <div class="flow-layer lv3"><div class="flow-layer-name">审查层（自检）</div>
+      <div class="flow-layer-item">HTML 校验 / 颜色检查 / LLM 深度审查 / 重试</div>
+      <div class="flow-layer-item"><span class="flow-layer-key">输出</span>通过/不通过 + 反馈</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>三、结构树整体框（flow-tree，不是每行一个框）</h2>
+  <div class="flow-tree">
+    <div class="flow-tnode dir"><span class="flow-tmark"></span><span class="flow-ttext">rag-assistant/</span></div>
+    <div class="flow-tnode dir"><span class="flow-tmark">├──</span><span class="flow-ttext">rag_assistant/</span></div>
+    <div class="flow-tnode"><span class="flow-tmark">│   ├──</span><span class="flow-ttext">agent.py  </span><span style="color:#888"># 决策循环</span></div>
+    <div class="flow-tnode"><span class="flow-tmark">│   └──</span><span class="flow-ttext">web_ui.py  </span><span style="color:#888"># HTTP 服务器</span></div>
+    <div class="flow-tnode"><span class="flow-tmark">└──</span><span class="flow-ttext">README.md</span></div>
+  </div>
+  <p class="normal" style="font-size:.9rem;color:#888">整体一个框：容器有背景+边框，节点是等宽文字（无逐行卡片），├── 连接线灰字，目录粗体。文字颜色不变。</p>
+</section>
+
+<section>
+  <h2>四、纯文本 / 行内代码 / 代码框 / 公式（不受层级色影响）</h2>
+  <p class="normal">这是<b>纯文本段落</b>：提示词变了，条件变了，整条链上每一个后续 token 的分布全部跟着变。<code class="inline">引用自{文件名}</code> 是行内代码标记。</p>
+  <pre class="codebox"># 代码框（pre）
+def pipeline(nodes):
+    for n in nodes:  # 遍历
+        execute(n)</pre>
+  <div class="math-block"><span class="math">P(至少一次幻觉) = 1 - (1-p)<sup>N</sup></span></div>
+  <p class="normal">行内公式：计算预算约束可表述为 <span class="math">C ≈ N × T</span>（FLOPs），缩放定律损失 <span class="math">L ∝ N<sup>α</sup></span>。</p>
+</section>
+
+<script>
+const btnAuto = document.getElementById('btn-auto');
+const btnLight = document.getElementById('btn-light');
+const btnDark = document.getElementById('btn-dark');
+const tip = document.querySelector('.switch-row span');
+function setTheme(t) {
+  document.documentElement.removeAttribute('data-theme');
+  if (t) document.documentElement.setAttribute('data-theme', t);
+  btnAuto.classList.toggle('active', !t);
+  btnLight.classList.toggle('active', t === 'light');
+  btnDark.classList.toggle('active', t === 'dark');
+  tip.textContent = t ? (t === 'light' ? '当前：亮色' : '当前：暗色') : '当前：跟随系统';
+}
+btnAuto.onclick = () => setTheme(null);
+btnLight.onclick = () => setTheme('light');
+btnDark.onclick = () => setTheme('dark');
+</script>
+</body>
+</html>

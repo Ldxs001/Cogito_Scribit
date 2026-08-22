@@ -68,12 +68,14 @@ PRINT_CSS = """@page {
 
 
 def make_cover_png():
-    """PIL 渲染 A4 封面图（96dpi，794×1123，打印 72dpi 基准下已超清晰）
-    到 BASE/cover.jpg（JPEG q88 压缩，渐变图体积小 20 倍）。
+    """PIL 渲染 A4 封面图（300dpi 印刷标准，2480×3508）
+    到 BASE/cover.jpg（JPEG q88 压缩）。
     配色与原 cover.svg 一致（深蓝渐变 #12224A→#081630 + 金色标 #C9A45C），
-    文字用思源黑体 OTF 直接画入图片（图片内文字，非字体分发）。"""
+    文字用思源黑体 OTF 直接画入图片（图片内文字，非字体分发）。
+    注意：封面是位图，打印分辨率 = 像素 ÷ 8.27 英寸——96/150ppi 会糊，
+    300ppi 为印刷行业标准（600ppi 在 A4 阅读距离无感知增益）。"""
     from PIL import Image, ImageDraw, ImageFont
-    W, H = 794, 1123  # A4 @96dpi
+    W, H = 2480, 3508  # A4 @300dpi
     img = Image.new('RGB', (W, H))
     draw = ImageDraw.Draw(img)
     top = (18, 34, 74)   # #12224A
@@ -85,13 +87,13 @@ def make_cover_png():
     reg = os.path.join(BASE, 'SourceHanSansSC-Regular.otf')
     bold = os.path.join(BASE, 'SourceHanSansSC-Bold.otf')
     medium = os.path.join(BASE, 'SourceHanSansSC-Medium.otf')
-    f_kicker = ImageFont.truetype(medium, 28)
-    f_title = ImageFont.truetype(bold, 76)
-    f_sub = ImageFont.truetype(reg, 35)
-    f_sub2 = ImageFont.truetype(reg, 24)
-    f_meta = ImageFont.truetype(reg, 19)
-    f_ver = ImageFont.truetype(reg, 17)
-    f_note = ImageFont.truetype(reg, 13)
+    f_kicker = ImageFont.truetype(medium, 88)
+    f_title = ImageFont.truetype(bold, 238)
+    f_sub = ImageFont.truetype(reg, 109)
+    f_sub2 = ImageFont.truetype(reg, 75)
+    f_meta = ImageFont.truetype(reg, 59)
+    f_ver = ImageFont.truetype(reg, 53)
+    f_note = ImageFont.truetype(reg, 41)
     GOLD = (201, 164, 92)
     LIGHT = (232, 237, 248)
     SUB = (216, 223, 236)
@@ -104,19 +106,19 @@ def make_cover_png():
         w = draw.textlength(text, font=font)
         draw.text(((W - w) / 2, y), text, font=font, fill=fill)
 
-    center('COGITO · SCRIBO', f_kicker, 166, GOLD)
-    center('我思故我写', f_title, 243, LIGHT)
-    center('一本 AI 写成的书', f_sub, 378, SUB)
-    center('AI 时代的方法论、边界与人类自洽', f_sub2, 442, SUB2)
-    draw.line([(W / 2 - 115, 512), (W / 2 + 115, 512)], fill=(201, 164, 92, 140), width=2)
-    center('wUwproject · CC BY-SA 4.0 · 免费公开', f_meta, 851, META)
-    center('v1.1.0 · 2026 年 8 月', f_ver, 909, VER)
+    center('COGITO · SCRIBO', f_kicker, 519, GOLD)
+    center('我思故我写', f_title, 759, LIGHT)
+    center('一本 AI 写成的书', f_sub, 1181, SUB)
+    center('AI 时代的方法论、边界与人类自洽', f_sub2, 1381, SUB2)
+    draw.line([(W / 2 - 360, 1600), (W / 2 + 360, 1600)], fill=(201, 164, 92, 140), width=6)
+    center('wUwproject · CC BY-SA 4.0 · 免费公开', f_meta, 2659, META)
+    center('v1.1.0 · 2026 年 8 月', f_ver, 2841, VER)
     note = '本书文字（含书名、标题、正文、图表标注）使用思源黑体（Source Han Sans SC）渲染，字体采用 SIL OFL 1.1 开源许可。'
     nw = draw.textlength(note, font=f_note)
-    draw.text(((W - nw) / 2, 1037), note, font=f_note, fill=NOTE)
+    draw.text(((W - nw) / 2, 3241), note, font=f_note, fill=NOTE)
     out = os.path.join(BASE, 'cover.jpg')
     img.save(out, 'JPEG', quality=88)
-    print('封面 JPEG 已生成:', out)
+    print('封面 JPEG 已生成（300dpi 2480×3508）:', out)
 
 
 def build_print_html():

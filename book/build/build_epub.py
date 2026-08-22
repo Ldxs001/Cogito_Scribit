@@ -137,6 +137,11 @@ hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
 .flow-phase { font-weight: bold; color: #2a6fd6; margin: .5em 0 .2em; }
 .flow-step { background: #f0f4fa; border: 1px solid #ccc; border-radius: 4px;
              padding: .25em .6em; margin: .2em 0; line-height: 1.5; }
+.flow-step.lv1 { background: rgba(160,166,172,.10); }
+.flow-step.lv2 { background: rgba(122,148,178,.10); }
+.flow-step.lv3 { background: rgba(126,158,138,.10); }
+.flow-step.lv4 { background: rgba(158,138,116,.10); }
+.flow-step.lv5 { background: rgba(158,150,168,.10); }
 .flow-edge { color: #555; padding: .15em 0 .15em 1.5em; font-size: .95em; }
 .flow-note { color: #777; font-size: .88em; padding: .15em 0; text-align: center; }
 .flow-chain { display: flex; align-items: stretch; justify-content: center;
@@ -154,6 +159,11 @@ hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
                background: #f4f6fa; border: 1px solid #ccc; border-radius: 8px; }
 .flow-layer { border: 1px solid #ccc; border-radius: 6px; margin: .5em 0;
               padding: .4em .6em; background: #fafbfd; }
+.flow-layer.lv1 { background: rgba(160,166,172,.10); }
+.flow-layer.lv2 { background: rgba(122,148,178,.10); }
+.flow-layer.lv3 { background: rgba(126,158,138,.10); }
+.flow-layer.lv4 { background: rgba(158,138,116,.10); }
+.flow-layer.lv5 { background: rgba(158,150,168,.10); }
 .flow-layer-name { font-weight: bold; color: #2a6fd6; margin-bottom: .2em; }
 .flow-layer-item { line-height: 1.6; }
 .flow-layer-key { color: #555; font-weight: bold; margin-right: .3em; }

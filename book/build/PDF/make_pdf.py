@@ -45,11 +45,14 @@ PRINT_CSS = """@media print {
   /* 封面独占一页（A4 内容高约 261mm，留余量防换页） */
   .pdf-cover { min-height: 250mm; break-after: page; }
   body { max-width: none; }
+  /* 书籍标准分页：版权页/序言/阅读指南/每篇/结语/附录各自独立起页 */
+  h1 { break-before: page; }
   pre, .flow, .flow-tree, .flow-treegroup, .flow-cols, .flow-layers, table { break-inside: avoid; }
   .flow-step, .flow-layer, tr { break-inside: avoid; }
 }"""
 
-# 封面页：信息与 cover.svg 一致，白底深字（打印友好），字体全走 SourceHanPrint
+# 封面页：配色与原 cover.svg 一致（深蓝渐变 #12224A→#081630 + 金色标
+# #C9A45C + 浅字 #E8EDF8），字体全走 SourceHanPrint
 COVER = """<div class="pdf-cover">
   <div class="pdf-cover-inner">
     <div class="pdf-cover-kicker">COGITO · SCRIBO</div>
@@ -63,16 +66,17 @@ COVER = """<div class="pdf-cover">
   </div>
 </div>"""
 
-COVER_CSS = """.pdf-cover { display: flex; align-items: center; justify-content: center; text-align: center; }
+COVER_CSS = """.pdf-cover { display: flex; align-items: center; justify-content: center; text-align: center;
+  background: linear-gradient(180deg, #12224A 0%, #081630 100%); color: #E8EDF8; }
 .pdf-cover-inner { width: 100%; }
-.pdf-cover-kicker { font-size: 22px; letter-spacing: .6em; color: #8A6D3B; margin-bottom: 28px; font-weight: 500; }
-.pdf-cover-title { font-size: 64px; font-weight: bold; color: #1F3A5F; letter-spacing: .18em; margin-bottom: 20px; }
-.pdf-cover-sub { font-size: 26px; color: #333; letter-spacing: .3em; margin-bottom: 10px; }
-.pdf-cover-sub2 { font-size: 18px; color: #555; letter-spacing: .12em; margin-bottom: 34px; }
-.pdf-cover-line { width: 200px; height: 1px; background: #B8A06A; margin: 0 auto 30px; }
-.pdf-cover-meta { font-size: 15px; color: #666; letter-spacing: .08em; margin-bottom: 8px; }
-.pdf-cover-ver { font-size: 13px; color: #888; margin-bottom: 40px; }
-.pdf-cover-note { font-size: 10.5px; color: #999; line-height: 1.7; padding: 0 8%; }"""
+.pdf-cover-kicker { font-size: 22px; letter-spacing: .6em; color: #C9A45C; margin-bottom: 28px; font-weight: 500; }
+.pdf-cover-title { font-size: 64px; font-weight: bold; color: #E8EDF8; letter-spacing: .18em; margin-bottom: 20px; }
+.pdf-cover-sub { font-size: 26px; color: #D8DFEC; letter-spacing: .3em; margin-bottom: 10px; }
+.pdf-cover-sub2 { font-size: 18px; color: #96A5C3; letter-spacing: .12em; margin-bottom: 34px; }
+.pdf-cover-line { width: 200px; height: 1px; background: rgba(201,164,92,.55); margin: 0 auto 30px; }
+.pdf-cover-meta { font-size: 15px; color: #96A5C3; letter-spacing: .08em; margin-bottom: 8px; }
+.pdf-cover-ver { font-size: 13px; color: #7C8BB0; margin-bottom: 40px; }
+.pdf-cover-note { font-size: 10.5px; color: #8FA0BF; line-height: 1.7; padding: 0 8%; }"""
 
 
 def build_print_html():

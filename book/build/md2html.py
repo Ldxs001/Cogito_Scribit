@@ -129,8 +129,8 @@ def _table(rows):
             first_cells = cells
         tag = 'th' if i == 0 else 'td'
         html_rows.append('<tr>' + ''.join(f'<{tag}>{_format_cell(_inline(c))}</{tag}>' for c in cells) + '</tr>')
-    # 引用编号索引表（表头=编号|文献|出处）统一固定列宽比例
-    if first_cells and len(first_cells) == 3 and first_cells[0] == '编号' and first_cells[1] == '文献':
+    # 引用编号索引表（表头=编号|引用|出处）统一固定列宽比例
+    if first_cells and len(first_cells) == 3 and first_cells[0] == '编号' and first_cells[1] == '引用':
         ref_class = ' class="ref-table"'
     return f'<table{ref_class}><thead>' + html_rows[0] + '</thead><tbody>' + ''.join(html_rows[1:]) + '</tbody></table>'
 

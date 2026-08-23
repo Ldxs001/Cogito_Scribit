@@ -58,12 +58,17 @@ PRINT_CSS = """@page {
   h1 { break-before: page; }
   /* 小节标题不落页末：标题与后续内容同页 */
   h2, h3, h4 { break-after: avoid; }
-  /* 段落防孤立行（页首/页底最少 3 行） */
-  p, li { orphans: 3; widows: 3; }
+  /* 段落防孤立行（页首/页底最少 2 行；3 太严，触发整段推页造成大空白） */
+  p, li { orphans: 2; widows: 2; }
   /* 分隔线/修饰符不独占一页 */
   hr, .flow-arrow { break-inside: avoid; break-before: avoid; break-after: avoid; }
-  pre, .flow, .flow-tree, .flow-treegroup, .flow-cols, .flow-layers, table { break-inside: avoid; }
+  pre, .flow, .flow-tree, .flow-treegroup, .flow-cols, .flow-layers, table, blockquote { break-inside: avoid; }
   .flow-step, .flow-layer, tr { break-inside: avoid; }
+  /* 超长元素（单页装不下）：就地分页。
+     JS 在渲染前检测 offsetHeight > 单页可用高度，动态加 print-overflow。
+     避免"先整体搬下一页、下一页仍装不下再分页"导致第一页留大空白。 */
+  thead { display: table-header-group; }
+  table.print-overflow, blockquote.print-overflow { break-inside: auto; }
 }"""
 
 
@@ -146,7 +151,8 @@ def render_pdf():
     html_url = 'file:///' + TMP_HTML.replace('\\', '/')
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        page = browser.new_page()
+        # A4 @96dpi = 794x1123px；视口与 @page 打印布局一致，保证表格测量准确
+        page = browser.new_page(viewport={'width': 794, 'height': 1123})
         page.goto(html_url, wait_until='networkidle')
         page.evaluate('document.fonts.ready.then(() => true)')
         page.wait_for_timeout(2000)
@@ -158,6 +164,20 @@ def render_pdf():
             return used.slice(0, 10);
         }''')
         print('已加载字体:', fonts)
+        # 超长元素标记：offsetHeight > 单页可用高度（A4 1123px - 上下 18mm 边距 68px×2）
+        # → 加 print-overflow（break-inside:auto，就地分页），避免整体搬页留大空白
+        overflow_tables = page.evaluate('''() => {
+            const usable = 1123 - 2 * 68;
+            const marked = [];
+            document.querySelectorAll('table, blockquote').forEach(t => {
+                if (t.offsetHeight > usable) {
+                    t.classList.add('print-overflow');
+                    marked.push(t.tagName + ':' + t.rows?.length + '行');
+                }
+            });
+            return marked;
+        }''')
+        print('超长元素标记:', overflow_tables if overflow_tables else '无')
         page.pdf(path=BODY_PDF, prefer_css_page_size=True,
                  print_background=True)
         browser.close()

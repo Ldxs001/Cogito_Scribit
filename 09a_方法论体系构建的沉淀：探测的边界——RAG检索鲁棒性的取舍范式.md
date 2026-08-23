@@ -181,7 +181,7 @@ if seq <= 3: is_header = True
 
 > 引文全部来自本人项目的实际代码、实测数据与本地知识库（KB），未经任何二手转述。
 
-| 编号 | 文献 | 出处 |
+| 编号 | 引用 | 出处 |
 |------|------|------|
 | [1] | wUwproject. *RAG Assistant — 本地知识库问答智能体*（"换个大模型也能查到 KB"现象） | 本地项目实践，2026-08-09 |
 | [2] | ChromaDB 存储结构实测：`embedding_metadata` 表 `chroma:document`/`source` 字段明文 | `data/kb/*/chroma.sqlite3` 直查 |

@@ -59,10 +59,17 @@ PRINT_CSS = """@page {
   /* 小节标题不落页末：标题与后续内容同页 */
   h2, h3, h4 { break-after: avoid; }
   /* 段落防孤立行（页首/页底最少 2 行；3 太严，触发整段推页造成大空白） */
-  p, li { orphans: 2; widows: 2; }
-  /* 分隔线/修饰符不独占一页 */
-  hr, .flow-arrow { break-inside: avoid; break-before: avoid; break-after: avoid; }
-  pre, .flow, .flow-tree, .flow-treegroup, .flow-cols, .flow-layers, table, blockquote { break-inside: avoid; }
+  p { orphans: 2; widows: 2; }
+  /* 列表项多为单行：widows 2 会让单行 bullet（1 行 < 2）永远被推下页留白 */
+  li { orphans: 1; widows: 1; }
+  /* 分隔线/修饰符不独占一页（break-before 去掉：hr 前禁断页与 h2 后禁断页
+     形成"保护链"，Chrome 会把 hr+h2 尾部整块推下页，留下半页空白） */
+  hr, .flow-arrow { break-inside: avoid; break-after: avoid; }
+  /* 纵向结构（pre 代码块 / flow 流程图 / flow-tree / table 表格）允许在
+     内容单元间拆页：行内不拆（见下）、表格跨页重复表头（thead），
+     避免"整块搬下页"留白；横向并排/层叠结构与引用块保持不拆 */
+  table { break-inside: auto; }
+  blockquote, .flow-cols, .flow-layers { break-inside: avoid; }
   .flow-step, .flow-layer, tr { break-inside: avoid; }
   /* 超长元素（单页装不下）：就地分页。
      JS 在渲染前检测 offsetHeight > 单页可用高度，动态加 print-overflow。

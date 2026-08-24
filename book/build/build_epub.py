@@ -19,12 +19,17 @@ EPUB_NS = {
 }
 
 def split_sections(md_text):
-    """按一级标题（# ）切分章节——每篇/组件一章"""
+    """按一级标题（# ）切分章节——每篇/组件一章（跳过代码块内的 # 注释行）"""
     lines = md_text.split('\n')
     sections = []
     cur_title, cur_body = None, []
+    in_code = False
     for line in lines:
-        if line.startswith('# '):
+        stripped = line.strip()
+        # 代码块开关：``` 切换状态（围栏长度 3+）
+        if stripped.startswith('```'):
+            in_code = not in_code
+        if not in_code and line.startswith('# '):
             if cur_title:
                 sections.append({'id': f'chap{len(sections)+1:03d}', 'title': cur_title, 'body': '\n'.join(cur_body)})
             cur_title = line[2:].strip()

@@ -126,7 +126,7 @@ def make_cover_png():
     center('AI 时代的方法论、边界与人类自洽', f_sub2, 1381, SUB2)
     draw.line([(W / 2 - 360, 1600), (W / 2 + 360, 1600)], fill=(201, 164, 92, 140), width=6)
     center('wUwproject · CC BY-SA 4.0 · 免费公开', f_meta, 2659, META)
-    center('v1.1.0 · 2026 年 8 月', f_ver, 2841, VER)
+    center('v1.2.0 · 2026 年 8 月', f_ver, 2841, VER)
     note = '本书文字（含书名、标题、正文、图表标注）使用思源黑体（Source Han Sans SC）渲染，字体采用 SIL OFL 1.1 开源许可。'
     nw = draw.textlength(note, font=f_note)
     draw.text(((W - nw) / 2, 3241), note, font=f_note, fill=NOTE)

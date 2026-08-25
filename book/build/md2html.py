@@ -582,10 +582,15 @@ def _flow_to_html(code):
             l2 = l2[:-1]
         if not l2:
             continue
-        # 3) 阶段标题
+        # 3) 阶段标题（【标签】+ 可选说明文字；说明保留，非空才拼接）
         if l2.startswith('【') and '】' in l2:
-            phase = l2[l2.find('【'):l2.rfind('】')+1]
-            out.append(f'<div class="flow-phase">{phase}</div>')
+            m = re.match(r'^(【[^】]*】)\s*(.*)$', l2)
+            phase_tag = m.group(1)
+            phase_note = m.group(2)
+            if phase_note:
+                out.append(f'<div class="flow-phase"><span class="flow-phase-tag">{_inline_arrows(phase_tag)}</span><span class="flow-phase-note"> {_inline_arrows(phase_note)}</span></div>')
+            else:
+                out.append(f'<div class="flow-phase">{phase_tag}</div>')
             continue
         # 3.5) 省略号占位行（... / ……）：渲染为与同级相同的 step 卡片样式
         #      （内容"……"灰字），层级/缩进与同级内容完全一致
@@ -759,6 +764,7 @@ a:hover { text-decoration: underline; }
         border-radius: 10px; }
 .flow-phase { font-weight: bold; color: #2a6fd6; margin: .6rem 0 .2rem;
               font-size: 1.02em; }
+.flow-phase .flow-phase-note { font-weight: normal; color: inherit; }
 .flow-step { background: rgba(128,128,128,.08); border: 1px solid #ccc;
              border-radius: 6px; padding: .3rem .7rem; margin: .25rem 0;
              line-height: 1.6; }

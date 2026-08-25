@@ -54,12 +54,12 @@ Copyright (c) 2026 wUwproject
 
 ## 成书：《我思故我写》
 
-本系列文章已汇编为完整一书《**我思故我写——一本 AI 写成的书：AI 时代的方法论、边界与人类自洽**》（约 13.8 万字，33 章，CC BY-SA 4.0）：
+本系列文章已汇编为完整一书《**我思故我写——一本 AI 写成的书：AI 时代的方法论、边界与人类自洽**》（约 14.5 万字，34 章，CC BY-SA 4.0）：
 
 | 项 | 入口 |
 |----|------|
 | 在线阅读整本书（GitHub Pages） | <https://ldxs001.github.io/Cogito_Scribit/> |
-| 下载 EPUB / HTML / PDF | `book/build/output/`（EPUB/HTML）或书的独立发行版 **book-v1.1.0**（[GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/book-v1.1.0) / Gitee 同 tag，含 PDF 打印版） |
+| 下载 EPUB / HTML / PDF | `book/build/output/`（EPUB/HTML）或书的独立发行版 **book-v1.2.0**（[GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/book-v1.2.0) / Gitee 同 tag，含 PDF 打印版） |
 | 书稿源码（四部 + 序言/阅读指南/结语/附录） | [`book/`](book/README.md) |
 | 构建管线（MD → HTML/EPUB，零依赖） | `book/build/` |
 

@@ -24,6 +24,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 | **下载 HTML（网页版）** | `build/output/book.html`（或独立发行版 **book-v1.2.0** 附件） |
 | **下载 PDF（打印版）** | 独立发行版 **book-v1.2.0** 附件（思源黑体渲染、A4、每篇独立起页、适合打印阅读） |
 | **书稿源码（Markdown）** | 本目录 `book/`（frontmatter + part1~4 + 附录） |
+| **入书规范（必读）** | 仓库根 `STRUCTURE_GUIDE.md` 第六章——单篇入书转化 + 6.2 配套同步清单（含字数 6.6/版本 6.7 全量落点） |
 
 ## 书的结构（四部，一本书）
 

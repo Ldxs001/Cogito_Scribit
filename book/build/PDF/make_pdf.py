@@ -54,6 +54,10 @@ PRINT_CSS = """@page {
 @media print {
   /* 打印去掉 body padding/margin，边距由 @page 控制 */
   body { padding: 0 !important; max-width: none; margin: 0 !important; }
+  /* 代码块长行强制换行：pre 默认 white-space:pre 不换行，打印无滚动条，
+     超宽行会被直接裁掉（raw 输出/长行文本必现）——pre-wrap 保留原换行
+     并允许软换行，overflow-wrap:anywhere 兜底超长词/URL */
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; }
   /* 书籍标准分页：版权页/序言/阅读指南/每篇/结语/附录各自独立起页 */
   h1 { break-before: page; }
   /* 小节标题不落页末：标题与后续内容同页 */

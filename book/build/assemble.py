@@ -60,7 +60,9 @@ def assemble():
             text = f.read()
         body = strip_spdx(text).strip()
         parts.append(body)
-    return '\n\n---\n\n'.join(parts)
+    # 章间不再注入 '---'：h1 已强制每章新页（break-before: page），
+    # 章间 hr 在上章内容顶满页底时会被推到下一页首行、且 h1 又强制新页 → hr 独占一整页（空白页）。
+    return '\n\n'.join(parts)
 
 def main():
     out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'build', 'output', '全书.md')

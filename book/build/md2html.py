@@ -740,9 +740,10 @@ table td .ref-piece, table th .ref-piece {
   overflow-wrap: break-word;
   line-height: 1.7;
 }
-pre { background: rgba(128,128,128,.1); padding: .8rem; border-radius: 6px;
+pre { background: rgba(128,128,128,.16); padding: .8rem; border-radius: 6px;
+      border: 1px solid rgba(128,128,128,.22);
       overflow-x: auto; font-size: .88rem; }
-code { background: rgba(128,128,128,.12); padding: .1em .35em; border-radius: 3px; font-size: .9em; }
+code { background: rgba(128,128,128,.15); padding: .1em .35em; border-radius: 3px; font-size: .9em; }
 /* 行内公式（LaTeX → HTML 轻量渲染） */
 .math { font-family: "Times New Roman", Georgia, "STIX Two Math", serif;
         font-style: italic; white-space: nowrap; }
@@ -873,6 +874,9 @@ a:hover { text-decoration: underline; }
   h1, h2 { border-color: #444; }
   blockquote { color: #aaa; background: rgba(255,255,255,.05); }
   th, td { border-color: #555; }
+  pre { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
+  pre code { background: none; }
+  code { background: rgba(255,255,255,.1); }
   a { color: #6ba4ff; }
   .toc { border-color: #444; background: rgba(255,255,255,.04); }
   .toc a.toc-l2 { color: #aaa; }

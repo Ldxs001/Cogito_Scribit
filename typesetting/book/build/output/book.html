@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>我思故我写 · 排版解析——五层排版如何把一篇文章变成一本书</title>
+<style>
+:root { color-scheme: light dark; }
+body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+       max-width: 780px; margin: 0 auto; padding: 2rem 1.2rem 4rem;
+       line-height: 1.8; font-size: 16px; }
+h1 { font-size: 1.7rem; border-bottom: 2px solid #ccc; padding-bottom: .4rem; margin-top: 2.5rem; }
+h2 { font-size: 1.4rem; border-bottom: 1px solid #ddd; padding-bottom: .3rem; margin-top: 2rem; }
+h3 { font-size: 1.15rem; margin-top: 1.5rem; }
+h4 { font-size: 1rem; }
+blockquote { border-left: 4px solid #999; margin: 1rem 0; padding: .4rem 1rem;
+             background: rgba(128,128,128,.08); color: #666; }
+table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .92rem;
+        table-layout: auto; }
+th, td { border: 1px solid #bbb; padding: .4rem .6rem; text-align: left;
+         word-break: keep-all; overflow-wrap: break-word; vertical-align: top; }
+th { background: rgba(128,128,128,.12); }
+/* 引用编号索引表：三列固定列宽比例（编号≈6字符 / 文献 / 出处），与全局表格同宽 */
+table.ref-table { table-layout: fixed; }
+table.ref-table th:nth-child(1), table.ref-table td:nth-child(1) { width: 8%; }
+table.ref-table th:nth-child(2), table.ref-table td:nth-child(2) { width: 47%; }
+table.ref-table th:nth-child(3), table.ref-table td:nth-child(3) { width: 45%; }
+/* 引用索引表内长文件名才允许任意断行 */
+table.ref-table th, table.ref-table td { overflow-wrap: anywhere; }
+/* 表格内多段文本（<br> 分隔）每段独立，保证一个原子信息不会被列宽拆字 */
+table td .ref-piece, table th .ref-piece {
+  display: block;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  line-height: 1.7;
+}
+pre { background: rgba(128,128,128,.16); padding: .8rem; border-radius: 6px;
+      border: 1px solid rgba(128,128,128,.22);
+      overflow-x: auto; font-size: .88rem; }
+code { background: rgba(128,128,128,.15); padding: .1em .35em; border-radius: 3px; font-size: .9em; }
+/* 行内公式（LaTeX → HTML 轻量渲染） */
+.math { font-family: "Times New Roman", Georgia, "STIX Two Math", serif;
+        font-style: italic; white-space: nowrap; }
+.math sup, .math sub { font-style: normal; font-size: .72em; }
+/* 公式块（```math） */
+.math-block { text-align: center; margin: 1rem 0; padding: .7rem 1rem;
+              background: rgba(128,128,128,.06);
+              border: 1px solid rgba(128,128,128,.3); border-radius: 10px;
+              font-size: 1.05rem; }
+.math-block .math { font-size: 1.1em; white-space: normal; }
+pre code { background: none; padding: 0; }
+hr { border: none; border-top: 1px solid #ccc; margin: 2rem 0; }
+a { color: #2a6fd6; text-decoration: none; }
+a:hover { text-decoration: underline; }
+/* 流程图 */
+.flow { margin: 1rem 0; padding: .9rem 1.1rem;
+        background: rgba(128,128,128,.06);
+        border: 1px solid rgba(128,128,128,.3);
+        border-radius: 10px; }
+.flow-phase { font-weight: bold; color: #2a6fd6; margin: .6rem 0 .2rem;
+              font-size: 1.02em; }
+.flow-phase .flow-phase-note { font-weight: normal; color: inherit; }
+.flow-step { background: rgba(128,128,128,.08); border: 1px solid #ccc;
+             border-radius: 6px; padding: .3rem .7rem; margin: .25rem 0;
+             line-height: 1.6; }
+/* 层级色（全文统一：单图内同级同色、全文同层级同色） */
+.flow-step.lv1 { background: rgba(160,166,172,.10); }
+.flow-step.lv2 { background: rgba(122,148,178,.10); }
+.flow-step.lv3 { background: rgba(126,158,138,.10); }
+.flow-step.lv4 { background: rgba(158,138,116,.10); }
+.flow-step.lv5 { background: rgba(158,150,168,.10); }
+.flow-edge { color: #555; padding: .15rem 0 .15rem 1.4rem; font-size: .92em;
+             line-height: 1.5; }
+.flow-note { color: #777; font-size: .88em; padding: .15rem 0; text-align: center; }
+/* 主链式对齐图（运用 = 规划 → 执行 → 验证 → 承担 + 注释） */
+.flow-chain { display: flex; align-items: stretch; justify-content: center;
+              flex-wrap: wrap; gap: .4rem; margin: 1rem 0;
+              padding: .9rem 1.1rem; background: rgba(128,128,128,.06);
+              border: 1px solid rgba(128,128,128,.3); border-radius: 10px; }
+.flow-chain-title { align-self: center; font-weight: bold; color: #2a6fd6;
+                    font-size: 1.05em; margin-right: .4rem;
+                    padding: .3rem .6rem; background: rgba(42,111,214,.08);
+                    border-radius: 6px; }
+.flow-cnode { display: flex; flex-direction: column; justify-content: center;
+              min-width: 5.5rem; text-align: center; }
+.flow-cnode .flow-step { margin: 0; }
+.flow-cnode .flow-note { margin-top: .2rem; }
+.flow-carr { align-self: center; color: #2a6fd6; font-weight: bold; font-size: 1.15em;
+             padding: 0 .15rem; }
+/* 盒子型分层图（三层分离：层名 + 内容 + 输出 层叠） */
+.flow-layers { margin: 1rem 0; padding: .6rem .9rem;
+               background: rgba(128,128,128,.06);
+               border: 1px solid rgba(128,128,128,.3); border-radius: 10px; }
+.flow-layer { border: 1px solid rgba(128,128,128,.28); border-radius: 8px;
+.flow-layer.lv1 { background: rgba(160,166,172,.10); }
+.flow-layer.lv2 { background: rgba(122,148,178,.10); }
+.flow-layer.lv3 { background: rgba(126,158,138,.10); }
+.flow-layer.lv4 { background: rgba(158,138,116,.10); }
+.flow-layer.lv5 { background: rgba(158,150,168,.10); }
+              margin: .5rem 0; padding: .45rem .75rem;
+              background: rgba(128,128,128,.04); }
+.flow-layer-name { font-weight: bold; color: #2a6fd6; margin-bottom: .2rem; }
+.flow-layer-item { line-height: 1.6; }
+.flow-layer-key { color: #555; font-weight: bold; margin-right: .3em; }
+/* 省略号 step（... 占位行：与同级内容同卡片样式，字色灰） */
+.flow-step.ellipsis-step { color: #999; }
+/* 树分支 step（├──/└─ 连接线 + 卡片：与链/列表同一样式体系） */
+.flow-step.flow-branch .flow-tmark { color: #888; margin-right: .35rem; }
+.flow-branch { text-align: left; }
+/* 分支组框（层级嵌套框模型：框1{父节点} 框2{分支组}，组背景=层级色） */
+.flow-treegroup { border: 1px solid rgba(128,128,128,.28); border-radius: 8px;
+                  margin: .25rem 0; padding: .35rem .7rem;
+                  font-family: Consolas, "Courier New", monospace;
+                  font-size: .92rem; line-height: 1.7; overflow-x: auto; }
+.flow-treegroup.lv1 { background: rgba(160,166,172,.10); }
+.flow-treegroup.lv2 { background: rgba(122,148,178,.10); }
+.flow-treegroup.lv3 { background: rgba(126,158,138,.10); }
+.flow-treegroup.lv4 { background: rgba(158,138,116,.10); }
+.flow-treegroup.lv5 { background: rgba(158,150,168,.10); }
+.flow-tree-row { padding: .08rem 0; white-space: pre; }
+.flow-tree-row .flow-tmark { color: #888; }
+.flow-tree-row .flow-inline-arrow, .flow-tree-row .edge-fall { font-family: "PingFang SC", "Microsoft YaHei", sans-serif; }
+/* 树行层级色带（组框 lv + 行内前缀列数//4，每层一色） */
+.flow-tree-row.lv1 { background: rgba(160,166,172,.07); }
+.flow-tree-row.lv2 { background: rgba(122,148,178,.07); }
+.flow-tree-row.lv3 { background: rgba(126,158,138,.07); }
+.flow-tree-row.lv4 { background: rgba(158,138,116,.07); }
+.flow-tree-row.lv5 { background: rgba(158,150,168,.07); }
+.flow-tnode.lv1 { background: rgba(160,166,172,.07); }
+.flow-tnode.lv2 { background: rgba(122,148,178,.07); }
+.flow-tnode.lv3 { background: rgba(126,158,138,.07); }
+.flow-tnode.lv4 { background: rgba(158,138,116,.07); }
+.flow-tnode.lv5 { background: rgba(158,150,168,.07); }
+/* 结构树形图（文件树/目录树） */
+.flow-tree { margin: 1rem 0; padding: .6rem .9rem;
+             background: rgba(128,128,128,.06);
+             border: 1px solid rgba(128,128,128,.3); border-radius: 10px;
+             font-family: Consolas, "Courier New", monospace;
+             font-size: .92rem; line-height: 1.7; }
+.flow-tnode { padding: .05rem 0; white-space: nowrap; }
+.flow-tmark { color: #888; margin-right: .35rem; }
+.flow-ttext { color: inherit; }
+.flow-tnode.dir .flow-ttext { font-weight: bold; }
+/* 并排多列对比图（flex 双列） */
+.flow-cols { display: flex; gap: 1.2rem; margin: 1rem 0;
+             padding: .9rem 1.1rem; background: rgba(128,128,128,.06);
+             border: 1px solid rgba(128,128,128,.3); border-radius: 10px; }
+.flow-col { flex: 1; min-width: 0; }
+.flow-col .flow-step { margin: .3rem 0; }
+.flow-col .flow-edge { padding-left: 0; text-align: center; color: #777; }
+@media (max-width: 600px) { .flow-cols { flex-direction: column; } }
+.flow-edge .edge-fall { color: #2a6fd6; font-weight: bold; }
+/* 行内箭头：与独立箭头同色同权重，视觉统一 */
+.flow-inline-arrow { color: #2a6fd6; font-weight: bold; margin: 0 .25em; }
+/* 箭头行：纯箭头无背景无边框（↓/▼ 独立行） */
+.flow-arrow { color: #2a6fd6; text-align: center; line-height: 1.4;
+              font-weight: bold; padding: .1rem 0; }
+.flow-arrow::before { content: ""; }
+.toc { background: rgba(128,128,128,.06); border: 1px solid #ddd; border-radius: 8px;
+       padding: 1.2rem 1.4rem; margin: 1rem 0 2rem; }
+.toc-title { font-size: 1.15rem; font-weight: bold; margin-bottom: .6rem; }
+.toc a { display: block; padding: .18rem 0; color: #2a6fd6; text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+.toc a.toc-l2 { padding-left: 1.4rem; font-size: .92rem; color: #666; }
+@media (max-width: 600px) { body { font-size: 15px; padding: 1rem .8rem 3rem; } table { font-size: .8rem; } }
+@media (prefers-color-scheme: dark) {
+  body { background: #1a1a1a; color: #ddd; }
+  h1, h2 { border-color: #444; }
+  blockquote { color: #aaa; background: rgba(255,255,255,.05); }
+  th, td { border-color: #555; }
+  pre { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
+  pre code { background: none; }
+  code { background: rgba(255,255,255,.1); }
+  a { color: #6ba4ff; }
+  .toc { border-color: #444; background: rgba(255,255,255,.04); }
+  .toc a.toc-l2 { color: #aaa; }
+  .flow { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-step { border-color: #444; background: rgba(255,255,255,.05); }
+  .flow-step.lv1 { background: rgba(160,166,172,.16); }
+  .flow-step.lv2 { background: rgba(122,148,178,.16); }
+  .flow-step.lv3 { background: rgba(126,158,138,.16); }
+  .flow-step.lv4 { background: rgba(158,138,116,.16); }
+  .flow-step.lv5 { background: rgba(158,150,168,.16); }
+  .flow-edge { color: #999; }
+  .flow-note { color: #888; }
+  .flow-cols { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-chain { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-layers { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-layer { border-color: rgba(255,255,255,.15); background: rgba(255,255,255,.03); }
+  .flow-layer.lv1 { background: rgba(160,166,172,.16); }
+  .flow-layer.lv2 { background: rgba(122,148,178,.16); }
+  .flow-layer.lv3 { background: rgba(126,158,138,.16); }
+  .flow-layer.lv4 { background: rgba(158,138,116,.16); }
+  .flow-layer.lv5 { background: rgba(158,150,168,.16); }
+  .flow-layer-name { color: #6ba4ff; }
+  .flow-layer-key { color: #aaa; }
+  .flow-tree { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-tmark { color: #666; }
+  .flow-step.ellipsis-step { color: #777; }
+  .flow-treegroup { border-color: rgba(255,255,255,.15); }
+  .flow-treegroup.lv1 { background: rgba(160,166,172,.16); }
+  .flow-treegroup.lv2 { background: rgba(122,148,178,.16); }
+  .flow-treegroup.lv3 { background: rgba(126,158,138,.16); }
+  .flow-treegroup.lv4 { background: rgba(158,138,116,.16); }
+  .flow-treegroup.lv5 { background: rgba(158,150,168,.16); }
+  .flow-tree-row .flow-tmark { color: #666; }
+  .flow-tree-row.lv1 { background: rgba(160,166,172,.12); }
+  .flow-tree-row.lv2 { background: rgba(122,148,178,.12); }
+  .flow-tree-row.lv3 { background: rgba(126,158,138,.12); }
+  .flow-tree-row.lv4 { background: rgba(158,138,116,.12); }
+  .flow-tree-row.lv5 { background: rgba(158,150,168,.12); }
+  .flow-tnode.lv1 { background: rgba(160,166,172,.12); }
+  .flow-tnode.lv2 { background: rgba(122,148,178,.12); }
+  .flow-tnode.lv3 { background: rgba(126,158,138,.12); }
+  .flow-tnode.lv4 { background: rgba(158,138,116,.12); }
+  .flow-tnode.lv5 { background: rgba(158,150,168,.12); }
+  .math-block { border-color: #444; background: rgba(255,255,255,.04); }
+  .flow-phase { color: #6ba4ff; }
+}
+</style>
+</head>
+<body>
+<div class="toc"><div class="toc-title">目录</div><a class="toc-l1" href="#h1">版权页</a><a class="toc-l2" href="#h2">版本</a><a class="toc-l2" href="#h3">与母书及姊妹卷的关系</a><a class="toc-l1" href="#h4">导读：方法论 ↔ 排版映射</a><a class="toc-l2" href="#h5">一、五层排版路径</a><a class="toc-l2" href="#h6">二、映射表</a><a class="toc-l2" href="#h7">三、怎么读</a><a class="toc-l1" href="#h8">成书排版（一）：先定样式，再写正文</a><a class="toc-l2" href="#h9">一、引子：两次版式事故</a><a class="toc-l2" href="#h10">二、样式规范的本质：写作端与渲染端的契约</a><a class="toc-l2" href="#h11">三、表格：列宽是语义，不是偏好</a><a class="toc-l2" href="#h12">四、图：用代码块写，用缩进说话</a><a class="toc-l2" href="#h13">五、公式：两处落点，各就各位</a><a class="toc-l2" href="#h14">六、结语：规范是复利，不是限制</a><a class="toc-l2" href="#h16">延伸阅读</a><a class="toc-l1" href="#h17">成书排版（二）：单篇入书，元素去留</a><a class="toc-l2" href="#h18">一、引子：一本书的两种形态</a><a class="toc-l2" href="#h19">二、该去除的去除：四个元素</a><a class="toc-l2" href="#h20">三、该保留的保留：引用表与延伸阅读</a><a class="toc-l2" href="#h21">四、去留的三条逻辑</a><a class="toc-l2" href="#h22">五、结语：转化不是复制，是换一种排法</a><a class="toc-l2" href="#h24">延伸阅读</a><a class="toc-l1" href="#h25">成书排版（三）：骨架排版——四部、导读与章序</a><a class="toc-l2" href="#h26">一、引子：一本书的顺序不是写出来的，是排出来的</a><a class="toc-l2" href="#h27">二、骨架是什么：前置页 + 四部 + 结语 + 附录</a><a class="toc-l2" href="#h28">三、章序的两条依据</a><a class="toc-l2" href="#h29">四、骨架变更的连锁：牵一发动全身</a><a class="toc-l2" href="#h30">五、结语：骨架稳定，则全书稳定</a><a class="toc-l2" href="#h32">延伸阅读</a><a class="toc-l1" href="#h33">成书排版（四）：页面排版——从屏幕到纸面</a><a class="toc-l2" href="#h34">一、引子：屏幕是流，纸面是页</a><a class="toc-l2" href="#h35">二、分页逻辑：四条规则，四条理由</a><a class="toc-l2" href="#h36">三、空白治理：两次事故换来的两条规则</a><a class="toc-l2" href="#h37">四、书的物理规范：纸、字、封、码</a><a class="toc-l2" href="#h38">五、结语：切页规则就是页面排版</a><a class="toc-l2" href="#h40">延伸阅读</a><a class="toc-l1" href="#h41">成书排版（五）：元数据排版——字数、章数与版本号</a><a class="toc-l2" href="#h42">一、引子：一个数字错了，全链路露馅</a><a class="toc-l2" href="#h43">二、字数：六口径，一个对外口径</a><a class="toc-l2" href="#h44">三、章数：35 章的口径构成</a><a class="toc-l2" href="#h45">四、版本号：规则与三端一致</a><a class="toc-l2" href="#h46">五、结语：数字是书的元排版</a><a class="toc-l2" href="#h48">延伸阅读</a><a class="toc-l1" href="#h49">附录 A 统一术语表</a><a class="toc-l1" href="#h50">附录 B 排版速查</a><a class="toc-l2" href="#h51">一、源稿渲染标注速查（排版 01）</a><a class="toc-l2" href="#h52">二、元素去留判据速查（排版 02）</a><a class="toc-l2" href="#h53">三、页面分页规则速查（排版 04）</a><a class="toc-l2" href="#h54">四、数字口径速查（排版 05）</a></div><h1 id="h1">版权页</h1>
+<p><strong>《我思故我写 · 排版解析——五层排版如何把一篇文章变成一本书》</strong></p>
+<blockquote>源稿怎么排、一章怎么去留、四部怎么立、纸面怎么切、数字怎么对……本书收录 wUwproject 成书排版的方法论记录——它们是《我思故我写》方法论在版式侧的落地形态。</blockquote>
+<ul><li><strong>作者</strong>：wUwproject</li><li><strong>协议</strong>：CC BY-SA 4.0（署名-相同方式共享）——可自由复制、分发、演绎，须署名 wUwproject 并按相同协议共享</li><li><strong>版本</strong>：typ-v1.0.0（2026 年 9 月）</li><li><strong>规模</strong>：约 2 万字（出版折算口径：汉字 + 英文单词 + 数字串，与母书一致），11 章（版权页 + 导读 + 排版 01-05 + 附录 A/B）</li><li><strong>母书</strong>：《我思故我写——一本 AI 写成的书：AI 时代的方法论、边界与人类自洽》（v1.2.0 完结版，35 章）——本书是其排版侧的姊妹卷</li><li><strong>姊妹卷</strong>：《我思故我写 · 架构解析——七套核心系统的工程实现》（arch-v1.0.0）——母书工程实现侧</li></ul>
+<h2 id="h2">版本</h2>
+<ul><li>2026 年 9 月 · 初版（typ-v1.0.0）：收录排版 01-05 五篇（源稿/元素/骨架/页面/元数据五层排版），正文与 Cogito_Scribit 的写作样式规范（STYLE_GUIDE）与转化入书排版规范（STRUCTURE_GUIDE）逐条核对同步</li></ul>
+<h2 id="h3">与母书及姊妹卷的关系</h2>
+<ul><li>母书回答<strong>为什么</strong>（方法论、原则、边界）；架构解析回答<strong>怎么做</strong>（工程实现、模块划分、代码架构）；本书回答<strong>怎么排</strong>（AI 成书的排版规则与逻辑）</li><li>母书正文即本册排版的对象——母书 35 章的全部版式（源稿样式、入书去留、四部骨架、打印分页、对外数字）由本册五层规则支撑</li><li>三册独立版本：母书 v1.2.0 完结不再逐版同步；架构解析随工具迭代独立更新；本书随排版规则演进独立更新</li></ul>
+<h1 id="h4">导读：方法论 ↔ 排版映射</h1>
+<blockquote>母书《我思故我写》回答"为什么"——约束为什么是加法、穷举为什么是宿命、槽位为什么是减法。架构解析回答"怎么做"——这些原则如何落成七套真实运行的系统。本书回答"<strong>怎么排</strong>"——同一批内容，如何从源稿排成一本 35 章的书。  五篇正文对应五层排版，每一层都回答一个排版问题。本导读给出映射表——读排版时可以回到母书对应篇目看原理，读母书时可以来这里看它落地成的版式。</blockquote>
+<h2 id="h5">一、五层排版路径</h2>
+<div class="flow">
+<div class="flow-step lv1" style="margin-left:0px">源稿排版（一）：表格/图/公式怎么写</div>
+<div class="flow-step lv3" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 单篇定稿（过四检）</div>
+<div class="flow-step lv1" style="margin-left:0px">元素排版（二）：入书后每个元素去留</div>
+<div class="flow-step lv3" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 进 book/</div>
+<div class="flow-step lv1" style="margin-left:0px">骨架排版（三）：四部、导读、章序怎么立</div>
+<div class="flow-step lv3" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 定结构</div>
+<div class="flow-step lv1" style="margin-left:0px">页面排版（四）：落到纸面一页页怎么切</div>
+<div class="flow-step lv3" style="margin-left:28px"><span class="flow-inline-arrow">↓</span> 出打印版</div>
+<div class="flow-step lv1" style="margin-left:0px">元数据排版（五）：字数、章数、版本号怎么对外</div>
+</div>
+<p>五层是流水线：写作形态 → 阅读形态 → 全书结构 → 纸面页面 → 对外数字。前一层定了，后一层才有输入。</p>
+<h2 id="h6">二、映射表</h2>
+<table><thead><tr><th>排版篇</th><th>层</th><th>对应母书内容</th><th>落地的核心规则</th></tr></thead><tbody><tr><td>排版 01 · 先定样式，再写正文</td><td>源稿</td><td>写作样式规范（表格/图/公式版式）</td><td>标注代替猜测、教训固化成条文、标准锁死</td></tr><tr><td>排版 02 · 单篇入书，元素去留</td><td>元素</td><td>单篇结构与论证规范（骨架/四检）</td><td>编号书内可查、层级承担分隔、成书无写作痕迹</td></tr><tr><td>排版 03 · 骨架排版</td><td>骨架</td><td>母书四部结构（约束→协作→边界→重估）</td><td>注册列表即版式序、骨架变更七处同步</td></tr><tr><td>排版 04 · 页面排版</td><td>页面</td><td>母书打印版（思源黑体/A4/分页）</td><td>每篇独立起页、防孤立行、长尾收益字体选型</td></tr><tr><td>排版 05 · 元数据排版</td><td>元数据</td><td>母书版权页/落地页的字数与版本</td><td>六口径一个对外口径、三端一致</td></tr></tbody></table>
+<h2 id="h7">三、怎么读</h2>
+<ul><li><strong>看版式</strong>：读排版 01 + 04（源稿怎么写、纸面怎么排）</li><li><strong>看成书流程</strong>：按 01 → 05 顺序（五层流水线）</li><li><strong>要落实规范</strong>：每篇对应的规范本体在 <code>typesetting/STYLE_GUIDE.md</code>（源稿侧）与 <code>typesetting/STRUCTURE_GUIDE.md</code>（入书侧），正文五篇是这两份规范的展开叙述</li></ul>
+<h1 id="h8">成书排版（一）：先定样式，再写正文</h1>
+<blockquote>AI 写作时代，markdown 文件不是给人看的终稿，而是构建管线的输入——排版问题必须在写作阶段消灭，路径是先于正文定一份样式规范。本文从两次真实版式事故出发，论证这份规范的本质是"写作端与渲染端之间的契约"，并逐条展开源稿排版的三块规则——表格、图、公式——每条规则都给出"怎么排、为什么这么排"两层。边界声明：本文覆盖源稿排版（单篇怎么写）；成书排版（入书后怎么变）由本系列后续篇目承担 [1]。  更新：2026-09-01（本篇定位：成书排版系列第一篇，实证取自 STYLE_GUIDE 真实条文与两次登记在册的版式事故。本篇属于<strong>成书排版系列</strong>（AI 成书全过程——样式、结构、入书、发布的排版规则与逻辑））</blockquote>
+<hr/>
+<h2 id="h9">一、引子：两次版式事故</h2>
+<p>我在用 AI 写一本书。整本书从正文到 HTML、EPUB、PDF，全部由一条构建管线自动生成——我写 markdown，渲染器负责变成书。目前这本书约 16 万字、35 章 [4]，由一个自写的 md2html 渲染器统一出三端格式。</p>
+<p>在这个流程里，markdown 文件的角色变了：它不是给人看的终稿，而是构建管线的输入——写作时多一个空格、少一个标注、错一个转义，都会原样传到渲染层，变成版式问题。</p>
+<p>这不是理论推演，是两次真实事故教给我的。</p>
+<p>第一次：我在一个附录的过滤规则表里写了一条枚举（<code>禁 最｜第一｜唯一｜极佳｜完美</code>），当时的写法是半角竖线加转义（<code>\|</code>）。渲染器不认这个转义，单元格里的竖线一律被当作列分隔符——整张表当场被拆成五列，版式直接报废 [2]。第二次：一篇的附录里有一段提示词示例，文本里含了 <code>→</code> 箭头符号，写的时候没标注语言，被渲染器的自动检测识别成流程图——一整段提示词被渲染成一排按钮状的卡片，完全不是作者想表达的东西 [3]。</p>
+<p>这两次事故指向同一件事：<strong>排版问题不在排版阶段解决，在写作阶段消灭。</strong> 先于正文定一套样式规范，写作端怎么写、渲染端就怎么解析，两边对齐，AI 写出来的东西才能一次成型。所以顺序是反的：先定样式，再写正文。</p>
+<h2 id="h10">二、样式规范的本质：写作端与渲染端的契约</h2>
+<p>这套规范管三类东西：表格、图、公式。它不是审美清单，而是一份<strong>写作端与渲染端之间的契约</strong>。契约的意义在于：写作端的一个词，决定渲染端的一种结果，双方对同一字符的理解必须一致。契约有三条原则。</p>
+<p><strong>判定交给标注，不交给猜测。</strong> 渲染器对代码块按语言标注分流，每个标注对应一种确定的渲染：<code>flow</code> 渲染为流程卡片流，<code>cols</code> 渲染为并排多列，<code>chain</code> 渲染为主链加注释，<code>tree</code> 保持等宽代码框，<code>text</code> 保持纯文本，<code>math</code> 渲染为居中公式块，<code>python</code>/<code>json</code> 等按真实代码处理。自动检测只给存量文件兜底，新写作一律显式标注——写的时候顺手标一个词，换来渲染结果确定。解析器不猜，是契约的第一条。</p>
+<p><strong>教训固化成条文。</strong> 这份规范里最值钱的部分全是踩坑后补的，规范版本每次递增背后都一次真实事故：拆表事故补了"单元格禁转义管道符、用全角 <code>｜</code>"；提示词变卡片补了"含 <code>→</code> 的纯文本必须标 <code>text</code>"；公式不渲染补了"公式必须标 <code>math</code> 或用 <code> MATH0 </code>" [2][3]。每条教训改两处：规范加条文，渲染器补判定。坑不白踩，规范越用越厚——厚的是判定精度，不是写作负担。</p>
+<p><strong>标准一旦固定，不再变动。</strong> 改规范的成本被刻意抬高：改文档、改渲染器、全量 rebuild，三件事一起做。这不是僵化——书是长跑，三十几篇文章如果样式各自漂移，成书时对齐的成本远高于一开始锁死。规范的稳定性本身就是交付质量：写作端永远可以假设"我按规范写的，渲染结果就是这个样子"。</p>
+<p>下面三章，把三块版式的规则与逻辑逐条展开。</p>
+<h2 id="h11">三、表格：列宽是语义，不是偏好</h2>
+<p>表格有两条规则，每条背后都有一条排版逻辑。</p>
+<p><strong>规则一：列宽由表的类型决定，不由内容决定。</strong> 全书有一种表是"引用编号表"（表头固定三列：编号、引用、出处），它承担全文的文献溯源功能，列宽必须全书一致——渲染器按表头自动识别这一类表，套用固定比例（编号 8% / 引用 47% / 出处 45%）[1]。除此之外的普通信息表，列宽全部交给浏览器按内容自适应（<code>table-layout: auto</code>），一个百分比都不手写。</p>
+<p>逻辑：<strong>同类型的表在版式上必须长得一样，读者才能形成"这一类表怎么看"的肌肉记忆。</strong> 引用编号表在全书中出现二十余次，如果每张表列宽各调一次，读者每次都要重新扫表头；列宽固定后，扫视路径固定——编号列扫一眼、引用列读内容、出处列追来源。列宽是语义：类型决定了信息密度，信息密度决定了列宽，不是审美偏好。</p>
+<p><strong>规则二：一格一个原子信息。</strong> 单元格里要放多条信息时，用 <code><br></code> 强制换行一行一条。比如引用表的出处列，一条真实条目长这样：</p>
+<pre><code>| [1] | 作者. 标题（年份） | KB「库名」&lt;br&gt;`文件名`&lt;br&gt;（核验方式标注） |</code></pre>
+<p>库名、文件名、核验方式三者分三行。配套的还有 <code>word-break: keep-all</code>——中文在单元格里不拆词折断 [1]。</p>
+<p>逻辑：<strong>挤成一句的信息等于没有结构。</strong> 出处列一格的职责是"可溯源"，读者要的是逐项核对：库名在哪、文件名是什么、怎么验证的。三行并排，视线逐行落，每行一个锚点；挤成一句，读者得自己从长句里拆。原子信息行是给读者的扫描路径，也是给引用表的检索键。</p>
+<h2 id="h12">四、图：用代码块写，用缩进说话</h2>
+<p>书里的图（流程链、对比列、结构树）全部用代码块写，不画位图、不写 HTML。这是规则，规则背后有两条逻辑。</p>
+<p>逻辑一：<strong>图的"源码"必须是纯文本。</strong> 只有纯文本，AI 才能写、能改、能 diff——一张流程图改一个节点，diff 里看得见；位图和 HTML 做不到。这一点对 AI 成书是根本性的：图是写作的一部分，不是写作之外的手工活。</p>
+<p>逻辑二：<strong>作者只写语义，不写对齐。</strong> 三条约定：</p>
+<ul><li><strong>缩进即层级：两个空格 = 一级。</strong> 图内所有层级关系只用缩进表达，渲染端按缩进递进着色——单图内同级同色、全文同层级同色，莫兰迪色系浅化透明，对比度全过 WCAG AAA。作者禁止用空格数量手工对齐：对齐是渲染器的事，写的人只负责语义层级 [1]。</li><li><strong>结构树保持代码框。</strong> 文件树、目录树这类无箭头的层级，渲染成等宽字体的框，不转图形——<code>├──</code>/<code>└──</code> 连接线在等宽字体里天然精确，代码框本身就是最好的容器。有箭头的树（决策树）才转图 [1]。</li><li><strong>箭头是链，不是装饰。</strong> <code>→</code> 在图内渲染为蓝色加粗连接符，正文里裸写箭头链不会转换——想让一段文本变成图，就进代码块并标注 [1]。</li></ul>
+<p>为什么"缩进即层级"而不是"画对齐"？因为对齐是视觉结果，缩进是语义输入。两个空格是一级，作者写图时想的是"这行从属于哪行"，不是"这根线画在第几列"。语义交给作者，视觉交给渲染器——这正是契约的分工。</p>
+<h2 id="h13">五、公式：两处落点，各就各位</h2>
+<p>公式有两处落点，各就各位。</p>
+<p><strong>行内公式用 <code> MATH0 </code></strong>，渲染器自动转 HTML（变量衬线体、上下标 <code><sup>/<sub></code>），比如缩放定律写作 <code> MATH1 </code>，读者看到的是 L ∝ Nᵅ。<strong>独立公式块标 <code>math</code></strong>，渲染为居中卡片。没有 MathJax、没有外部 CDN——公式转换在渲染器内完成，零依赖 [1]。</p>
+<p>逻辑：<strong>电子书和打印版的公式不能依赖运行时脚本。</strong> EPUB 在阅读器里打开、PDF 是静态纸面，两者都没有"页面加载后再跑一段 JS 渲染公式"的条件。公式必须在构建期就变成 HTML 的普通元素，才能进三端。零依赖不是省事，是三端发布的结构性要求——这条逻辑直接决定了"行内 <code> MATH0 </code> + 块级 <code>math</code>"两个落点的存在。</p>
+<h2 id="h14">六、结语：规范是复利，不是限制</h2>
+<p>这套东西表面上是在约束 AI 的写法，实际上是在约束我自己的系统：渲染器该支持什么、写作端该标注什么、哪些坑已经用条文封死。AI 写作的可复现性，恰恰建立在这种看起来最枯燥的约定上——写作端的每个标注，都在为渲染端的确定性买单。</p>
+<p>回头看这两次事故：一次是转义符，一次是漏标注，都不是渲染器的 bug，而是"写作端和渲染端对同一字符的理解不一致"。契约的意义就是把这种不一致提前暴露在写作端——写的时候多敲一个标注词，省掉的是成书后逐页排查的返工。</p>
+<hr/>
+<h3 id="h15">引用与出处说明</h3>
+<blockquote>本文为经验记录，无外部文献引用；全部条文与事故引证来自本人仓库的规范本体与构建管线：</blockquote>
+<table class="ref-table"><thead><tr><th>编号</th><th>引用</th><th>出处</th></tr></thead><tbody><tr><td>[1]</td><td>写作样式规范 v3.0：引用编号表固定列宽（8%/47%/45%）与表头自动识别、代码块标注分流（flow/cols/chain/tree/text/math）、单元格禁转义管道符（全角 <code>｜</code> 替代）、2 空格 = 1 级缩进与莫兰迪层级色（WCAG AAA）、结构树保持代码框、公式 <code> MATH0 </code>/<code>math</code> 零依赖转换</td><td><span class="ref-piece"><code>typesetting/STYLE_GUIDE.md</code></span><span class="ref-piece">v3.0（规范本体）</span></td></tr><tr><td>[2]</td><td>版式事故一：单元格内半角竖线转义（`\</td><td>`）不被渲染器识别，表格被拆为五列（附录过滤规则表实例）</td><td><span class="ref-piece">STYLE_GUIDE 1.4</span><span class="ref-piece">（2026-08-28 实战固化，事故登记）</span></td></tr><tr><td>[3]</td><td>版式事故二：含 <code>→</code> 的提示词未标 <code>text</code>，被自动检测渲染成流程卡片（附录提示词示例实例）</td><td><span class="ref-piece">STYLE_GUIDE 2.11 常见误标</span><span class="ref-piece">（事故登记）</span></td></tr><tr><td>[4]</td><td>全书约 16 万字、35 章</td><td><span class="ref-piece">count_words.py ⑥ 出版折算</span><span class="ref-piece">（2026-09-01 复测 161,962）</span></td></tr></tbody></table>
+<blockquote>说明：[1] 为规范本体，本文全部条文引证对象；[2][3] 为 STYLE_GUIDE 中登记的真实事故，条文即事故的固化结果；[4] 为构建管线 count_words 自动统计的实测数字。</blockquote>
+<h2 id="h16">延伸阅读</h2>
+<ul><li><strong>STYLE_GUIDE.md</strong>：本文全部条文的规范本体 [1]，共九章——一~三章版式（本文已展开），四章存量结构统计，五章单篇骨架模板，六章描述方式白黑名单，七章命题纪律，八章四项检测，九章速查表。</li></ul>
+<hr/>
+<p><em>最后更新：2026-09-01（论证概要：从两次真实版式事故导出"先定样式、再写正文"，论证规范本质为写作端与渲染端的契约，逐条展开表格/图/公式三块版式的规则与排版逻辑；文献佐证：[1] 规范本体、[2][3] 登记事故、[4] 实测字数，无外部文献；四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS）</em></p>
+<h1 id="h17">成书排版（二）：单篇入书，元素去留</h1>
+<blockquote>一篇文章在仓库根目录是"单篇"，进了书（book/ 目录）就是"一章"。同一批内容，两种形态——源稿有源稿的排法，成书有成书的排法。本文展开成书排版的第一层：元素级排版——单篇的每个元素（许可头、标题、摘要、引用表、延伸阅读、脚注）入书后该去除还是保留、以什么形态呈现，以及去留背后的三条排版逻辑。边界声明：本文只讲元素级；骨架级、页面级、元数据级由本系列后续篇目承担 [1]。  更新：2026-09-01（本篇定位：成书排版系列第二篇，承接（一）——（一）定源稿排版，本篇定成书排版第一层。实证取自 book 版 21 篇的真实转化形态与两次登记在册的转化事故。本篇属于<strong>成书排版系列</strong>（AI 成书全过程——样式、结构、入书、发布的排版规则与逻辑））</blockquote>
+<hr/>
+<h2 id="h18">一、引子：一本书的两种形态</h2>
+<p>我的书有两个仓库目录：根目录放 21 篇单篇（<code>NN_xxx.md</code>，源稿），<code>book/part{X}/</code> 放成书版（每篇是书的一章）。同一篇文章，两个位置长得不一样——比如 09f，源稿带着摘要、更新行和篇尾脚注；进了书，摘要没了、标题前面多了"第 III 部 · 09f｜"、篇尾只剩延伸阅读 [4]。</p>
+<p>这不是复制粘贴时的偷懒，是排版的刻意：<strong>源稿是写作形态，成书是阅读形态。</strong> 写作形态服务于"改"（作者要版本记录、要四检登记）；阅读形态服务于"读"（读者要的是连续的章节流，不是写作过程记录）。转化入书的第一件事，就是逐元素决定：这个元素在书里还承担功能吗？</p>
+<p>一张对照表看全貌（以 09f 为例 [4]）：</p>
+<table><thead><tr><th>元素</th><th>源稿形态</th><th>成书形态</th></tr></thead><tbody><tr><td>SPDX 许可头</td><td>文件头顶 5 行注释</td><td>去除（版权页统一声明）</td></tr><tr><td>H1 标题</td><td><code>名词不解释就等于没有名词——…</code></td><td>加前缀 <code>第 III 部 · 09f｜…</code></td></tr><tr><td>摘要 + 更新行</td><td>开篇结论先行一段 + 版本记录</td><td>去除（成书无摘要/日期戳）</td></tr><tr><td>正文（含 [n] 编号）</td><td>原样</td><td><strong>原样保留</strong>（含修正内容）</td></tr><tr><td>引用与出处说明</td><td><code>### 引用与出处说明</code> 三列表</td><td><strong>保留</strong>（编号书内可查）</td></tr><tr><td>延伸阅读</td><td>条目带篇号</td><td><strong>保留</strong>，条目加"第 X 部 ·"前缀</td></tr><tr><td>篇尾脚注</td><td><code>*最后更新：…*</code> 含四检登记</td><td>去除（成书无版本戳）</td></tr></tbody></table>
+<p>七个元素，四去三留。这张表不是一次定下的——前三去三留是 21 篇逐篇转化后固化的，引用表那条留是事故换来的（见第三章）。</p>
+<h2 id="h19">二、该去除的去除：四个元素</h2>
+<p><strong>SPDX 许可头（5 行注释）——去除。</strong> 源稿每个文件头顶的 CC BY-SA 4.0 许可声明，进书时整体剥离。逻辑：成书有版权页统一声明协议（书名、作者、协议全文、溯源仓库都在版权页），每章再重复一遍许可头是噪声——许可信息在书里只有一个落点：版权页 [1]。</p>
+<p><strong>摘要 blockquote 与更新行——去除。</strong> 源稿开头"结论先行一段 + 更新记录"是写作形态的产物：作者需要知道自己改过什么。成书无摘要、无日期戳——读者不需要在每章开头重读一遍"这篇承接哪篇、实证取自哪里"，那是作者的工作记录，不是阅读内容 [1]。</p>
+<p><strong>篇尾脚注——去除。</strong> 源稿的 <code>*最后更新：日期（论证概要 + 文献佐证统计 + 四检结果）*</code> 是写作质量门禁的登记，成书无版本戳 [1]。</p>
+<p><strong>正文中无编号的非标章节——去除。</strong> 源稿里偶有"## 两篇的关系"这类无编号章节（篇际依赖说明），进书删除——篇际依赖关系统一归延伸阅读承担 [1]。</p>
+<h2 id="h20">三、该保留的保留：引用表与延伸阅读</h2>
+<p><strong>引用表——保留，这是最贵的一次修正换来的。</strong> 曾经犯过这样的错：以为入书后引用表可以删掉、并入书末的文献汇总，结果正文里的编号引用在书内无处可查——读者看到一个编号标记，翻遍全书找不到它指什么。编号引用在书里断链，是比样式不一致严重得多的问题 [2]。修正后的规则：引用表原样保留（从源稿同步，含修正内容），连同来源声明与说明段一起，插在延伸阅读之前；书末的文献汇总表（"文献 → 被引篇目"逆向表）与篇内正向表并存，各司其职——正向表管"这篇引了什么"，汇总表管"全书有哪些文献"。</p>
+<p><strong>延伸阅读——保留，但条目要换形态。</strong> 源稿的延伸阅读条目（<code>- **09e：提示词拉扯的边界**：…</code>）进书时，系列篇目条目加前缀"第 X 部 · 篇号"（如 <code>**第 III 部 · 09e：…**</code>）——读者在书里看到条目，能直接定位到本书的对应章节；项目文件类条目（rag-assistant、semantic-split 等）不加前缀——它们指向仓库工程文件，不是书内章节 [1]。这个区分本身是一条排版逻辑：<strong>书内的指引必须指回书内，书外的指引才指向仓库。</strong> 实例：09f 的延伸阅读里既有"09e 提示词拉扯的边界"（书内篇目，加"第 III 部 ·"），也有"rag-assistant 工程实证"（仓库文件，不加前缀）——同一列表两种定位，读者一看便知哪个能翻到、哪个要去仓库找 [4]。</p>
+<p><strong>尾部顺序——固定不可换。</strong> 成书章节的尾部顺序是：正文 → 引用与出处说明 → 延伸阅读 → 文件结束 [1]。这个顺序经历过一次错乱：有篇曾把引用表排在延伸阅读之后，读者先看到"延伸阅读"再看"引用与出处说明"——读引用表时还要回头翻。尾部顺序就是书的导航逻辑，错一次就要用条文钉死。</p>
+<p><strong>一个系列特例：收束签名的保留。</strong> 四部里有一系（认知重估篇）的源稿以 <code>*Cogito, Scribo. 我思，故我写。*</code> 收束——这是该系列的签名，不是写作痕迹。成书版保留这个签名 [1]。特例说明一个反例边界：<strong>"去除写作痕迹"不等于"抹掉系列身份"</strong>——版本记录是痕迹，签名是身份，判据不同。</p>
+<h2 id="h21">四、去留的三条逻辑</h2>
+<p>先说一条没进表格但贯穿全程的规则：<strong>正文本身——原样保留。</strong> 源稿的正文（含 <code>[n]</code> 编号引用、认知分级标注、图表、引文、四维展开）全部保留，一字不改 [1]。逻辑：转化作用于外围元素（许可头、摘要、脚注、非标章节），不作用于论证内容——书是同一批内容的另一种排法，不是改写。认知分级标注（"机制性推断""经验刻画"这类括号说明）是论证的组成部分，源稿有，书里就有；源稿论证怎么成立，书里就怎么成立。去留的刀，只落在"写作痕迹"上，不落在"论证内容"上。</p>
+<p>把上面的去留判据收拢，是三条排版逻辑。</p>
+<p><strong>逻辑一：可溯源性——编号在书内必须可查。</strong> 全书的正文只用 <code>[n]</code> 编号引用来源，这个机制能成立的前提是编号在书内闭环：引用表在每一篇里都在，编号所指在书内可查。这是引用表必须保留的根本原因，也是"删除引用表导致断链"被记入教训的原因 [2]。</p>
+<p><strong>逻辑二：层级承担分隔——书的分章不靠装饰，靠标题。</strong> 源稿正文里有章节间分隔线、入书后一律去除——章节之间的分隔由 H1 标题层级承担（每章独立起页），而不是一条横线 [1]。同一个逻辑在书里还有一处印证：章与章之间不注入分隔线，靠标题层级 + 分页承担。<strong>分隔是结构问题，不是装饰问题。</strong></p>
+<p><strong>逻辑三：成书无写作痕迹——写作过程记录不进书。</strong> 摘要、更新行、篇尾脚注、非标章节，全是写作形态的痕迹；成书只保留阅读形态需要的元素。判断一个元素去留，就问一句：<strong>它在书里还承担阅读功能吗？</strong> 承担，保留（引用表、延伸阅读）；不承担，去除（许可头、摘要、脚注、非标章节）[1]。</p>
+<p>三条逻辑不是并列的偏好，是有序的裁量：先问"编号能不能查"（可溯源性），再问"分隔靠不靠得住"（层级承担分隔），最后问"这是内容还是痕迹"（成书无写作痕迹）。三条顺序执行，一个元素的去留不会产生歧义。</p>
+<h2 id="h22">五、结语：转化不是复制，是换一种排法</h2>
+<p>单篇入书不是把文件复制一份进 book 目录，而是同一批内容换一种排法：去除写作痕迹、保留阅读功能、给书内指引加书内定位。转化规则表把这些判据固定成一张表——该去除的去除，该保留的保留，尾部顺序固定不可换 [1]。这张表是入书排版的起点：它把"怎么改"从每次逐篇判断，变成一次定下来的约定——后面的骨架、页面、元数据三层，都在这张表确定的"一章"之上继续排。</p>
+<p>这套元素级规则解决的是"一章长什么样"——七元素四去三留、三条裁量逻辑、一个系列特例，都写在转化规则表里，新篇入书照表执行。一章的先后、一部之内怎么排，是骨架级排版的事——四部、导读与章序，下一篇展开。</p>
+<hr/>
+<h3 id="h23">引用与出处说明</h3>
+<blockquote>本文为经验记录，无外部文献引用；全部规则与事故引证来自本人仓库的转化入书规范与 book 版实态：</blockquote>
+<table class="ref-table"><thead><tr><th>编号</th><th>引用</th><th>出处</th></tr></thead><tbody><tr><td>[1]</td><td>转化入书排版规范 v3.0 第一章：转化规则表（SPDX 去除/标题加"第 X 部 · 篇号｜"前缀/摘要与更新行去除/引用表保留/延伸阅读带部前缀/脚注去除/尾部顺序固定）与三条去留逻辑</td><td><span class="ref-piece"><code>typesetting/STRUCTURE_GUIDE.md</code></span><span class="ref-piece">v3.0 第一章（规范本体）</span></td></tr><tr><td>[2]</td><td>转化事故：book 版曾删除文末引用表，正文 [n] 编号在书内无处可查（断链）；修正为引用表保留并同步</td><td><span class="ref-piece">STRUCTURE_GUIDE 第七章</span><span class="ref-piece">（2026-08-28 教训登记）</span></td></tr><tr><td>[3]</td><td>转化事故：8 篇 book 版延伸阅读重复（旧版未删 + 带前缀版追加，一份内容两处标题）；修正为保留带部前缀版</td><td><span class="ref-piece">STRUCTURE_GUIDE 第七章</span><span class="ref-piece">（2026-08-28 教训登记）</span></td></tr><tr><td>[4]</td><td>book 版 09f 实态：标题带"第 III 部 · 09f｜"前缀、无摘要、篇尾为延伸阅读</td><td><span class="ref-piece"><code>book/part3_边界/09f_…md</code></span><span class="ref-piece">（成书版实态）</span></td></tr></tbody></table>
+<blockquote>说明：[1] 为规范本体（转化规则表的真实条文）；[2][3] 为规范第七章登记的真实转化事故；[4] 为 book 版文件可直接核验的实态。</blockquote>
+<h2 id="h24">延伸阅读</h2>
+<ul><li><strong>成书排版（一）：先定样式，再写正文</strong>：本篇的上游——源稿排版的规则与逻辑（表格/图/公式），（一）定写作形态，（二）定阅读形态。</li><li><strong>STRUCTURE_GUIDE.md</strong>：转化规则表的规范本体 [1]——元素级规则之外，还有配套同步清单、字数/版本号、构建管线与打印版式各章。</li></ul>
+<hr/>
+<p><em>最后更新：2026-09-01（论证概要：从"同一内容两种形态"出发，逐元素给出入书去留判据（去除：SPDX/摘要/脚注/非标章节；保留：引用表/延伸阅读），收拢为三条排版逻辑（编号书内可查、层级承担分隔、成书无写作痕迹）；文献佐证：[1] 规范本体、[2][3] 登记事故、[4] book 实态，无外部文献；四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS）</em></p>
+<h1 id="h25">成书排版（三）：骨架排版——四部、导读与章序</h1>
+<blockquote>元素级排版决定"一章长什么样"，骨架级排版决定"一章排在哪里"。本书的骨架是：版权页、序言、阅读指南三个前置页，四部正文（每部一页导读 + 若干章），一篇结语，六个附录。本文展开骨架排版的规则——书的顺序是怎么排出来的、系列内章序的依据、骨架变更为什么牵一发动全身——以及背后的两条排版逻辑：顺序即叙事弧线、骨架稳定则全书稳定。边界声明：本文覆盖骨架级；页面级（打印分页）与元数据级（字数/版本号）由后续篇目承担 [1][2]。  更新：2026-09-01（本篇定位：成书排版系列第三篇，承接（二）——（二）定元素去留，（三）定章节排布。实证取自 book 目录实态、构建脚本的注册列表与一次真实的全链路漏同步教训。本篇属于<strong>成书排版系列</strong>（AI 成书全过程——样式、结构、入书、发布的排版规则与逻辑））</blockquote>
+<hr/>
+<h2 id="h26">一、引子：一本书的顺序不是写出来的，是排出来的</h2>
+<p>21 篇单篇在仓库根目录是按编号平铺的：01、02、03……10b。但成书不是这个顺序——书把 21 篇拆进四个部，每部有导读，前面加三个前置页，后面挂六个附录。成书的顺序和源稿的编号顺序是两套东西：编号顺序是"写作时间线"，书的顺序是"阅读叙事线" [1]。</p>
+<p>这个顺序不是人手工编排的，是构建脚本的注册列表决定的：拼接全书时，脚本按 <code>STRUCTURE</code> 列表依次取文件，列表里是什么顺序，书就是什么顺序 [2]。<strong>注册列表就是书的版式序。</strong> 这一条是整个骨架排版的枢纽：改骨架，就是改这个列表。</p>
+<h2 id="h27">二、骨架是什么：前置页 + 四部 + 结语 + 附录</h2>
+<p>本书的骨架排布（按书的阅读顺序）：</p>
+<div class="flow">
+<div class="flow-step lv1" style="margin-left:0px">版权页 <span class="flow-inline-arrow">→</span> <span class="edge-fall">序言 <span class="flow-inline-arrow">→</span> 阅读指南 <span class="flow-inline-arrow">→</span> 第 I 部 约束（导读 + 01~07）</span></div>
+<div class="flow-arrow">↓</div>
+<div class="flow-step lv1" style="margin-left:0px">第 II 部 协作（导读 + 08、08a、08b、08c）</div>
+<div class="flow-arrow">↓</div>
+<div class="flow-step lv1" style="margin-left:0px">第 III 部 边界（导读 + 09、09a~09f）</div>
+<div class="flow-arrow">↓</div>
+<div class="flow-step lv1" style="margin-left:0px">第 IV 部 重估（导读 + 10、10a、10b） <span class="flow-inline-arrow">→</span> <span class="edge-fall">结语 <span class="flow-inline-arrow">→</span> 附录 A~F</span></div>
+</div>
+<p>三个前置页各司其职：版权页承载书名、作者、协议与溯源（元素级排版里"许可头只在版权页"的落点就是这里）；序言讲这本书为什么存在、为谁而写；阅读指南给出读者路径——先读哪部、跳读怎么走 [1]。</p>
+<p>六篇附录是书的支撑层：术语表、工具索引、参考文献、方法论地图、提示词示例、端到端实测 [1]。它们不属于任何一部——是全书横向的参考面，排在正文之后。</p>
+<p><strong>导读是每部的版式入口。</strong> 每部正文的第一篇是"00_导读"——它承担三个职责：这部的主题是什么（一句话）、这部的篇目表、每篇与读者的阅读建议 [1]。导读是骨架上的路标：读者进入一部时，先看到"这部在讲什么、按什么顺序读"，而不是直接掉进第一篇的论证细节。没有导读的部，读者要靠自己从篇名推断顺序——导读的存在让部的边界在版式上可见。</p>
+<p><strong>阅读指南是骨架的导航图。</strong> 前置页里的阅读指南，把骨架翻译成读者的行动路径：想系统读，按"四部路线"顺序走；想快速上手，先读某部某篇；想跳读，每篇自洽可单点进入 [1]。骨架排好了是一棵树（前置页 → 部 → 章 → 小节），阅读指南把这棵树切成若干条"路径"——同一棵树，不同读者走不同的路径。<strong>骨架决定"有什么"，阅读指南决定"怎么走"</strong>，两者一个管结构、一个管导航，缺了后者，骨架对读者就是一张只标注了地名的地图。</p>
+<p><strong>前置页的数量是骨架的硬约束。</strong> 前置页固定三篇（版权页、序言、阅读指南），不多不少 [1]。为什么是三篇？版权页解决"这本书是谁的"（署名、协议、溯源），序言解决"这本书为什么存在"（动机、写法、为谁写），阅读指南解决"这本书怎么读"（路径、跳读、术语）。三个问题各占一篇，职责不重叠也不留空——前置页的排版逻辑和正文一样：<strong>一个页面承担一个功能</strong>，功能不合并，页面就不合并。</p>
+<h2 id="h28">三、章序的两条依据</h2>
+<p><strong>部内顺序：主篇在前，注脚随其后。</strong> 每部内部，编号即序：第 II 部是 08（主篇）→ 08a → 08b → 08c（注脚按派生顺序排）；第 III 部是 09（主篇）→ 09a ~ 09f（六篇注脚按字母序）[1]。这个排序逻辑是：读者先读主篇建立范式，注脚是范式的展开与修正，紧随其后才能形成连续论证。</p>
+<p>编号本身是版式的一部分：主篇用裸编号（08、09、10），注脚用主篇号加字母后缀（08a、09f）——读者从编号就能读出"这是主篇还是注脚、属于哪个主篇"。注册列表里的顺序与编号体系必须一致：编号说了算，列表跟着编号排，两者不一致时以编号为准，列表修正。编号体系的稳定还意味着：一部的容量被编号可视地约束着——注脚排到 09f，读者能一眼看出 09 系列已经扩展了几层，这是骨架的自明性。</p>
+<p><strong>部序：一条叙事弧线。</strong> 四部的顺序是"约束 → 协作 → 边界 → 重估"——每部一条主线：第 I 部约束回答"LLM 不听话怎么办"（单技能怎么可靠，01~07），第 II 部协作回答"多个智能体怎么配合"（LLM 只填空不决策，08~08c），第 III 部边界回答"这套规则能走多远"（穷举是宿命，边界由人画，09~09f），第 IV 部重估回答"让渡之后人还剩什么"（判断、划界与体验，10~10b）[1]。四部的主线层层递进：先解决可靠，再解决配合，再面对边界，最后回到人——这是从工程到人的一条弧线，每部承接前部的结论 [1]。骨架排版的任务之一，就是让这条弧线在目录上肉眼可见：读者翻目录，看到的不只是 21 个文件名，是一条完整的阅读路径——每部的导读标题本身就在提示这条路径的下一站。</p>
+<h2 id="h29">四、骨架变更的连锁：牵一发动全身</h2>
+<p>骨架最怕的是"改了但没改全"。一次真实的教训：新篇入书时，方法论地图的"每篇一句话命题"表、工具支撑层的篇数统计、导读里的跨部引用——其中一处"第 III 部全部 N 篇"的 N 漏改了，写的是旧篇数；同期在线阅读落地页停在旧字数、旧章数、旧版本号，落后了两个版本 [3]。</p>
+<p>为什么骨架变更会漏？因为<strong>骨架不是一处定义，是七处共识</strong>：构建脚本的注册列表、四部导读、阅读指南的读者路径、版权页的章数、方法论地图的篇数统计、附录的"引用于篇号"列、落地页的字数与版本 [1][2]。任何一处落后，读者在书里看到的骨架就和实际不一致——目录说 20 篇，翻到第 20 篇发现后面还有一篇。</p>
+<p>七处落点逐一对应骨架的哪个侧面：</p>
+<table><thead><tr><th>落点</th><th>管骨架的什么</th></tr></thead><tbody><tr><td>构建脚本注册列表</td><td>章序本身（拼接顺序即版式序）</td></tr><tr><td>四部导读</td><td>部的篇目表与跨部引用（"全部 N 篇"的 N）</td></tr><tr><td>阅读指南</td><td>读者路径（<code>09 → 09a~09f</code> 类）与四部路线</td></tr><tr><td>版权页</td><td>全书章数（版本记录尾部）</td></tr><tr><td>方法论地图</td><td>"每篇一句话命题"表 + 工具支撑层 N 篇统计</td></tr><tr><td>附录参考文献</td><td>新增文献条目 + 既有条目"引用于"列补篇号</td></tr><tr><td>落地页</td><td>四部卡片字数/章数与 PDF 下载链接版本号</td></tr></tbody></table>
+<p>对策不是"记住七处"，是把七处列成一张同步清单，新篇入书逐项打勾。骨架级排版的纪律：<strong>改骨架 = 改注册列表 + 全量同步七处 + 重建全书</strong>。</p>
+<p><strong>注册列表的实操形态。</strong> 注册列表里每一行是二元组：<code>("part{X}/{文件名}", "第 {X} 部 · {篇号}")</code>——文件路径与书的标题分开登记 [2]。拼接时按路径取文件内容、按标题加 H1 前缀；位置按部内顺序排。这一行就是骨架变更的最小单元：新篇进来 = 列表加一行 + 七处同步 + 重建。<strong>骨架的每一次变更，都从这一行开始，也以这一行为最终裁决</strong>——列表里没登记，内容写得再好也不进书。</p>
+<h2 id="h30">五、结语：骨架稳定，则全书稳定</h2>
+<p>骨架是书的宏观排版：前置页、四部、章序、附录，各自的位置承载各自的阅读功能；章序排的是叙事弧线，注册列表是它的唯一实现；骨架的任何变更都会波及七处共识，所以同步清单不是可选项，是骨架排版的一部分 [1][2][3]。</p>
+<p>骨架在五层排版里的位置是枢纽：元素级排版决定"一章长什么样"（本系列第二篇），骨架决定"一章排在哪里"——它把二十几篇各自成形的单篇，排成一条有弧线的阅读路径；它又为页面级排版提供切页的单元（每篇独立起页的"篇"，就是骨架定义的那个单元）。骨架不成立，上下两层都失去依托：元素排得再好，位置错了读者找不到；页面切得再准，顺序错了叙事就断了。反过来，骨架一旦稳定，它就是后面所有层的基准——页面排版不用关心"这篇排第几"，只管"这篇从新页起"。</p>
+<p>骨架定了，书就有了形状。接下来是更细的一层：一章排好了、顺序定了，落到纸面上一页一页怎么切——页面排版，下一篇展开。</p>
+<hr/>
+<h3 id="h31">引用与出处说明</h3>
+<blockquote>本文为经验记录，无外部文献引用；全部规则与事故引证来自本人仓库的成书实态、构建脚本与同步教训：</blockquote>
+<table class="ref-table"><thead><tr><th>编号</th><th>引用</th><th>出处</th></tr></thead><tbody><tr><td>[1]</td><td>成书目录实态：frontmatter（版权页/序言/阅读指南）+ 四部（各含导读 + 章节）+ 结语 + 附录 A~F；部序"约束→协作→边界→重估"；部内"主篇在前、注脚随后"</td><td><span class="ref-piece"><code>book/</code> 目录结构</span><span class="ref-piece">（frontmatter + part1~4 + appendix）</span></td></tr><tr><td>[2]</td><td>构建拼接：<code>assemble.py</code> STRUCTURE 注册列表，拼接顺序即版式序</td><td><span class="ref-piece"><code>book/build/assemble.py</code></span><span class="ref-piece">（构建脚本实态）</span></td></tr><tr><td>[3]</td><td>骨架变更连锁教训：09f 入书时方法论地图 N 篇统计漏改、导读跨部引用"六篇"漏改；在线阅读落地页落后两个版本（旧字数/旧章数/旧版本号）</td><td><span class="ref-piece">STRUCTURE_GUIDE 第二章同步清单 + 第七章</span><span class="ref-piece">（2026-08-26/28 教训登记）</span></td></tr><tr><td>[4]</td><td>章节数口径：35 = 正文 21 + 四部导读 4 + 结语 1 + frontmatter 3 + 附录 6</td><td><span class="ref-piece">STRUCTURE_GUIDE 第三章</span><span class="ref-piece">（字数统计规范）</span></td></tr></tbody></table>
+<blockquote>说明：[1][2] 为仓库实态可直接核验；[3] 为规范第七章登记的教训；[4] 为规范第三章的章数口径条文。</blockquote>
+<h2 id="h32">延伸阅读</h2>
+<ul><li><strong>成书排版（二）：单篇入书，元素去留</strong>：本篇的上游——元素级排版决定"一章长什么样"，本篇决定"一章排在哪里"。</li><li><strong>STRUCTURE_GUIDE.md</strong>：骨架变更的同步清单与章节数口径的规范本体 [3][4]——入书必查的七处落点全量表。</li><li><strong>成书排版（五）：元数据排版</strong>：骨架变更直接牵动的字数、章数、版本号三端一致（本系列后续篇目）。</li></ul>
+<hr/>
+<p><em>最后更新：2026-09-01（论证概要：从"书的顺序由注册列表决定"出发，展开骨架排布（前置页/四部/结语/附录）、章序两条依据（主篇在前、叙事弧线），论证骨架变更牵动七处共识并以同步清单约束；文献佐证：[1][2] 仓库实态、[3] 登记教训、[4] 规范条文，无外部文献；四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS）</em></p>
+<h1 id="h33">成书排版（四）：页面排版——从屏幕到纸面</h1>
+<blockquote>屏幕是流，纸面是页。HTML 是连续滚动的，打印版必须一页一页切——切页规则就是页面排版。本文展开打印版页面排版的全部规则与逻辑：分页逻辑（每篇独立起页、标题不落页末、防孤立行）、空白治理（两次真实的分页事故与修正）、书的物理规范（A4、字体、封面、页码、目录）。边界声明：本文覆盖打印版页面级排版；元数据级（字数/版本号）由本系列第五篇承担 [1]。  更新：2026-09-01（本篇定位：成书排版系列第四篇，承接（三）——（三）定章节排布，（四）定纸面切页。实证取自打印版生成脚本的全部真实参数与两次登记在册的分页事故。本篇属于<strong>成书排版系列</strong>（AI 成书全过程——样式、结构、入书、发布的排版规则与逻辑））</blockquote>
+<hr/>
+<h2 id="h34">一、引子：屏幕是流，纸面是页</h2>
+<p>在线阅读的 HTML 是连续的——读者滚轮一滚，28 万字符从头到尾不断流。打印版做不到：A4 纸有边界，内容必须一页一页切下来。切在哪、怎么切，就是页面排版的全部问题。</p>
+<p>切页规则藏在打印版生成脚本的打印 CSS 里，每一条都是真实排版的取舍——而且其中两条是事故换来的 [1][2]。打印版不是 HTML 的缩小，是同一个内容在"页"这个容器里的重新排版。</p>
+<h2 id="h35">二、分页逻辑：四条规则，四条理由</h2>
+<p><strong>规则一：每篇独立起页（h1 强制新页）。</strong> 打印 CSS 里 <code>h1 { break-before: page }</code>——每一个一级标题（版权页、序言、每篇、结语、每个附录）强制从新页开始 [1]。逻辑：书的章节天然以篇为单元，一篇从新页起，读者翻开任何一页都能判断"我正读的是哪一篇"，也方便折页标记。这是书籍分篇的惯例，不是偏好。</p>
+<p><strong>规则二：标题不落页末（h2/h3/h4 禁止断页在标题后）。</strong> <code>break-after: avoid</code>——小节标题必须与后续内容同页 [1]。逻辑：页末孤零零一个标题，翻页后内容在下一页，读者的视线断了。标题是导航标记，标记必须指向内容，不能指向空白。</p>
+<p><strong>规则三：防孤立行——段落与列表分别取值。</strong> 段落 <code>orphans: 2; widows: 2</code>（页首页底最少 2 行）；列表项 <code>orphans: 1; widows: 1</code> [1]。这个取值是实测出来的：段落设 3 太严，触发整段推页造成大空白；列表项大多是单行 bullet，若也设 2，单行条目（1 行 < 2）永远被推下页，每页底部留一条白。逻辑：<strong>防孤立行的目的是阅读连续性，但取值必须按元素形态分别定</strong>——段落是长文本，列表是短条目，一刀切反而制造新空白。</p>
+<p><strong>规则四：纵向结构允许拆页，横向结构不拆。</strong> 表格允许跨页（跨页重复表头）、tr 不拆；引用块、并排多列不拆 [1]。逻辑：表格是纵向延伸的，跨页是它的自然形态，表头重复保证跨页后读者仍知道每列是什么；横向并排结构一旦拆开，左右对照关系就断了。拆与不拆，由结构的方向性决定。</p>
+<p><strong>规则五：长行不截断——代码块强制换行。</strong> 打印 CSS 里 <code>pre { white-space: pre-wrap; overflow-wrap: anywhere }</code>——代码块的长行保留原换行、允许软换行、超长词兜底断开 [1]。逻辑：书里大量 raw 输出（测试实录、日志）是超宽单行，屏幕上有横向滚动条，纸面上没有——如果不强制换行，超宽行会被直接裁掉，内容丢失。<strong>排版不能让内容消失</strong>，这条规则保证纸面承载的内容与屏幕一致。</p>
+<h2 id="h36">三、空白治理：两次事故换来的两条规则</h2>
+<p>页面排版最大的敌人不是内容太多，是<strong>空白太多</strong>——内容被"保护性"地推到下一页，留下一整页或半页空白。两次真实事故：</p>
+<p><strong>事故一：保护链造成的半页空白。</strong> 打印 CSS 曾对分隔线（hr）加了"禁止断页"的规则，本意是分隔线不独占页。但分隔线的断页保护与标题的断页保护连成一条"保护链"：分隔线不能断、它后面的标题也不能断，两者作为一个整体被浏览器推到下一页——上一页留下半页空白 [2]。修正：hr 只保留"后部禁断页"（<code>break-after: avoid</code>），去掉"前部禁断页"——分隔线可以留在页尾，不再触发整块搬运。</p>
+<p><strong>事故二：章间分隔线独占一整页。</strong> 拼接全书时曾在章与章之间注入分隔线。某章内容正好顶满一页时，分隔线无处安放被推到下一页首行，而下一章标题又要新起一页——分隔线独自占了一整页 [2]。修正：章与章之间不再注入分隔线——章节分隔由标题层级承担，这印证了元素级排版里"层级承担分隔"的逻辑：<strong>分隔是结构问题，不是装饰问题，装饰性的横线在页面上会变成空白</strong>。</p>
+<p><strong>治理的最后一环是超长元素就地分页。</strong> 单页装不下的超长表格/引用块，渲染前先检测高度，超出单页可用高度（A4 高 1123px − 上下边距 136px）就标记为"就地分页"——在内容单元之间拆，而不是整块搬下页再拆，避免第一页先留一大块空白 [1]。逻辑：<strong>超长元素的正确排法是在它内部切，不是把它整体搬走</strong>。</p>
+<h2 id="h37">四、书的物理规范：纸、字、封、码</h2>
+<p>页面排版除了切页，还有四个物理层。</p>
+<p><strong>纸：A4，边距 18mm 16mm。</strong> 打印版渲染视口取 794×1123px（A4 @96dpi），与打印布局一致，保证页面元素测量准确 [1]。边距上下 18mm、左右 16mm——正文区的宽高在渲染前是确定的，超长元素判定（见第三章）用的"单页可用高度"就是按这个边距算的：1123px 减去上下边距 136px。<strong>纸面尺寸是页面排版的基准坐标系</strong>，所有"放不放得下"的判断都建立在它之上。</p>
+<p><strong>字：思源黑体，零字体分发。</strong> 正文字体用思源黑体（Regular/Medium/Bold 三档），以本地 OTF 加载、按字重映射——标题用 Medium/Bold、正文用 Regular，等宽场景回退 DejaVu Sans Mono [1]。封面文字用字体直接画入图片。逻辑：<strong>打印版不能依赖读者电脑里有这套字体，也不能把字体文件随 PDF 分发</strong>——零分发、零授权争议，是打印版的分发前提 [1][3]。字体名在打印版里整体替换（从屏显字体栈换成思源黑体栈），保证纸面与屏幕的观感一致，不是让两种介质各长各的。</p>
+<p><strong>为什么是思源黑体而不是系统字体——长尾收益原理。</strong> 用微软雅黑渲染 PDF 大概率不侵权，但"大概率"不是选字体的标准。风险是期望值里的尾部：闭源字体随系统授权，不授予单独分发与商业嵌入，PDF 分发后字体是否随文档传播、边界是模糊的——概率低，但一旦触发（厂商追索、平台下架），整本书的分发停摆，损失远超省下的功夫。思源黑体是 SIL OFL 1.1 开源许可：自由使用、嵌入、分发，把概率归零，换来"永远不必处理这类问题"的确定性。<strong>确定性的价值就是长尾收益——用零授权成本，买断一类风险。</strong> 封面印上字体许可声明（SIL OFL 1.1），许可透明写在书面上，任何渠道分发都无后顾之忧 [1][3]。</p>
+<p><strong>封：A4 300dpi 位图。</strong> 封面用渲染生成 300dpi（2480×3508）PNG——300ppi 是印刷行业标准，600ppi 在阅读距离无感知增益 [3]。封面是位图、正文是矢量，两者物理分离、合并不互相污染 [1]。封面印版本号、日期与字体许可声明——书的元数据在封面上的落点，见本系列第五篇。</p>
+<p><strong>码：页码与目录。</strong> 页码规则：封面与目录页无页码，正文起始页（版权页）= 页码 1，奇页右下、偶页左下（外侧）[4]。目录页用点线引导 + 页码 + 内部链接 + PDF 书签——打印渲染器不生成内部链接与书签，全部由后处理补齐 [4]。目录分两级：一级是部/篇/附录（顶格），二级是篇内小节（缩进），按缩进坐标判级 [4]。逻辑：<strong>页码是读者在纸面上定位的坐标，目录是纸面上的导航</strong>——两者都是页面的功能性排版，不是装饰。点线把"标题 → 页码"连成一条可见的追踪路径，书签让电子阅读者能点击跳转——纸面与数字两套导航并存，各服务一种读法。</p>
+<h2 id="h38">五、结语：切页规则就是页面排版</h2>
+<p>页面排版解决一件事：连续的内容如何变成离散的页，且不制造空白、不折断视线。四条分页规则（独立起页、标题随文、防孤立行、按方向拆页）、两次事故换来的空白治理、四个物理层（纸、字、封、码），构成了打印版的完整页面排版。</p>
+<p>到这一步，一章的形态定了（元素级）、一章的位置定了（骨架级）、一页的切法定了（页面级）——打印版从连续流变成离散页，页页有边界、处处不落空。还剩最后一层：书对外的数字——字数、章数、版本号怎么在书和落地页上排布，下一篇展开。</p>
+<hr/>
+<h3 id="h39">引用与出处说明</h3>
+<blockquote>本文为经验记录，无外部文献引用；全部规则与参数引证来自打印版生成脚本的真实实现：</blockquote>
+<table class="ref-table"><thead><tr><th>编号</th><th>引用</th><th>出处</th></tr></thead><tbody><tr><td>[1]</td><td>打印版分页规则与物理参数：A4 @page 18mm/16mm、h1 break-before page、h2/h3/h4 break-after avoid、p orphans/widows 2、li orphans/widows 1、hr 仅 break-after avoid、table 跨页 thead 重复、超长元素 print-overflow（1123−2×68px 判据）、pre pre-wrap</td><td><span class="ref-piece"><code>book/build/PDF/make_pdf.py</code></span><span class="ref-piece">PRINT_CSS（脚本实态）</span></td></tr><tr><td>[2]</td><td>分页事故：hr 与 h2 断页保护连成保护链 → 半页空白；章间注入分隔线 → 上章页满时分隔线独占一整页</td><td><span class="ref-piece">STRUCTURE_GUIDE 第六章/第七章</span><span class="ref-piece">（2026-08-28 教训登记）</span></td></tr><tr><td>[3]</td><td>封面参数：PIL 渲染 A4 300dpi（2480×3508）PNG、深蓝渐变 #12224A→#081630 + 金标 #C9A45C、思源黑体画入图片（字体零分发）、封面印版本号/日期/OFL 声明</td><td><span class="ref-piece"><code>book/build/PDF/make_pdf.py</code></span><span class="ref-piece">make_cover_png（脚本实态）</span></td></tr><tr><td>[4]</td><td>页码与目录：封面+目录无页码、版权页=1、奇页右下/偶页左下、目录点线+链接+书签（PyMuPDF 后处理，Chromium 不支持 target-counter）</td><td><span class="ref-piece"><code>book/build/PDF/make_pdf.py</code></span><span class="ref-piece">add_page_numbers / add_toc_dots（脚本实态）</span></td></tr></tbody></table>
+<blockquote>说明：[1][3][4] 为生成脚本的真实实现，可直接核对；[2] 为规范第七章登记的教训，两处事故均发生在 2026-08-28 打印版调优期间。</blockquote>
+<h2 id="h40">延伸阅读</h2>
+<ul><li><strong>成书排版（三）：骨架排版</strong>：本篇的上游——章节排布决定"一章排在哪里"，本篇决定"落到纸面一页一页怎么切"。</li><li><strong>STRUCTURE_GUIDE.md 第六章</strong>：PDF 打印版式的规范本体 [1][3][4]——页面/字体/分页/封面/页码目录的完整规则表。</li><li><strong>成书排版（五）：元数据排版</strong>：封面上的版本号、日期与书对外数字的三端一致（本系列后续篇目）。</li></ul>
+<hr/>
+<p><em>最后更新：2026-09-01（论证概要：从"屏幕是流、纸面是页"出发，展开四条分页规则及其取值依据（独立起页/标题随文/防孤立行按形态取值/按方向拆页）、两次分页事故换来的空白治理（保护链半页空白、章间线独占页）、四个物理层（纸/字/封/码）；文献佐证：[1][3][4] 脚本实态、[2] 登记教训，无外部文献；四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS）</em></p>
+<h1 id="h41">成书排版（五）：元数据排版——字数、章数与版本号</h1>
+<blockquote>一本书除了正文，还有一组"关于书的数字"：多少字、多少章、什么版本。这些数字出现在封面、版权页、落地页、下载链接上——读者对一本书的第一印象往往来自它们。本文展开元数据排版的规则与逻辑：字数六口径与一个对外口径、章数的构成、版本号的规则，以及三者"三端一致"的纪律。边界声明：本文是成书排版系列的收尾篇，覆盖元数据级；源稿、元素、骨架、页面各级由前四篇承担 [1][2]。  更新：2026-09-01（本篇定位：成书排版系列第五篇（暂定收尾），承接（四）——（四）定纸面切页，（五）定书的对外数字。实证取自字数统计脚本的真实算法、一次真实的字数回填实践与一次版本号落后教训。本篇属于<strong>成书排版系列</strong>（AI 成书全过程——样式、结构、入书、发布的排版规则与逻辑））</blockquote>
+<hr/>
+<h2 id="h42">一、引子：一个数字错了，全链路露馅</h2>
+<p>书的对外数字有个特性：<strong>同一个数字出现在多处，任何一处落后都会露馅。</strong> 一次真实教训：书已经收到新章（35 章），在线阅读落地页却还写着旧字数、旧章数、旧版本号，落后了两个版本——读者点开落地页，看到 33 章，下载的书是 35 章 [3]。</p>
+<p>元数据排版的全部工作，就是让这些数字在多处落点保持一致，并且口径可复现。它不是"填几个数字"的杂活，是排版——数字在书上的排布，和正文在页面上的排布一样有规则。</p>
+<h2 id="h43">二、字数：六口径，一个对外口径</h2>
+<p>字数统计脚本给出六个口径 [1]：</p>
+<table><thead><tr><th>口径</th><th>算法</th><th>用途</th></tr></thead><tbody><tr><td>① 总字符</td><td>全文长度（含空白与 md 语法）</td><td>原始规模参考</td></tr><tr><td>② 去空白</td><td>去除全部空白后长度</td><td>紧凑规模</td></tr><tr><td>③ 纯汉字</td><td>汉字（CJK 统一表意文字）计数</td><td>中文体量</td></tr><tr><td>④ 汉字+中文标点</td><td>③ + 全角标点区</td><td>接近阅读量</td></tr><tr><td>⑤ 去语法</td><td>去 md 符号后去空白</td><td>可见内容量</td></tr><tr><td><strong>⑥ 出版折算</strong></td><td><strong>汉字数 + 英文单词数 + 连续数字串数</strong></td><td><strong>对外唯一口径</strong></td></tr></tbody></table>
+<p>排版逻辑：<strong>对内多个口径各有用途，对外只认一个。</strong> ③ 纯汉字适合讲"中文体量"——做对比时（这版比上版多多少字）用③最干净，它不受标点与英文影响；⑤ 去语法适合估算"读者实际看到的可见内容"——排版审查时用，看一页密度是否过载；但它们都不是出版口径——中文出版折算惯例是"汉字 + 英文单词 + 数字串"混合计，⑥ 就是按这个口径实现 [1]。对外（版权页、落地页、README）只写⑥的数，杜绝"有人说 16 万字、有人说 14 万字"的口径打架。</p>
+<p>口径的分工本身也是排版：<strong>统计口径服务于统计目的</strong>——审查用⑤、对比用③、发布用⑥，一个脚本输出六个口径，取哪个看场合，但对外只有一个。</p>
+<p>一次真实实践：全书内容调整后，⑥ 出版折算从 161,808 变成 161,955——变化只有 147 字，来自一次读者条目的增补（为书新增了一类读者的导语）[4]。对外表述从"约 16.5 万字"改为"约 16.2 万字"，三处落点（书目录 README、根 README、落地页）同时回填 [4]。<strong>口径定了，数字变了就是变了，三处一起变。</strong> 这个案例还说明一个细节：口径的敏感度——147 字的增补在 16 万字的体量里约等于 0.09%，但对外表述必须跟着变，因为"约 16.2 万"是读者可核对的承诺，不是四舍五入的游戏。（注：161,808 → 161,955 为 2026-08-28 当日实测；2026-09-01 复测为 161,962——字数随内容持续变化，口径与回填规则不变 [4]。）</p>
+<h2 id="h44">三、章数：35 章的口径构成</h2>
+<p>章数同样有口径：本书 35 章 = 正文 21 篇 + 四部导读 4 篇 + 结语 1 篇 + 前置页 3 篇（版权页/序言/阅读指南）+ 附录 6 篇 [2]。</p>
+<p>排版逻辑：<strong>章数口径必须可复现。</strong> 读者在落地页看到"35 章"，应该能推算出 35 从哪来。如果口径含糊（正文算不算导读？附录算不算章？），章数就变成一个无法核对的数字。35 的口径写进规范，新增一篇正文 → 章数 +1，新增一个附录 → 章数 +1 并更新口径公式 [2]。章数不是拍脑袋的统计，是有构成公式的数字。</p>
+<p>章数的历史本身就是版式的演化记录：32 章（四部 + 六篇扩容）→ 33 章（第 IV 部扩容）→ 34 章（附录 F 端到端实测）→ 35 章（09f 入书完结）[2]。每一次章数变化都对应一次骨架变更（见本系列第三篇的"七处同步"）——章数口径的构成公式与骨架变更同步演进，两者互相印证：骨架多了什么，公式里就多了什么。</p>
+<h2 id="h45">四、版本号：规则与三端一致</h2>
+<p><strong>版权页的版本记录是版本号的历史形态。</strong> 版权页上除了当前的版本号，还有一条逐次递增的版本记录：每次变更列一行——版本号、变更内容（新增哪些篇、动了哪些部）、章数变到多少 [4]。<strong>版本号是当前的锚，版本记录是变更的档案</strong>，两者都在版权页上：一个指向现在（读者看到"v1.2.0"就知道当前是什么），一个记录过去（想追溯这版改了什么，逐条可查）。版本号只写当前，版本记录只写历史，各司其职——这也是元数据排版"一个落点一个职责"的体现。</p>
+<p>版本规则：新增篇目 / 四部结构变化 / 章节数变化 → 次版本 +1（如 v1.2.0 → v1.3.0）；纯错字 / 格式修正 → 修订号 +1。<strong>章数变化与版本号变化必须同时发生</strong>——章数变了版本不 bump，读者看到"35 章 v1.2.0"，无法判断这个版本是否包含新增内容 [2]。</p>
+<p>这个规则的粒度值得展开：次版本号管"结构变化"（加了篇、动了部、变了章数），修订号管"内容修正"（错字、格式）。它排的是"变更的语义"——读者从版本号就能读出这版改了多大：次版本动了，是结构级；修订号动了，是内容级。版本号是变更的摘要，粒度定错了，摘要就失真。</p>
+<p>三端一致校验：<strong>版权页记录的版本号 == 根 README 的发行 tag == 落地页 PDF 链接里的版本号</strong>，任一不一致即失败 [2]。这三个落点对应三种读者：翻开书看版权页的、在仓库看 README 的、从落地页下载的——三种人看到的版本号必须是同一个。三个落点的角色各不相同：版权页是书内的（纸面或电子书翻到最前页），README 是仓库的（开发者语境），落地页是发布的（读者入口）——<strong>介质不同、数字必须相同</strong>，这就是三端一致的排版逻辑：元数据不随介质漂移。</p>
+<p>版本号还决定发行：书出打印版走 GitHub/Gitee 双平台 Release（tag <code>book-vX.Y.Z</code> + PDF 附件），附件随内容更新同步替换——版本号不变，附件内容可以更新；版本号变了，发布新 tag [2][4]。发行侧的替换也有排版纪律：GitHub 换附件是"删旧传新"，Gitee 同名上传会变成新增而不是覆盖——必须先按目标文件名上传、再查附件列表删掉旧条目，否则同一个文件出现两条记录，读者下载时无法区分哪个是新版。<strong>元数据排版不止管书页上的数字，还管发布时数字与附件的一致性。</strong> 版本号是书对外身份的锚点：它同时出现在封面、版权页、README、落地页链接、Release tag 与附件名里——一个锚点，六处悬挂，任何一处漂移，读者对"这版书"的认知就出现裂痕。</p>
+<h2 id="h46">五、结语：数字是书的元排版</h2>
+<p>字数、章数、版本号，是"关于书的排版"——它们不排正文，排的是读者对书的认知。六口径一个对外口径，让"多少字"可复现；35 章有构成公式，让"多少章"可核对；版本号三端一致，让"哪个版本"无歧义。三个数字合起来，是书对外的第一张脸——这张脸不能糊，因为它是读者决定"要不要打开这本书"的依据。</p>
+<p>到这里，成书排版五层收齐：源稿排版定写法（一），元素排版定一章（二），骨架排版定章序（三），页面排版定纸面（四），元数据排版定对外数字（五）。五层合起来是一本书从"作者写"到"读者读"的完整排版链路——每一层都有规则，每一条规则都有它的排版逻辑。</p>
+<p>为什么元数据放在最后讲？因为它依赖前四层的结果：字数依赖成书后的内容，章数依赖骨架的构成，版本号依赖全部变更——<strong>元数据是前四层排版的"结算单"</strong>，前四层定了，它才有数可算。反过来，它又是读者最先接触的一层：落地页第一眼看到的就是字数、章数、版本号。排版链路的最后一环，恰恰是读者认知的第一环——这也是为什么"一个数字错了全链路露馅"值得单独写成一篇：前四层排得再好，结算单错了，读者对整本书的第一印象就错了。</p>
+<hr/>
+<h3 id="h47">引用与出处说明</h3>
+<blockquote>本文为经验记录，无外部文献引用；全部规则与数字引证来自字数统计脚本、规范条文与真实回填实践：</blockquote>
+<table class="ref-table"><thead><tr><th>编号</th><th>引用</th><th>出处</th></tr></thead><tbody><tr><td>[1]</td><td>字数六口径算法：① 总字符 / ② 去空白 / ③ 纯汉字 / ④ 汉字+中文标点 / ⑤ 去 md 语法 / ⑥ 出版折算（汉字+英文词+数字串，对外唯一口径）</td><td><span class="ref-piece"><code>book/build/count_words.py</code></span><span class="ref-piece">（统计脚本实态）</span></td></tr><tr><td>[2]</td><td>字数与版本号规范：章数口径公式（35 = 正文 21 + 导读 4 + 结语 1 + 前置页 3 + 附录 6）；版本规则（次版本/修订号判据、章数与版本号同时变）；三端一致校验（版权页 = 根 README tag = 落地页 PDF 链接）</td><td><span class="ref-piece">STRUCTURE_GUIDE 第三章、第四章</span><span class="ref-piece">（规范本体 v3.0）</span></td></tr><tr><td>[3]</td><td>版本落后教训：09f 入书后落地页停留在旧字数/旧章数/旧版本号（13.8 万字/33 章/v1.1.0），落后两个版本</td><td><span class="ref-piece">STRUCTURE_GUIDE 第七章</span><span class="ref-piece">（2026-08-26 教训登记）</span></td></tr><tr><td>[4]</td><td>字数回填实践：2026-08-28 当日 ⑥ 出版折算 161,808 → 161,955（变化 147 字，读者条目增补），对外表述 16.5 → 16.2 万字，三处同时回填；2026-09-01 复测 161,962</td><td><span class="ref-piece">2026-08-28 字数回填</span><span class="ref-piece">（当日操作实录 + 09-01 复测）</span></td></tr></tbody></table>
+<blockquote>说明：[1] 为统计脚本真实算法；[2] 为规范第三章/第四章条文；[3] 为规范第七章登记教训；[4] 为 2026-08-28 实际执行的字数回填操作，三处落点修改可回溯。</blockquote>
+<h2 id="h48">延伸阅读</h2>
+<ul><li><strong>成书排版（一）~（四）</strong>：本系列前四篇——源稿排版、元素排版、骨架排版、页面排版；本篇为元数据排版，五层收齐构成完整链路。</li><li><strong>STRUCTURE_GUIDE.md</strong>：字数/版本号规范的完整条文 [2]，以及配套同步清单（新增篇目入书时章数/字数/版本的全部落点）。</li></ul>
+<hr/>
+<p><em>最后更新：2026-09-01（论证概要：从"一个数字错了全链路露馅"出发，展开字数六口径与对外口径、章数构成公式、版本号规则与三端一致，论证元数据是"关于书的排版"；文献佐证：[1] 脚本实态、[2] 规范条文、[3] 登记教训、[4] 操作实录，无外部文献；四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS）</em></p>
+<h1 id="h49">附录 A 统一术语表</h1>
+<blockquote>本册术语与母书、架构解析共用同一套词汇；此处收录排版侧的核心术语，定义与出处 = 母书相关篇目或本册正文篇。</blockquote>
+<table><thead><tr><th>术语</th><th>定义</th><th>出处</th></tr></thead><tbody><tr><td>源稿</td><td>仓库根目录的单篇（<code>NN_xxx.md</code>），写作形态，含摘要/更新行/脚注</td><td>排版 01</td></tr><tr><td>成书版</td><td>book/ 目录的章节，阅读形态，去写作痕迹</td><td>排版 02</td></tr><tr><td>版式</td><td>内容在介质（屏/纸）上的呈现规则——列宽、层级、分页、落点</td><td>排版 01</td></tr><tr><td>版心</td><td>打印版正文区：A4 减 18mm 上下、16mm 左右边距</td><td>排版 04</td></tr><tr><td>分页</td><td>连续内容切成离散页的过程与规则</td><td>排版 04</td></tr><tr><td>断页</td><td>分页点在标题后/孤立行等破坏阅读的位置</td><td>排版 04</td></tr><tr><td>孤立行</td><td>页首/页底单独一行（orphans/widows 控制的孤行）</td><td>排版 04</td></tr><tr><td>标注分流</td><td>代码块语言标注决定渲染形态（flow/cols/chain/tree/text/math）</td><td>排版 01</td></tr><tr><td>层级即分隔</td><td>章节分隔由标题层级承担，不靠装饰横线</td><td>排版 02</td></tr><tr><td>注册列表即版式序</td><td>构建脚本的 STRUCTURE 列表决定书的拼接顺序</td><td>排版 03</td></tr><tr><td>出版折算</td><td>字数对外口径：汉字 + 英文单词 + 连续数字串</td><td>排版 05</td></tr><tr><td>三端一致</td><td>版权页版本号 == 根 README tag == 落地页 PDF 链接版本号</td><td>排版 05</td></tr><tr><td>长尾收益</td><td>收益 = 概率 × 影响；小概率大损失用确定性规避，如开源字体选型</td><td>排版 04</td></tr></tbody></table>
+<h1 id="h50">附录 B 排版速查</h1>
+<blockquote>五层排版的一页速查。完整规则见正文五篇与 <code>typesetting/STYLE_GUIDE.md</code>、<code>typesetting/STRUCTURE_GUIDE.md</code>。</blockquote>
+<h2 id="h51">一、源稿渲染标注速查（排版 01）</h2>
+<table><thead><tr><th>标注</th><th>渲染</th><th>何时用</th></tr></thead><tbody><tr><td><code>flow</code></td><td>流程卡片流</td><td>线性流程链、决策树、组合图</td></tr><tr><td><code>cols</code></td><td>并排多列</td><td>多列对比</td></tr><tr><td><code>chain</code></td><td>横向链 + 注释</td><td>主链 + 层级注释</td></tr><tr><td><code>tree</code></td><td>等宽代码框</td><td>文件树/结构树（无箭头）</td></tr><tr><td><code>text</code></td><td>纯文本 pre</td><td>模板/提示词/raw 输出（含 → 必标）</td></tr><tr><td><code>math</code></td><td>居中公式块</td><td>独立公式</td></tr><tr><td><code>python</code>/<code>json</code> 等</td><td>代码 pre</td><td>真实代码</td></tr></tbody></table>
+<ul><li>行内公式 <code> MATH0 </code>；单元格内禁 <code>\|</code> 转义（用全角 <code>｜</code>）；缩进 2 空格 = 1 级</li></ul>
+<h2 id="h52">二、元素去留判据速查（排版 02）</h2>
+<table><thead><tr><th>元素</th><th>成书处理</th></tr></thead><tbody><tr><td>SPDX 许可头 / 摘要+更新行 / 篇尾脚注 / 无编号非标章节</td><td>去除</td></tr><tr><td>正文（含 [n] 编号、认知分级标注）/ 引用表 / 延伸阅读</td><td>保留（延伸阅读条目加"第 X 部 ·"前缀）</td></tr><tr><td>10 系收束签名（Cogito, Scribo.）</td><td>保留（系列身份非痕迹）</td></tr><tr><td>尾部顺序</td><td>正文 → 引用表 → 延伸阅读 → 结束</td></tr></tbody></table>
+<h2 id="h53">三、页面分页规则速查（排版 04）</h2>
+<table><thead><tr><th>元素</th><th>规则</th></tr></thead><tbody><tr><td>h1</td><td>每篇独立起页（break-before: page）</td></tr><tr><td>h2/h3/h4</td><td>标题不落页末（break-after: avoid）</td></tr><tr><td>段落</td><td>orphans/widows 2（防孤立行，3 太严）</td></tr><tr><td>列表项</td><td>orphans/widows 1（单行 bullet 不推页）</td></tr><tr><td>表格</td><td>允许跨页、表头重复；tr 不拆</td></tr><tr><td>横向并排/引用块</td><td>不拆</td></tr><tr><td>超长元素</td><td>print-overflow 就地分页</td></tr><tr><td>字体</td><td>思源黑体（OFL 1.1），禁用闭源字体——长尾收益</td></tr></tbody></table>
+<h2 id="h54">四、数字口径速查（排版 05）</h2>
+<table><thead><tr><th>项</th><th>规则</th></tr></thead><tbody><tr><td>字数</td><td>⑥ 出版折算 = 汉字 + 英文单词 + 数字串（唯一对外口径）</td></tr><tr><td>章数</td><td>35 = 正文 21 + 导读 4 + 结语 1 + 前置页 3 + 附录 6</td></tr><tr><td>版本</td><td>结构变化 → 次版本 +1；错字/格式 → 修订号 +1；章数变则版本必变</td></tr><tr><td>三端</td><td>版权页 = 根 README tag = 落地页 PDF 链接版本号</td></tr></tbody></table>
+</body>
+</html>

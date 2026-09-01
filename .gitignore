@@ -10,3 +10,9 @@ book/build/PDF/*.otf
 book/build/PDF/book_print*.html
 book/build/PDF/book_*.pdf
 book/build/PDF/cover.*
+# 姊妹册《排版解析》打印产物（同上规则）
+typesetting/book/build/PDF/*.otf
+typesetting/book/build/PDF/book_print*.html
+typesetting/book/build/PDF/book_*.pdf
+typesetting/book/build/PDF/cover.*
+typesetting/book/build/__pycache__/

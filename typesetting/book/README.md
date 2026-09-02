@@ -20,7 +20,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 | 方式 | 入口 |
 |------|------|
 | **在线阅读整本册子** | GitHub Pages：<https://ldxs001.github.io/Cogito_Scribit/typesetting/book/> |
-| **下载 PDF / HTML / EPUB** | 发行版 **typ-v1.0.0**（[GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/typ-v1.0.0) / Gitee 同 tag，含 PDF 打印版） |
+| **下载 PDF / HTML / EPUB** | 发行版 **typ-v1.0.0**（[Gitee](https://gitee.com/wUwproject/Cogito_Scribit/releases/tag/typ-v1.0.0) / [GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/typ-v1.0.0)，含 PDF 打印版） |
 | **册子源码（Markdown）** | 本目录 `book/`（frontmatter：版权页 / 导读 / 附录 A / 附录 B） |
 | **构建管线** | `build/`（`python build.py` 一键构建，复用母书管线） |
 
@@ -51,7 +51,7 @@ book/
 ## 同系列
 
 - 母书《我思故我写》：[`../../book/`](../../book/)
-- 姊妹卷《架构解析》：<https://github.com/Ldxs001/architecture>（Gitee 同名仓库）
+- 姊妹卷《架构解析》：<https://gitee.com/wUwproject/architecture>（GitHub 同名仓库）
 - 源仓库双平台同步，内容一致，任选其一：
   - Gitee：<https://gitee.com/wUwproject/Cogito_Scribit>
   - GitHub：<https://github.com/Ldxs001/Cogito_Scribit>

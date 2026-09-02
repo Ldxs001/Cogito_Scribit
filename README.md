@@ -13,7 +13,7 @@ Copyright (c) 2026 wUwproject
 
 | 母书 | 姊妹卷 · 排版 | 姊妹卷 · 架构 |
 |------|--------------|--------------|
-| <a href="book/README.md"><img src="book/cover.png" width="330" alt="《我思故我写》"></a> | <a href="typesetting/book/README.md"><img src="typesetting/book/cover.png" width="330" alt="《排版解析》"></a> | <a href="https://github.com/Ldxs001/architecture/blob/main/book/README.md"><img src="assets/arch-cover.png" width="330" alt="《架构解析》"></a> |
+| <a href="book/README.md"><img src="book/cover.png" width="330" alt="《我思故我写》"></a> | <a href="typesetting/book/README.md"><img src="typesetting/book/cover.png" width="330" alt="《排版解析》"></a> | <a href="https://gitee.com/wUwproject/architecture/blob/main/book/README.md"><img src="assets/arch-cover.png" width="330" alt="《架构解析》"></a> |
 | **我思故我写**——一本 AI 写成的书 | **排版解析**——五层排版如何把一篇文章变成一本书 | **架构解析**——七套核心系统的工程实现 |
 | 回答"为什么" | 回答"怎么排" | 回答"怎么做" |
 

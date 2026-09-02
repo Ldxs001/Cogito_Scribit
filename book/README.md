@@ -20,7 +20,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 | 方式 | 入口 |
 |------|------|
 | **在线阅读整本书** | GitHub Pages：<https://ldxs001.github.io/Cogito_Scribit/>（书入口页 → 在线阅读） |
-| **下载 EPUB（电子书）** | `build/output/book.epub`（或独立发行版 **book-v1.2.0**：<https://github.com/Ldxs001/Cogito_Scribit/releases/tag/book-v1.2.0>，Gitee 同 tag） |
+| **下载 EPUB（电子书）** | `build/output/book.epub`（或独立发行版 **book-v1.2.0**：[Gitee](https://gitee.com/wUwproject/Cogito_Scribit/releases/tag/book-v1.2.0) / [GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/book-v1.2.0)） |
 | **下载 HTML（网页版）** | `build/output/book.html`（或独立发行版 **book-v1.2.0** 附件） |
 | **下载 PDF（打印版）** | 独立发行版 **book-v1.2.0** 附件（思源黑体渲染、A4、每篇独立起页、适合打印阅读） |
 | **书稿源码（Markdown）** | 本目录 `book/`（frontmatter + part1~4 + 附录） |

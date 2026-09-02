@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
 《我思故我写 · 排版解析》书稿拼接脚本
-将导读 + 5 篇排版文章拼接为单一书稿 Markdown。
+将导读 + 6 篇排版文章拼接为单一书稿 Markdown。
 用法: python assemble.py [输出路径]
 零依赖（标准库）。入书规范参考 Cogito_Scribit STRUCTURE_GUIDE。
 
-入书清洗（STRUCTURE_GUIDE 去留规则的管线级硬约束，typ-v1.0.1）：
+入书清洗（STRUCTURE_GUIDE 去留规则的管线级硬约束，typ-v1.1.0）：
 - 剥 SPDX 头（strip_spdx）
 - 剥章头「摘要 + 更新行/生成时间」blockquote（成书无摘要/日期戳）
 - 剥篇尾「*最后更新：…*」脚注（成书无版本戳）
@@ -15,7 +15,7 @@ import sys, io, os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# 书的结构（顺序即书的顺序；五层排版按流水线排序）
+# 书的结构（顺序即书的顺序；排版 01~05 五层按流水线排序，排版 06 为收束篇殿后）
 # 元组第三项 = 成书章题（None = 保留源 H1，用于版权页/导读/附录）
 STRUCTURE = [
     ("frontmatter/00_版权页.md", "版权页", None),
@@ -25,6 +25,7 @@ STRUCTURE = [
     ("articles/成书排版（三）：骨架排版——四部、导读与章序.md", "排版 03 · 骨架排版", "03｜成书排版：骨架排版——四部、导读与章序"),
     ("articles/成书排版（四）：页面排版——从屏幕到纸面.md", "排版 04 · 页面排版", "04｜成书排版：页面排版——从屏幕到纸面"),
     ("articles/成书排版（五）：元数据排版——字数、章数与版本号.md", "排版 05 · 元数据排版", "05｜成书排版：元数据排版——字数、章数与版本号"),
+    ("articles/AI任务执行的完整流程——明确位置、对齐粒度、穷举正反例.md", "排版 06 · AI 任务执行的完整流程", "06｜AI 任务执行的完整流程——明确位置、对齐粒度、穷举正反例"),
     ("frontmatter/附录A_统一术语表.md", "附录 A 统一术语表", None),
     ("frontmatter/附录B_排版速查.md", "附录 B 排版速查", None),
 ]

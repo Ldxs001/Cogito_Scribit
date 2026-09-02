@@ -9,6 +9,14 @@ Copyright (c) 2026 wUwproject
 >
 > wUwproject 重型技能构建过程中沉淀的方法论体系。CC BY-SA 4.0。
 
+## 系列三部曲
+
+| 母书 | 姊妹卷 · 排版 | 姊妹卷 · 架构 |
+|------|--------------|--------------|
+| <a href="book/README.md"><img src="book/cover.png" width="330" alt="《我思故我写》"></a> | <a href="typesetting/book/README.md"><img src="typesetting/book/cover.png" width="330" alt="《排版解析》"></a> | <a href="https://github.com/Ldxs001/architecture/blob/main/book/README.md"><img src="assets/arch-cover.png" width="330" alt="《架构解析》"></a> |
+| **我思故我写**——一本 AI 写成的书 | **排版解析**——五层排版如何把一篇文章变成一本书 | **架构解析**——七套核心系统的工程实现 |
+| 回答"为什么" | 回答"怎么排" | 回答"怎么做" |
+
 ## 仓库定位
 
 本仓库独立托管 wUwproject 的方法论系列文章（Cogito_Scribit 系列）。2026-08-02 自 `workbuddy-skills` 仓库的 `Cogito_Scribit/` 目录独立拆分而来。
@@ -54,14 +62,9 @@ Copyright (c) 2026 wUwproject
 
 ## 成书：《我思故我写》
 
-本系列文章已汇编为完整一书《**我思故我写——一本 AI 写成的书：AI 时代的方法论、边界与人类自洽**》（约 16.2 万字，35 章，CC BY-SA 4.0）：
+本系列文章已汇编为完整一书《**我思故我写——一本 AI 写成的书：AI 时代的方法论、边界与人类自洽**》（约 16.2 万字，35 章，CC BY-SA 4.0）。
 
-| 项 | 入口 |
-|----|------|
-| 在线阅读整本书（GitHub Pages） | <https://ldxs001.github.io/Cogito_Scribit/> |
-| 下载 EPUB / HTML / PDF | `book/build/output/`（EPUB/HTML）或书的独立发行版 **book-v1.2.0**（[GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/book-v1.2.0) / Gitee 同 tag，含 PDF 打印版） |
-| 书稿源码（四部 + 序言/阅读指南/结语/附录） | [`book/`](book/README.md) |
-| 构建管线（MD → HTML/EPUB，零依赖） | `book/build/` |
+**获取与下载（在线阅读 / EPUB / HTML / PDF / 书稿源码 / 构建管线）统一见 [`book/README.md`](book/README.md)。**
 
 书是系列文章的再加工成品：正文为发布版文章，另新增版权页、序言、阅读指南、四部导读、全书结语与附录四件（术语表/工具索引/参考文献/方法论地图）。
 
@@ -74,7 +77,9 @@ Cogito_Scribit/
 ├── COGITO_README.md           # 系列总纲
 ├── index.html                 # 成书《我思故我写》入口页（GitHub Pages 首页）
 ├── book/                      # 成书书稿（四部 + 序言/导读/结语/附录 + 构建管线）
-├── 01_~10_*.md                # 方法论文章（含 08a/08b/08c、09a~09f、10a、10b）
+├── typesetting/               # 排版规范 + 排版解析册（导读见 typesetting/README.md）
+├── assets/                    # 跨仓库展示用封面
+└── 01_~10_*.md                # 方法论文章（含 08a/08b/08c、09a~09f、10a、10b）
 ```
 
 ## 维护约定

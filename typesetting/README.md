@@ -15,14 +15,9 @@ Copyright (c) 2026 wUwproject
 
 本目录 5 篇排版方法论文章已汇编为册子《**我思故我写 · 排版解析——五层排版如何把一篇文章变成一本书**》（typ-v1.0.0，约 1.7 万字，CC BY-SA 4.0）——母书《我思故我写》的姊妹卷：母书回答"为什么"、架构解析册回答"怎么做"、本册回答"怎么排"。
 
-| 项 | 入口 |
-|----|------|
-| 在线阅读整本册子（GitHub Pages） | <https://ldxs001.github.io/Cogito_Scribit/typesetting/book/> |
-| 下载 PDF / HTML / EPUB | 发行版 **typ-v1.0.0**（[GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/typ-v1.0.0) / Gitee 同 tag，含 PDF 打印版） |
-| 册子源码（版权页/导读/附录 A/B + 封面 + 落地页） | [`book/`](book/) |
-| 构建管线（MD → HTML/EPUB/PDF，复用母书管线） | `book/build/`（`python build.py` 一键构建） |
-
 收录内容：版权页 + 导读（五层排版路径 + 映射表）+ 排版 01~05（源稿 / 元素 / 骨架 / 页面 / 元数据五层排版）+ 附录 A 统一术语表 + 附录 B 排版速查。
+
+**册子的在线阅读、下载（PDF / HTML / EPUB）与构建入口统一见 [`book/README.md`](book/README.md)。**
 
 ## 文档列表
 
@@ -45,12 +40,7 @@ typesetting/
 ├── STRUCTURE_GUIDE.md          # 转化入书排版规范
 ├── articles/                   # 排版系列文章（册子正文源稿）
 │   └── 成书排版（一）~（五）.md
-└── book/                       # 排版解析册（版权页/导读/附录/封面/落地页/构建管线）
-    ├── index.html              # 在线阅读落地页（GitHub Pages）
-    ├── cover.png               # 书封（1200×630）
-    ├── cover_wechat.png        # 微信宣传图（900×383）
-    ├── frontmatter/            # 版权页 / 导读 / 附录 A 术语表 / 附录 B 排版速查
-    └── build/                  # 构建管线（assemble/md2html/make_pdf/count_words/gen_covers）
+└── book/                       # 排版解析册（门面 / 封面 / 落地页 / 构建管线，详见 book/README.md）
 ```
 
 ## 维护约定

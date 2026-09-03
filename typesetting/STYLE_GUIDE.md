@@ -883,3 +883,36 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 ---
 
 *规范版本：v3.0（2026-09-01 定位重构：收编原 STRUCTURE_GUIDE 的单篇写作内容——结构骨架（现五章）、描述方式（现六章）、命题纪律（现七章）、四项检测（现八章）、存量统计（现四章）——本文档成为单篇写作全量规范；一~三章版式编号不变，外部引用（STYLE_GUIDE 2.1 等）不受影响。转化入书排版规范已整体移交 STRUCTURE_GUIDE v3.0。原 v2.1 版式规则全部不变）*
+
+---
+
+## 六、字体纪律（出片字形安全，2026-09-03 实战固化）
+
+**背景**：母书《我思故我写》、排版书《排版解析》、架构册《架构解析》均以 make_pdf.py（Chromium page.pdf()）出片。2026-09 发现三书同源字体事故：架构册 v1.1.1 的 PDF 120 页中 73 页正文整页回退 NSimSun（微软版权宋体），母书 849 处、排版书 113 处局部回退，另有 Times New Roman（公式斜体变量）、SegoeUISymbol/CambriaMath（符号）混入。
+
+**根因（三书一致）**：Chromium page.pdf() 对「@font-face 注册的 CFF 字体（SourceHanPrint 思源黑体）+ 本地/内置 TTF（DejaVu Sans Mono、Consolas、PingFang、微软雅黑、Times New Roman）」同文档混排做子集化时会触发嵌入失效——自触发点起整文档正文放弃嵌入注册字体、回退系统字体。即使文档中只有极小一段 pre/code 用本地 TTF 也照样触发。
+
+### 6.1 出片层硬约束（make_pdf.py 维护者，已全量落地三书）
+
+1. **双 @font-face 全注册**：正文 SourceHanPrint + 代码/树 SourceHanMono 各 Regular/Medium/Bold 三字重，OTF 置于脚本同目录；禁任何本地字体名（DejaVu/Consolas/PingFang/YaHei/Times）作为 @font-face 候选之外的首选。
+2. **UNIFY_CSS 全元素覆盖**：注入 `</style>` 前——`* { font-family: SourceHanPrint !important }`；pre/code/kbd/samp 与 .flow-*/.edge-* 等树/图组件系 `SourceHanMono !important`（组件自带 font-family 声明 specificity 高，普通替换赢不过，必须 !important）。
+3. **字体栈收敛**：FONT_MONO 只留 `"SourceHanMono", Consolas, monospace`，删除 DejaVu Sans Mono 领头。
+4. **Latin 扩展兜底**：思源缺 š/ć 等 Latin Extended 字形（作者名/外文词），加载 SourceSans3（Adobe OFL 1.1）@font-face + `unicode-range: U+0100-017F, U+0180-024F, U+1E00-1EFF`，链尾兜底——原文拼写可保留，禁 ASCII 化改写人名。
+5. **find_h1_page 阈值按书校准**（禁机械平移）：以真版权页 h1 实测字号为准——架构册 >9（其 h1≈13pt）、母书/排版书 >15（h1≈18-20pt）。阈值过松会误命中目录页小字「版权页」条目（10-12pt），导致页码/书签全错位。
+
+### 6.2 内容层红线（写作时）
+
+1. 正文/代码/表格禁写思源未覆盖字形。入库前先核查 cmap（SourceHanSansSC + SourceHanMonoSC + SourceSans3 并集）。
+2. 已知思源缺字形：勾选符 ☑ U+2611、空框 ☐ U+2610、缩进箭头 ↳ U+21B3、修饰符小写 ᵅ U+1D45（及 U+1D43/U+2099/U+2084 等上/下标修饰符）、全部 emoji（U+1F000+）、部分 Latin Extended（š U+0161、ć U+0107 等，走 SourceSans3 兜底）。
+3. 等价替换（思源收录、宽度语义兼容）：☑ → √（U+221A）、☐ → □（U+25A1）、↳ → →（U+2192）；上标 α 语义用真实 HTML `<sup>α</sup>`（正文讲解公式渲染效果时禁用手写 ᵅ）。
+4. 规范/changelog 等文档里描述这些符号时**只用码点（U+2611）禁写原字符**——assemble 会把规范文本并进全书产物，原字符会再次触发回退。
+5. emoji 会被 Chromium 转图形对象嵌入（Type3 无字体名，无版权分发），但文本层不可检索，正式书籍不依赖。
+
+### 6.3 出片验证门禁（每次生成 PDF 后必跑）
+
+1. fitz 全书 span 字体黑名单扫描（NSimSun/SimSun/SegoeUI/Cambria/YaHei/DengXian/SimHei/KaiTi/FangSong/Microsoft/Arial/Times/DejaVu）→ 0 命中。
+2. PDF 文本层字符集与思源+SourceSans3 cmap 差集 → 空（Helvetica 页码层除外）。
+3. 页码/目录点线/书签条数与基线不回归（母书 247 条、排版书 58 条、架构册 12 章基线）。
+
+---
+

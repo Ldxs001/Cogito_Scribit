@@ -163,9 +163,11 @@ book/ 各章节 md → [1/3] assemble 拼接 → 全书.md
 | 纸张 / 边距 | A4，@page margin 18mm 16mm |
 | 渲染视口 | 794×1123px（A4 @96dpi），与 @page 布局一致保证表格测量准确 |
 | 正文字体 | SourceHanPrint（思源黑体 @font-face 三档 Regular/Medium/Bold，本地 OTF 加载，零字体分发） |
-| 等宽字体 | DejaVu Sans Mono 回退链 |
+| 等宽字体 | SourceHanMono（思源等宽 @font-face 三档）；字体栈收敛为 `"SourceHanMono", Consolas, monospace`——**删 DejaVu Sans Mono 领头**（本地 TTF 与 @font-face CFF 混排触发子集化失效回退 NSimSun，见 STYLE_GUIDE 10.1） |
 | 配色 | 打印强制 light——dark 媒体查询整体剥离 |
+| 内容盒治理 | print 态 `*{box-sizing:border-box}` + body `max-width:665px; padding:0; margin:0`（去居中偏移）——**内容超 ICB（A4@96dpi ≈672px）即触发 Chromium 整本等比缩放**，全文字号偏离自然态（见 STYLE_GUIDE 11） |
 | pre 长行 | pre-wrap + overflow-wrap:anywhere（raw 输出/长行不截断） |
+| 表格宽度 | width:100% + table-layout:auto；td/th overflow-wrap:anywhere + word-break:break-word（表格横向溢出是整档缩放触发源之一，见 STYLE_GUIDE 11.1） |
 
 ### 6.2 分页规则（书籍标准）
 
@@ -179,6 +181,7 @@ book/ 各章节 md → [1/3] assemble 拼接 → 全书.md
 | table | break-inside: auto，thead 跨页重复表头；tr 不拆 | 纵向结构允许内容单元间拆页，避免整块搬页留白 |
 | blockquote / .flow-cols / .flow-layers | 不拆 | 横向并排/引用块完整性 |
 | 超长元素 | JS 渲染前检测 offsetHeight > 单页可用高度（1123−2×68px），动态加 print-overflow 就地分页 | 避免"整块搬下页仍装不下再分页"导致第一页大空白 |
+| 树形图 | .flow-treegroup scrollWidth 超预算（665−左偏移−14）则 zoom=预算/原始宽（clamp 0.5） | 消除软触发源后仅剩的硬溢出（等宽 nowrap 树行）；**须 emulate_media('print') 后测量**（见 STYLE_GUIDE 11.1.5-6） |
 
 ### 6.3 封面（make_cover_png）
 
@@ -190,6 +193,8 @@ book/ 各章节 md → [1/3] assemble 拼接 → 全书.md
 
 - **页码**：封面 + 目录无页码；正文起始页（首个大字号"版权页"标题）= 页码 1；奇页右下 / 偶页左下（外侧），9pt 灰
 - **目录**：点线引导 + 页码（版权页 = 1）+ 内部跳转链接 + PDF 书签大纲（l1 = 部/篇/附录，l2 = 小节，按缩进 x 判层级）
+- 正文标题匹配阈值 **>=15**（自然字号标定：正文 12pt 排除、h2 16.8 / h1 20.4 命中；缩放态旧值 >=12 随自然态重校准，见 STYLE_GUIDE 11.2）
+- 目录行**跨行合并**（同页按 y 排序，间距 <23pt 的相邻行视为同一跨行条目；超长标题折行续行碎片曾误配"结语"h1 污染顺序锚致 10a/10b 24 条漏配）+ **顺序锚定 miss 全局回退**（见 STYLE_GUIDE 11.1.7）；纯数字页码列行剔除
 - 依据：Chromium 不支持 CSS target-counter() 且打印不生成内部链接/书签，全部后处理补齐
 
 ### 6.5 产物链与依赖
@@ -215,7 +220,10 @@ PyMuPDF 合并（封面页前置，garbage=3 + deflate 压缩）
 | 2026-08-26 | 09f 正文已收录，但方法论地图/术语表/工具索引/提示词示例/导读跨部引用/在线阅读全部未同步；index.html 停留在 13.8 万字/33 章/v1.1.0（落后两个版本） | 同步清单不完整——缺附录 A/D/E、index.html、根 README、版本号落点；在线阅读页与书构建目录分离，最易漏。本次已补全同步清单并新增字数/版本号规范 |
 | 2026-08-28 | book 版曾删除文末引用表（09 系 8 篇），正文 [n] 编号在书内无处可查（断链）；且 09 系与 10 系处理不一致（09 删表、10 留表） | 入书转化规则 1.1 规定"引用来源表去除、并入附录 C"——但附录 C 是逆向汇总表（文献→被引篇目），替代不了正向表（编号→文献）；"去表"导致编号断链。本次修正 1.1/1.2：09 系与 10 系 book 版均保留引用表，同步清单新增条目 |
 | 2026-08-28 | book 版三处排版问题：① 8 篇（08b/08c/09/09a/09c/09d/09e/09f）延伸阅读重复（旧版未删+带前缀版追加，一份内容两处标题）；② 存量篇正文 `## N` 章节间夹 `---`（视觉冗余，且与 h2 断页保护形成"hr+h2 整块推下页"→ 页尾半页空白）；③ 章间 hr 在"上章内容顶满页底"时被推到下一页首行、h1 又强制新页 → **hr 独占一整页**（空页） | ① 入书转换时只追加新版未删旧版（转换操作遗漏）；② 正文分隔线为第一代/过渡形态历史遗留，第二代成熟篇本已不用；③ `assemble.py` 用 `'---'.join(parts)` 在 35 章间注入 34 条 `---`，而 h1 已承担"每章新页"（break-before: page）。本次修正：转化规则新增"正文章节间分隔线去除"规则（尾部结构线保留、raw 代码块内文本不动）；assemble.py 改为 `'\n\n'.join(parts)`（章间不再注入） |
+| 2026-09-03 | 母书 PDF 整本缩放态（正文 10.7pt / h1 18.2pt，300 页）长期未被发现——字号偏移使目录匹配阈值全错位 | Chromium page.pdf() 对 print 布局中超 ICB（≈672px@96dpi）的元素**整本等比压缩**（OCEAN flow-tree 866px 行触发 ×0.892）。修复 = 消除触发源（print border-box / body 收 665 左对齐 / 表格 width:100%+断行 / 流程标签 pre→normal）+ 树 zoom（预算 665，print 媒体测量）；阈值随自然字号重校准 >=15；目录跨行合并 + 顺序回退。机制自架构册 arch-v1.1.3 移植母书 v1.2.0（零 bump），收编 STYLE_GUIDE 11 |
 
 ---
 
 *规范版本：v3.0（2026-09-01 定位重构：本文档转型为**转化入书排版规范**——原单篇写作内容（结构骨架/描述方式/命题纪律/四项检测/存量统计）整体移交 STYLE_GUIDE v3.0；原第六章入书转化规范重排为一~四章（转化规则/同步清单/字数/版本号）；**新增第五、六章**——构建管线与 PDF 打印版式规范 py 化文档化（build.py 三步/assemble 拼接/md2html 锚点/字数六口径；A4 字体分页规则/封面 300dpi/页码目录书签），改脚本 = 改规范 = 全量 rebuild。历史：v2.7 排版修复、v2.6 附录处理、v2.5 引用表统一不变）*
+
+*2026-09-03 追加：第六章同步修订——等宽字体栈收敛（删 DejaVu Sans Mono 领头，改 SourceHanMono + Consolas，消除与 UNIFY_CSS 的历史冲突）；新增内容盒治理行（print 态 border-box + body 665 左对齐，超 ICB 触发 Chromium 整档缩放）与表格宽度行（width:100% + 单元格断行）；6.2 增树形图 zoom 时序（emulate_media('print') 后测量）；6.4 目录补正文标题匹配阈值 >=15（自然字号标定）、目录行跨行合并（y<23pt）与顺序锚定全局回退；第七章增 2026-09-03 缩放事故教训。机制详见 STYLE_GUIDE 第十一章《版面缩放纪律》（架构册 arch-v1.1.3 实证 → 母书 v1.2.0 零 bump 移植，书签 224→247 回归基线）。*

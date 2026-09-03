@@ -23,6 +23,11 @@ find_h1_page >15 保持（h1 20.4pt 自然态与 18.2pt 缩放态均 >15，命�
 条目命中正文"结语"h1，把顺序锚 last_target 抬到 302，致 10a/10b 及其小节 24 条
 真书签全部漏配。现按 y 近邻(<23pt)合并跨行续行，消除碎片；纯数字页码行剔除；
 顺序锚定降级为首选起点，miss 后全局回退兜底（防目录序与正文物理序非单调）。
+目录页码列修订（不 bump）——根因：.toc 容器装饰右边框 x=543.4，三位数页码右缘
+x=548 穿框 4.6pt（实测 p8 上 28 条三位数页码 bbox 一致穿框）。修复 = 三项数值
+同步收紧：①页码右对齐基线 548→538（.toc 框内留 5pt 安全间距，1/2/3 位数字均
+容得下）；②虚线终点 532→521（距页码左缘 ≥3pt，三位数时虚线不进页码列）；
+③link_rect 右缘 556→543（贴合 .toc 边框不溢出，点击区仍覆盖页码列）。
 用法：cd book/build/PDF && python make_pdf.py
 前置：pip install playwright pillow pymupdf
       python -m playwright install chromium
@@ -484,18 +489,18 @@ def add_toc_dots(path, h1_page):
             continue
         last_target = target
         page = doc[pi]
-        # 虚线：标题右端 → 页码左
+        # 虚线：标题右端 → 页码左 6pt 处，且终点 ≤ 521（不入页码列、距右边框 ≥22pt）
         dx1 = min(x1 + 6, 400)
-        page.draw_line((dx1, y), (532, y), color=gray, width=0.7,
+        page.draw_line((dx1, y), (521, y), color=gray, width=0.7,
                        dashes='[3 3] 0')
-        # 页码右对齐；版权页 = 1
+        # 页码右对齐；版权页 = 1。基线 x=538 在 .toc 右边框 543.4 内留 5pt 安全间距
         num = str(target - h1_page + 1)
         tw = font.text_length(num, fontsize=8.5)
-        px = 548 - tw
+        px = 538 - tw
         page.insert_text((px, y + 3), num, fontname='helv',
                          fontsize=8.5, color=(0.45, 0.45, 0.45))
-        # 目录行链接（点击跳转目标页顶部）
-        link_rect = fitz.Rect(x0 - 2, y - 8, 556, y + 8)
+        # 目录行链接（点击跳转目标页顶部）—— 右缘 543 贴合 .toc 边框不溢出
+        link_rect = fitz.Rect(x0 - 2, y - 8, 543, y + 8)
         page.insert_link({'kind': fitz.LINK_GOTO, 'from': link_rect,
                           'page': target, 'to': fitz.Point(0, 0)})
         # 书签：l1 = x0 < 65（部/篇/附录），l2 = 缩进小节

@@ -8,7 +8,7 @@
 
 ---
 
-> **章节导航**：一~三为版式（表格 / 图 / 公式，写作端与渲染端契约）；四为存量结构统计（骨架的事实依据）；五为单篇骨架模板；六为描述方式白黑名单；七为命题纪律；八为四项检测；九为速查表。
+> **章节导航**：一~三为版式（表格 / 图 / 公式，写作端与渲染端契约）；四为存量结构统计（骨架的事实依据）；五为单篇骨架模板；六为描述方式白黑名单；七为命题纪律；八为四项检测；九为速查表；十为字体纪律（出片字形安全）；十一为版面缩放纪律（Chromium shrink-to-fit 根治）。
 
 ---
 
@@ -912,9 +912,44 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 ---
 
+## 十一、版面缩放纪律（Chromium shrink-to-fit 根治，2026-09-03 实战固化）
+
+**背景**：母书/排版书/架构册均以 make_pdf.py（Chromium page.pdf()）出片。2026-09-03 实测发现：**print 布局中任一元素内容超出内容盒（ICB，A4@96dpi 实测 ≈672px；可打印宽 794px 有偏差）即触发整本等比 shrink-to-fit**——母书旧 PDF 整本 ×0.892（正文 12pt→10.7pt、h1 20.4pt→18.2pt，300 页），触发源是 OCEAN 五维 flow-tree 一条 866px 超宽等宽行；表格横向溢出、长 token 标签 `white-space:pre` 同理可触发。缩放后全文字号偏离自然态，正文标题匹配阈值（STYLE_GUIDE 10.3 书签门禁）全线错位。
+
+**根因**：Chromium page.pdf() 无"按元素适配"能力——检测到越界元素后**整本等比压缩**到内容盒内，而非只处理越界元素。修复 = **消除触发源 + 按需 zoom**（只对无法软断行的等宽树行），不是接受缩放后补偿。
+
+### 11.1 出片层硬约束（make_pdf.py 维护者；已落地母书 v1.2.0、架构册 arch-v1.1.3；排版书未触发缩放系数≈1.0 不强制）
+
+1. **print 态全局 border-box**：`* { box-sizing: border-box !important }`——padding 元素（.toc 等）width:auto 不再因 padding 右撑超出内容盒。
+2. **body 收进内容盒 + 左对齐**：`body { padding:0 !important; margin:0 !important; max-width:665px !important; overflow-wrap:anywhere }`——**margin:0 auto 居中会使满宽块右缘仍超 ICB（居中偏移），必须 margin:0 去偏移**；665 = ICB 672 留 7px 安全。
+3. **可断行元素软换行**：code/kbd/samp `overflow-wrap:anywhere`；pre `white-space:pre-wrap + overflow-wrap:anywhere`（print 无滚动条，pre 超宽行会被直接裁掉，须 !important 压制书内 pre 规则）；表格 `width:100% !important + table-layout:auto`、td/th `overflow-wrap:anywhere + word-break:break-word`。
+4. **流程/边标签文本放行断行**：.edge-fall/.flow-edge/.flow-chain-title/.flow-step/.flow-layer-name/.flow-layer-key/.flow-cnode `white-space:normal !important`——`white-space:pre` 下 overflow-wrap 无效，长 token 标签必须改 normal 才断行（pre 框线树 .flow-treegroup/.flow-tree-row 保持，由 zoom 处理）。
+5. **树形图按需 zoom**（消除软性触发源后仅剩的硬溢出源）：.flow-treegroup 测量 scrollWidth，超预算则 `zoom = 预算 / 原始宽`（clamp 0.5）；预算 = 665 − 树左偏移 − 14。母书实测 2 棵：630px→z0.98、866px→z0.71。
+6. **测量/zoom 时序硬约束**：`page.goto()` 后**先 `page.emulate_media('print')` 再枚举字体、标记 overflow、测量 zoom**——screen 与 print 布局宽不同（print 下 pre→pre-wrap 等规则才生效），screen 态测量 scrollWidth 会与 page.pdf() 实际布局错位，曾致误缩 37 棵 vs print 态 15 棵。
+7. **目录行跨行合并与顺序锚定回退**（add_toc_dots，书签完整性）：目录页行按 y 排序后，y 间距 < 23pt 的相邻行视为同一跨行条目合并（实测同条目折行行距 ≈20-21pt、条目间距 ≥24.5pt，23 可干净分离）——否则超长标题（如"第 IV 部 · 10｜…两种力气活的终结"）折行后的续行碎片（单字"结"）会被当独立条目，key 命中正文"结语"h1 把顺序锚 last_target 抬到 302，致 10a/10b 及小节 24 条真书签全部漏配（224→247 修复实证）。纯数字行（页码列）剔除；last_target 仅作首选起点，miss 后全局回退重搜（防目录序与正文物理序非单调）。
+
+### 11.2 阈值随字号自然态重校准（禁机械沿用缩放态旧值）
+
+| 项 | 缩放态旧值（正文 10.7pt） | 自然态现值（正文 12pt） | 说明 |
+|---|---|---|---|
+| add_toc_dots 正文标题匹配 | >=12 | **>=15** | 12pt 正文会被 >=12 误命中为标题；h2 16.8pt / h1 20.4pt 命中 |
+| find_h1_page 版权页定位 | 架构册 >9 | 母书/排版书 >15（不变） | h1 20.4pt 自然与 18.2pt 缩放均 >15，命中稳定，禁机械平移 |
+| 树 zoom 预算 | — | 665px | A4@96dpi 内容盒 ≈672，留 7px 安全 |
+
+### 11.3 出片验证门禁（每次生成 PDF 后必跑）
+
+1. 字号自然态采样：fitz 按页步长采样正文 span，正文 12.0pt / h2 16.8pt / h1 20.4pt 主导；出现 10.7/18.2 缩放痕迹即 FAIL。
+2. 树 zoom 命中日志核对：make_pdf 输出"树形图按需缩放"列表须只含真实超宽树（母书 2 棵：630→z0.98、866→z0.71），无 screen/print 混测误缩、无整本缩放态。
+3. 书签条数与基线不回归：母书 247 条（L1=35 / L2=212，含 10a/10b 及全部小节），无单字/截断标题。
+4. 黑名单字体扫描 0 命中（同 10.3.1）。
+
+---
+
 *规范版本：v3.0（2026-09-01 定位重构：收编原 STRUCTURE_GUIDE 的单篇写作内容——结构骨架（现五章）、描述方式（现六章）、命题纪律（现七章）、四项检测（现八章）、存量统计（现四章）——本文档成为单篇写作全量规范；一~三章版式编号不变，外部引用（STYLE_GUIDE 2.1 等）不受影响。转化入书排版规范已整体移交 STRUCTURE_GUIDE v3.0。原 v2.1 版式规则全部不变）*
 
 *2026-09-03 追加：收编第十章《字体纪律（出片字形安全）》——母书/排版书出片事故与架构册同根因（@font-face CFF 与本地 TTF 混排致 Chromium 子集化失效、正文回退 NSimSun/Times/DejaVu 版权字体），全量落地三书：出片层双思源 @font-face + UNIFY_CSS !important + 字体栈收敛（删 DejaVu 领头）+ SourceSans3 Latin 扩展兜底 + find_h1_page 阈值按书校准（架构册 >9、母书/排版书 >15，禁机械平移）；内容层思源缺字码点红线（☑/☐/↳/ᵅ/emoji 用等价替换或码点标注）；出片验证门禁三检（黑名单扫描 0 命中 / cmap 差集空 / 书签页码基线不回归）。外部小节引用（STYLE_GUIDE 1.4/2.1/2.11 等）不受影响。*
 
 *2026-09-03（二）追加：存量小节编号撞号修复——第四章《存量结构统计》原误挂 7.1-7.4、第五章《固定化单篇结构》原误挂 8.1-8.4（v3.0 定位重构收编时未重排的存量遗留），与真实七章 7.1-7.4、八章 8.1-8.5 重号，统一改回 4.1-4.4 / 5.1-5.4；同步归位章内悬空引用（四级标注"见 4.1"两处→7.1；循环论证良性链"5.3/5.4"四处→8.3/8.4；结构自检"对照 5.1 模板与 8.3 约束"→5.3 约束）；"见 4.4 / 4.4 末 / 4.4 第 6 条"三处随重编号自动归位为存量不一致清单。外部小节引用（STYLE_GUIDE 1.4/2.1/2.11 等）不受影响。*
+
+*2026-09-03（三）追加：收编第十一章《版面缩放纪律（Chromium shrink-to-fit 根治）》——Chromium page.pdf() 对 print 布局中内容超内容盒（ICB ≈672px@96dpi）的元素整本等比压缩（母书 OCEAN 五维 flow-tree 866px 超宽行 → 整本 ×0.892，正文 12→10.7pt）。机制自架构册 arch-v1.1.3 实证后移植母书 v1.2.0（零 bump）：print 态 border-box / body 收 665px 左对齐 margin:0 / 表格 width:100%+单元格断行 / 流程与 edge 长标签 pre→normal / 树形图 .flow-treegroup 按需 zoom（预算 665，emulate_media('print') 后测量）；正文标题匹配阈值随自然字号重校准 >=12→>=15；目录行跨行合并（y 近邻 <23pt）+ 顺序锚定 miss 全局回退，书签 224→247 回归基线（含 10a/10b）。外部小节引用不受影响。*
 

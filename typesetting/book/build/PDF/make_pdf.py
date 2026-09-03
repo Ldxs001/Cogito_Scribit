@@ -9,6 +9,19 @@
 
 产物：book_print.pdf（封面独立 PDF 页 + 正文双族思源字形（正文 SourceHanPrint、代码/树 SourceHanMono）+ SourceSans3 Latin 扩展兜底，Type3 矢量嵌入，
 零字体嵌入、零分发争议；封面与正文物理分离，不会互相污染）
+
+typ-v1.2.0 修订（同母书 v1.2.0 机制移植，2026-09-03 规范 10/11 章对齐）：
+① 整档缩放根治：Chromium page.pdf() 对 print 布局中「内容超出内容盒(~672px@96dpi)」
+的元素整本等比压缩（母书 OCEAN 五维 flow-tree 超宽行 ~866px → ×0.892，正文 12pt→
+10.7pt）。修复 = 消除触发源：print 态 border-box 全局 / body 收 665px 左对齐 /
+表格 width:100%+单元格断行 / 流程与 edge 长 token 标签 pre→normal 断行 / 树形图
+.flow-treegroup 按需 zoom（预算 665，print 媒体下测量）。修复后正文回到自然 12pt。
+② 目录页码列修订（同母书）：.toc 容器装饰右边框 x=543.4，三位数页码右缘 x=548 穿框
+4.6pt。页码右对齐基线 548→538 / 虚线终点 532→521 / link_rect 右缘 556→543。
+③ 阈值随自然字号重校准：add_toc_dots 匹配 >=12→>=15；find_h1_page >15 保持。
+④ 目录行跨行合并修复：超长目录标题折行后碎片（单字）曾独立命中正文标题，把顺序锚
+last_target 抬高致真书签漏配。现按 y 近邻(<23pt)合并跨行续行、纯数字页码行剔除、
+顺序锚定降级为首选起点 + miss 后全局回退兜底。
 用法：cd book/build/PDF && python make_pdf.py
 前置：pip install playwright pillow pymupdf
       python -m playwright install chromium
@@ -98,12 +111,33 @@ PRINT_CSS = """@page {
   margin: 18mm 16mm;
 }
 @media print {
-  /* 打印去掉 body padding/margin，边距由 @page 控制 */
-  body { padding: 0 !important; max-width: none; margin: 0 !important; }
-  /* 代码块长行强制换行：pre 默认 white-space:pre 不换行，打印无滚动条，
+  /* ===== 整档缩放根治（typ-v1.2.0 移植，同母书 v1.2.0 实证校准机制）=====
+     Chromium page.pdf() 对 print 布局中「内容超出内容盒(~672px@96dpi)」的
+     元素整本等比压缩（母书 OCEAN 五维 flow-tree 超宽 ~866px → ×0.892）。
+     以下规则把一切内容收进 665px 内容盒，缩放不再触发，正文保持自然 12pt。 */
+  /* 1) 全局 border-box：.toc 等 padding 元素 width:auto 不再超出内容盒 */
+  * { box-sizing: border-box !important; }
+  /* 2) body 收进内容盒 + 左对齐（margin:0 而非 auto 居中——居中偏移使满宽
+        块右缘仍超阈值）并去 padding；行内 code 长 token 软断行兜底 */
+  body { padding: 0 !important; margin: 0 !important;
+         max-width: 665px !important; overflow-wrap: anywhere; }
+  code, kbd, samp { overflow-wrap: anywhere !important; }
+  /* 3) 代码块长行强制换行：pre 默认 white-space:pre 不换行，打印无滚动条，
      超宽行会被直接裁掉（raw 输出/长行文本必现）——pre-wrap 保留原换行
-     并允许软换行，overflow-wrap:anywhere 兜底超长词/URL */
-  pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+     并允许软换行，overflow-wrap:anywhere 兜底超长词/URL（须 !important，
+     否则被书内 pre 规则压制） */
+  pre { white-space: pre-wrap !important; overflow-wrap: anywhere; }
+  /* 4) 表格收进内容盒：宽 100% + 单元格可断行（多列长函数名表不再横向溢出） */
+  table { width: 100% !important; max-width: 100% !important;
+          table-layout: auto; }
+  table td, table th { overflow-wrap: anywhere; word-break: break-word; }
+  /* 5) 流程/边标签文本：print 态允许换行（pre→normal）。white-space:pre 下
+     overflow-wrap 无效，长 token 标签必须改 normal 才会断行。树形图
+     (.flow-treegroup/.flow-tree-row 等)保持 pre 框线对齐，由 render_pdf JS
+     在 print 媒体下按需 zoom。 */
+  .edge-fall, .flow-edge, .flow-chain-title, .flow-step,
+  .flow-layer-name, .flow-layer-key, .flow-cnode {
+    white-space: normal !important; overflow-wrap: anywhere; }
   /* 书籍标准分页：版权页/序言/阅读指南/每篇/结语/附录各自独立起页 */
   h1 { break-before: page; }
   /* 小节标题不落页末：标题与后续内容同页 */
@@ -176,7 +210,7 @@ def make_cover_png():
     center('五层排版如何把一篇文章变成一本书', f_sub2, 1381, SUB2)
     draw.line([(W / 2 - 360, 1600), (W / 2 + 360, 1600)], fill=(201, 164, 92, 140), width=6)
     center('wUwproject · CC BY-SA 4.0 · 免费公开', f_meta, 2659, META)
-    center('typ-v1.1.0 · 2026 年 9 月', f_ver, 2841, VER)
+    center('typ-v1.2.0 · 2026 年 9 月', f_ver, 2841, VER)
     note = '本书文字（含书名、标题、正文、图表标注）使用思源黑体（Source Han Sans SC）渲染，字体采用 SIL OFL 1.1 开源许可。'
     nw = draw.textlength(note, font=f_note)
     draw.text(((W - nw) / 2, 3241), note, font=f_note, fill=NOTE)
@@ -213,6 +247,11 @@ def render_pdf():
         page.goto(html_url, wait_until='networkidle')
         page.evaluate('document.fonts.ready.then(() => true)')
         page.wait_for_timeout(2000)
+        # 关键：后续测量/zoom 一律切到 print 媒体（typ-v1.2.0 移植，同母书 v1.2.0）——
+        # screen 与 print 布局宽度不同（print 下 pre→pre-wrap 等规则生效），
+        # 在 screen 态测量 scrollWidth 会与 page.pdf() 实际布局错位，导致
+        # zoom 漏缩/误缩。
+        page.emulate_media(media='print')
         fonts = page.evaluate('''() => {
             const used = [];
             for (const f of document.fonts) {
@@ -235,6 +274,27 @@ def render_pdf():
             return marked;
         }''')
         print('超长元素标记:', overflow_tables if overflow_tables else '无')
+        # 树形图按需 zoom（typ-v1.2.0 移植，同母书 v1.2.0）：Chromium page.pdf()
+        # 对「print 布局内容超内容盒(~672px@96dpi)」整本等比压缩。PRINT_CSS 已
+        # 消除软性触发源（body 收 665/表格与 code 断行/流程标签 pre→normal），
+        # 此处只处理硬溢出：等宽 nowrap 树行。预算 = 665（内容盒），并减去树
+        # 左偏移——树右缘 ≤665 才不触发缩放。zoom 已在 print 媒体下执行，测量
+        # 与 page.pdf() 布局一致。
+        tree_zooms = page.evaluate('''() => {
+            const budget = 665;   // A4 @96dpi 内容盒 ≈672，留 7px 安全
+            const out = [];
+            document.querySelectorAll('.flow-treegroup').forEach(el => {
+                const usable = budget - el.getBoundingClientRect().left - 14;
+                const orig = el.scrollWidth;
+                if (orig > usable) {
+                    const z = Math.max(0.5, usable / orig);
+                    el.style.zoom = String(z);
+                    out.push((el.className || '') + ': ' + orig + 'px→z' + z.toFixed(2));
+                }
+            });
+            return out;
+        }''')
+        print('树形图按需缩放:', tree_zooms if tree_zooms else '无（树均不超宽）')
         page.pdf(path=BODY_PDF, prefer_css_page_size=True,
                  print_background=True)
         browser.close()
@@ -333,20 +393,45 @@ def add_toc_dots(path, h1_page):
         print('目录点线：未找到正文起始页，跳过')
         return
     # 1) 提取目录行（目录页 = 1..h1_page-1）
+    # typ-v1.2.0 修订：① 先按页收集全部行并按 y 排序；② 跨行标题合并——
+    # 超长目录条目折行后每行独立成 line，续行碎片（如"…力气活的终"+"结"）
+    # 会被误当独立条目。实测：同条目折行行距 ≈20-21pt，条目间距 ≥24.5pt，
+    # 阈值 23 可干净分离，合并后 text 为完整标题（折行无空格，直接拼接）。
+    # ③ 剔除纯数字行（目录行右侧的页码列，非标题）。
+    MERGE_GAP = 23.0
     rows = []  # (page_idx, y_center, x0, x1, text)
     for pi in range(1, h1_page):
+        lines = []
         d = doc[pi].get_text('dict')
         for b in d['blocks']:
             if 'lines' not in b:
                 continue
             for line in b['lines']:
                 s = ''.join(sp['text'] for sp in line['spans']).strip()
-                if s:
-                    y = (line['bbox'][1] + line['bbox'][3]) / 2
-                    x0 = line['bbox'][0]
-                    x1 = line['bbox'][2]
-                    rows.append((pi, y, x0, x1, s))
-    # 2) 正文标题匹配（大字号标题行 + 顺序锚定）
+                if not s:
+                    continue
+                y = (line['bbox'][1] + line['bbox'][3]) / 2
+                lines.append((y, line['bbox'][0], line['bbox'][2], s))
+        lines.sort(key=lambda t: t[0])
+        merged = []
+        for y, x0, x1, s in lines:
+            if s.isdigit():
+                continue  # 页码列数字行，非标题
+            if merged and y - merged[-1][0] < MERGE_GAP:
+                # 跨行续行：并入上一条（text 拼接、x1 取续行、y 取首行）
+                py, px0, px1, pt = merged[-1]
+                merged[-1] = (py, px0, max(px1, x1), pt + s)
+            else:
+                merged.append((y, x0, x1, s))
+        for y, x0, x1, s in merged:
+            rows.append((pi, y, x0, x1, s))
+    # 2) 正文标题匹配（大字号标题行）
+    # 阈值 >= 15：正文 12pt 排除、h2 16.8pt / h1 20.4pt 命中（自然字号标定，
+    # typ-v1.2.0 修订；此前缩放态正文 10.7pt 用 >=12 即可，现随字号重校准——
+    # 12pt 正文会被 >=12 误命中为标题，须抬到 >=15）
+    # 顺序锚定降级（typ-v1.2.0 修订）：last_target 只作首选起点——顺序命中失败后
+    # 全局回退从 h1_page 重搜，避免目录序与正文物理序非单调时（曾由续行碎片
+    # 把锚点抬到 302 致 10a/10b 漏配）整批条目不可达。
     gray = (0.6, 0.6, 0.6)
     font = fitz.Font('helv')
     drawn = 0
@@ -366,7 +451,7 @@ def add_toc_dots(path, h1_page):
                 for line in b['lines']:
                     ltext = ''.join(sp['text'] for sp in line['spans'])
                     max_size = max((sp['size'] for sp in line['spans']), default=0)
-                    if max_size >= 12 and ltext.replace(' ', '').replace('\u3000', '').startswith(key):
+                    if max_size >= 15 and ltext.replace(' ', '').replace('\u3000', '').startswith(key):
                         hit = True
                         break
                 if hit:
@@ -375,21 +460,40 @@ def add_toc_dots(path, h1_page):
                 target = pj
                 break
         if target is None:
+            # 全局回退：顺序锚定漏掉（目录序与物理序非单调）时整域重搜
+            for pj in range(h1_page, total):
+                d = doc[pj].get_text('dict')
+                hit = False
+                for b in d['blocks']:
+                    if 'lines' not in b:
+                        continue
+                    for line in b['lines']:
+                        ltext = ''.join(sp['text'] for sp in line['spans'])
+                        max_size = max((sp['size'] for sp in line['spans']), default=0)
+                        if max_size >= 15 and ltext.replace(' ', '').replace('\u3000', '').startswith(key):
+                            hit = True
+                            break
+                    if hit:
+                        break
+                if hit:
+                    target = pj
+                    break
+        if target is None:
             continue
         last_target = target
         page = doc[pi]
-        # 虚线：标题右端 → 页码左
+        # 虚线：标题右端 → 页码左 6pt 处，且终点 ≤ 521（不入页码列、距右边框 ≥22pt）
         dx1 = min(x1 + 6, 400)
-        page.draw_line((dx1, y), (532, y), color=gray, width=0.7,
+        page.draw_line((dx1, y), (521, y), color=gray, width=0.7,
                        dashes='[3 3] 0')
-        # 页码右对齐；版权页 = 1
+        # 页码右对齐；版权页 = 1。基线 x=538 在 .toc 右边框 543.4 内留 5.4pt 安全间距
         num = str(target - h1_page + 1)
         tw = font.text_length(num, fontsize=8.5)
-        px = 548 - tw
+        px = 538 - tw
         page.insert_text((px, y + 3), num, fontname='helv',
                          fontsize=8.5, color=(0.45, 0.45, 0.45))
-        # 目录行链接（点击跳转目标页顶部）
-        link_rect = fitz.Rect(x0 - 2, y - 8, 556, y + 8)
+        # 目录行链接（点击跳转目标页顶部）—— 右缘 543 贴合 .toc 边框不溢出
+        link_rect = fitz.Rect(x0 - 2, y - 8, 543, y + 8)
         page.insert_link({'kind': fitz.LINK_GOTO, 'from': link_rect,
                           'page': target, 'to': fitz.Point(0, 0)})
         # 书签：l1 = x0 < 65（部/篇/附录），l2 = 缩进小节

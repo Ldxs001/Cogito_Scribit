@@ -25,7 +25,7 @@ find_h1_page >15 保持（h1 20.4pt 自然态与 18.2pt 缩放态均 >15，命�
 顺序锚定降级为首选起点，miss 后全局回退兜底（防目录序与正文物理序非单调）。
 目录页码列修订（不 bump）——根因：.toc 容器装饰右边框 x=543.4，三位数页码右缘
 x=548 穿框 4.6pt（实测 p8 上 28 条三位数页码 bbox 一致穿框）。修复 = 三项数值
-同步收紧：①页码右对齐基线 548→538（.toc 框内留 5pt 安全间距，1/2/3 位数字均
+同步收紧：①页码右对齐基线 548→538（.toc 框内留 5.4pt 安全间距，1/2/3 位数字均
 容得下）；②虚线终点 532→521（距页码左缘 ≥3pt，三位数时虚线不进页码列）；
 ③link_rect 右缘 556→543（贴合 .toc 边框不溢出，点击区仍覆盖页码列）。
 用法：cd book/build/PDF && python make_pdf.py
@@ -493,7 +493,7 @@ def add_toc_dots(path, h1_page):
         dx1 = min(x1 + 6, 400)
         page.draw_line((dx1, y), (521, y), color=gray, width=0.7,
                        dashes='[3 3] 0')
-        # 页码右对齐；版权页 = 1。基线 x=538 在 .toc 右边框 543.4 内留 5pt 安全间距
+        # 页码右对齐；版权页 = 1。基线 x=538 在 .toc 右边框 543.4 内留 5.4pt 安全间距
         num = str(target - h1_page + 1)
         tw = font.text_length(num, fontsize=8.5)
         px = 538 - tw

@@ -7,7 +7,7 @@
    @font-face / 打印 CSS）→ Playwright 渲染正文 PDF（@page 精确 18mm 边距）
 3. PyMuPDF 合并：封面页 + 正文页
 
-产物：book_print.pdf（封面独立 PDF 页 + 正文 Type3 思源黑体矢量字形，
+产物：book_print.pdf（封面独立 PDF 页 + 正文双族思源字形（正文 SourceHanPrint、代码/树 SourceHanMono）+ SourceSans3 Latin 扩展兜底，Type3 矢量嵌入，
 零字体嵌入、零分发争议；封面与正文物理分离，不会互相污染）
 用法：cd book/build/PDF && python make_pdf.py
 前置：pip install playwright pillow pymupdf
@@ -29,7 +29,7 @@ BODY_PDF = os.path.join(BASE, 'book_print.body.pdf')
 OUT = os.path.join(BASE, 'book_print.pdf')
 
 FONT_BODY = '"SourceHanPrint", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif'
-FONT_MONO = '"DejaVu Sans Mono", "SourceHanPrint", Consolas, monospace'
+FONT_MONO = '"SourceHanMono", Consolas, monospace'
 
 FONT_FACE = """@font-face {
   font-family: "SourceHanPrint";
@@ -45,7 +45,53 @@ FONT_FACE = """@font-face {
   font-family: "SourceHanPrint";
   src: url("SourceHanSansSC-Bold.otf") format("opentype");
   font-weight: bold;
+}
+@font-face {
+  font-family: "SourceHanMono";
+  src: url("SourceHanMonoSC-Regular.otf") format("opentype");
+  font-weight: normal;
+}
+@font-face {
+  font-family: "SourceHanMono";
+  src: url("SourceHanMonoSC-Medium.otf") format("opentype");
+  font-weight: 500;
+}
+@font-face {
+  font-family: "SourceHanMono";
+  src: url("SourceHanMonoSC-Bold.otf") format("opentype");
+  font-weight: bold;
+}
+@font-face {
+  font-family: "SourceSans3";
+  src: url("SourceSans3-Regular.otf") format("opentype");
+  font-weight: normal;
+  unicode-range: U+0100-017F, U+0180-024F, U+1E00-1EFF;
+}
+@font-face {
+  font-family: "SourceSans3";
+  src: url("SourceSans3-Bold.otf") format("opentype");
+  font-weight: bold;
+  unicode-range: U+0100-017F, U+0180-024F, U+1E00-1EFF;
 }"""
+
+
+UNIFY_CSS = """/* ==== 字体收敛全覆盖（v1.2.0 排版事故修复，同架构册 arch-v1.1.2 机制）====
+Chromium page.pdf() 对 @font-face CFF 与本地/内置 TTF（DejaVu/Consolas/
+NSimSun/PingFang/微软雅黑/Times）同文档混排做子集化会触发嵌入失效，
+正文回退系统 NSimSun 级联。全文档收敛为注册的开源族后 0 回退；
+SourceSans3（Adobe OFL）仅 Latin 扩展区（\u0161/\u0107 等思源缺字形）兜底。 */
+* {
+  font-family: "SourceHanPrint", "SourceSans3", sans-serif !important;
+}
+pre, code, kbd, samp,
+.flow-tree, .flow-treegroup, .flow-tree-row, .flow-tnode, .flow-tmark,
+.flow-branch, .flow-step.flow-branch,
+.flow-inline-arrow, .edge-fall, .flow-arrow,
+.flow-cnode, .flow-carr, .flow-layer-name, .flow-layer-key,
+.flow-chain-title, .flow-note, .flow-edge, .flow-phase-tag {
+  font-family: "SourceHanMono", "SourceHanPrint", sans-serif !important;
+}
+"""
 
 PRINT_CSS = """@page {
   size: A4;
@@ -149,7 +195,7 @@ def build_print_html():
     t = t.replace('Consolas, "Courier New", monospace', FONT_MONO)
     t = t.replace('"PingFang SC", "Microsoft YaHei"', FONT_BODY)  # 兜底形态
     # 3) 注入 @font-face + 打印 CSS
-    t = t.replace('</style>', FONT_FACE + '\n' + PRINT_CSS + '\n</style>', 1)
+    t = t.replace('</style>', FONT_FACE + '\n' + UNIFY_CSS + '\n' + PRINT_CSS + '\n</style>', 1)
     with io.open(TMP_HTML, 'w', encoding='utf-8', newline='\n') as f:
         f.write(t)
     print('打印版 HTML 已生成:', TMP_HTML)

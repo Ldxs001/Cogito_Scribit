@@ -20,7 +20,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 | 方式 | 入口 |
 |------|------|
 | **在线阅读整本册子** | GitHub Pages：<https://ldxs001.github.io/Cogito_Scribit/typesetting/book/> |
-| **下载 PDF / HTML / EPUB** | 发行版 **typ-v1.4.0**（[Gitee](https://gitee.com/wUwproject/Cogito_Scribit/releases/tag/typ-v1.4.0) / [GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/typ-v1.4.0)，含 PDF 打印版） |
+| **下载 PDF / HTML / EPUB** | 发行版 **typ-v1.5.0**（[Gitee](https://gitee.com/wUwproject/Cogito_Scribit/releases/tag/typ-v1.5.0) / [GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/typ-v1.5.0)，含 PDF 打印版） |
 | **册子源码（Markdown）** | 本目录 `book/`（frontmatter：版权页 / 导读 / 附录 A / 附录 B） |
 | **构建管线** | `build/`（`python build.py` 一键构建，复用母书管线） |
 
@@ -30,11 +30,11 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 |------|------|------|
 | 版权页 | `frontmatter/00_版权页.md` | 版本、协议、署名 |
 | 导读 | `frontmatter/00_导读.md` | 五层排版路径与映射表 |
-| 正文六篇 | 仓库 `typesetting/articles/` | 源稿排版 / 元素排版 / 骨架排版 / 页面排版 / 元数据排版 + 收束篇（AI 任务执行的完整流程） |
+| 正文八篇 | 仓库 `typesetting/articles/` | 五层排版（源稿/元素/骨架/页面/元数据）+ 规范排版（条文之家与族系工程）+ 管线排版（规则入脚本）+ 收束篇（AI 任务执行的完整流程） |
 | 附录 A | `appendix/统一术语表.md` | 统一术语表 |
 | 附录 B | `appendix/排版速查.md` | 排版速查 |
 
-全册规模与版本见 `frontmatter/00_版权页.md`（当前 typ-v1.4.0，10 章）。
+全册规模与版本见 `frontmatter/00_版权页.md`（当前 typ-v1.5.0，13 章）。
 
 ## 目录结构
 

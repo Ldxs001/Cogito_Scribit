@@ -20,7 +20,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 | 方式 | 入口 |
 |------|------|
 | **在线阅读整本册子** | GitHub Pages：<https://ldxs001.github.io/Cogito_Scribit/typesetting/book/> |
-| **下载 PDF / HTML / EPUB** | 发行版 **typ-v1.3.0**（[Gitee](https://gitee.com/wUwproject/Cogito_Scribit/releases/tag/typ-v1.3.0) / [GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/typ-v1.3.0)，含 PDF 打印版） |
+| **下载 PDF / HTML / EPUB** | 发行版 **typ-v1.4.0**（[Gitee](https://gitee.com/wUwproject/Cogito_Scribit/releases/tag/typ-v1.4.0) / [GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/typ-v1.4.0)，含 PDF 打印版） |
 | **册子源码（Markdown）** | 本目录 `book/`（frontmatter：版权页 / 导读 / 附录 A / 附录 B） |
 | **构建管线** | `build/`（`python build.py` 一键构建，复用母书管线） |
 
@@ -34,7 +34,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 | 附录 A | `appendix/统一术语表.md` | 统一术语表 |
 | 附录 B | `appendix/排版速查.md` | 排版速查 |
 
-全册规模与版本见 `frontmatter/00_版权页.md`（当前 typ-v1.3.0，10 章）。
+全册规模与版本见 `frontmatter/00_版权页.md`（当前 typ-v1.4.0，10 章）。
 
 ## 目录结构
 

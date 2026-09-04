@@ -224,6 +224,12 @@ PyMuPDF 合并（封面页前置，garbage=3 + deflate 压缩）
 
 ---
 
+## 六.5 族系文件规范（typ-v1.4.0 固化，源：母书仓 STRUCTURE_GUIDE.md）
+
+- **99_结语为三册标配**：book/99_结语.md，正文（收束篇殿后）之后、appendix/ 之前装配；收束篇保持末篇不动，结语是书的收束章，职能不重复
+- **仓级文件四类判定**：A 书内内容（frontmatter/正文/99_结语/appendix，进书）；B 仓级规范（STRUCTURE_GUIDE.md；STYLE_GUIDE.md 全族系唯一一份在本目录，不重复）；C 仓级对外（README.md 仓导航 / 成册说明_<卷名>.md 发行说明 / index.html **仓根**落地页）；D 杂物一律进 archive/（归档优于删除），不留在仓根
+- **版权页版本日志一行式书籍口径**：工程细节只进 commit / Release notes / 成册说明，不进书
+
 ## 七、历史教训（防止复发）
 
 | 日期 | 教训 | 根因 |

@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 """
 《我思故我写 · 排版解析》书稿拼接脚本
-将导读 + 6 篇排版文章拼接为单一书稿 Markdown。
+将版权页/导读 + 8 篇排版文章 + 结语 + 附录拼接为单一书稿 Markdown。
 用法: python assemble.py [输出路径]
 零依赖（标准库）。入书规范参考本目录 STRUCTURE_GUIDE.md（族系转化规范）与 BOOK_GUIDE.md（成书规范）。
 
-入书清洗（STRUCTURE_GUIDE 去留规则的管线级硬约束，typ-v1.1.0）：
+入书清洗（STRUCTURE_GUIDE 去留规则的管线级硬约束，typ-v1.6.2 修订）：
 - 剥 SPDX 头（strip_spdx）
-- 剥章头「摘要 + 更新行/生成时间」blockquote（成书无摘要/日期戳）
-- 剥篇尾「*最后更新：…*」脚注（成书无版本戳）
+- 剥章头「摘要 + 更新行/生成时间」blockquote（成书无摘要/日期戳；连带其紧随分隔线）
+- 剥篇尾「*最后更新：…*」脚注（成书无版本戳；连带其前一条结构线——脚注不在，为其而设的结构线不留）
 - 章题统一为母书族系格式 `NN｜标题`（母书为 `第 X 部 · NN｜标题`，姊妹卷无部）
+- 章间不注入分隔线（h1 已强制每章新页）
+排版册源稿（articles/）无章尾编制说明戳记与正文节间分隔线，故不设对应清洗函数（架构册差异见 STRUCTURE_GUIDE §八.1）。
 """
 import sys, io, os, re
 
@@ -65,8 +67,19 @@ def strip_writing_traces(body):
                 while rest and not rest[0].strip():
                     rest.pop(0)
                 lines = lines[:h1_idx + 1] + [''] + rest
-    lines = [l for l in lines if not _FOOTNOTE_RE.match(l)]
-    return '\n'.join(lines)
+    res = []
+    for l in lines:
+        if _FOOTNOTE_RE.match(l):
+            # 脚注连带其前一条结构线一起去（成书无版本戳；结构线为脚注而设，脚注不在则不留）
+            for j in range(len(res) - 1, -1, -1):
+                if not res[j].strip():
+                    continue
+                if res[j].strip() == '---':
+                    del res[j]
+                break
+            continue
+        res.append(l)
+    return '\n'.join(res)
 
 def retitle(body, title):
     """章题对齐：替换首个 H1 为成书章题"""

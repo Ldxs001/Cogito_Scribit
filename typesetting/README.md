@@ -23,6 +23,7 @@ Copyright (c) 2026 wUwproject
 
 | 文档 | 对应内容 | 类别 |
 |------|---------|------|
+| [SPEC_MAP.md](SPEC_MAP.md) | 规范地图（角色路径：做哪件事读哪几节 / 规则族判例索引 / 规范治理） | 地图 |
 | [STYLE_GUIDE.md](STYLE_GUIDE.md) | 单篇写作规范（版式 / 结构骨架 / 描述方式 / 命题纪律 / 四项检测） | 规范 |
 | [STRUCTURE_GUIDE.md](STRUCTURE_GUIDE.md) | 转化入书规范（转化规则 / 同步清单 / 字数 / 版本号 / 构建管线 / PDF 打印版式 / 第八章架构册差异） | 规范 |
 | [BOOK_GUIDE.md](BOOK_GUIDE.md) | 书籍结构规范（书内骨架 / 文件夹布局 / 文件命名 / 新册创建清单） | 规范 |

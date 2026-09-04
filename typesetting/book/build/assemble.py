@@ -3,7 +3,7 @@
 《我思故我写 · 排版解析》书稿拼接脚本
 将导读 + 6 篇排版文章拼接为单一书稿 Markdown。
 用法: python assemble.py [输出路径]
-零依赖（标准库）。入书规范参考 Cogito_Scribit STRUCTURE_GUIDE。
+零依赖（标准库）。入书规范参考本目录 STRUCTURE_GUIDE.md（族系转化规范）与成书规范.md。
 
 入书清洗（STRUCTURE_GUIDE 去留规则的管线级硬约束，typ-v1.1.0）：
 - 剥 SPDX 头（strip_spdx）

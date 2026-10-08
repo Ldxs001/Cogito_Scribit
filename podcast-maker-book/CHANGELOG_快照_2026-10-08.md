@@ -12,6 +12,184 @@
 
 ---
 
+## v2.6.0
+
+**本次改动：ref_base 版本账本（换嗓串嗓事故修复）**
+
+**现象**
+
+- 某项目 13:35 认领声库新嗓（只换 `ref.wav` / `profile.json`），凌晨 01:03 旧嗓克隆的 `ref_base.wav` / `icl.wav` 原样残留；`_ref_pair()` 判「icl 两件齐备即用」→ 整期 138 句的合成条件全是旧嗓。
+- 体检锚 = 新 `ref.wav`，与合成条件（旧嗓 icl）不同源 → 73 句点名、B 角整批嵌入 0.71–0.85，换种子重出 24 句全部无效（嗓源本身不是档案里那个人），保底全标人工审。实测 `cos(旧 ref_base, 新 ref)` = 0.809（B），A 恰好新旧近源 0.974 所以 A 全过——点名多是体检在正确报警，报的是「这批声音不是档案里那个人」。
+
+**根因（两层叠加）**
+
+- 换嗓认领不失效旧 ref_base/icl，`_ref_pair()` 又齐备即用 → 静默用旧嗓合成；
+- 锚口径与合成条件不同源——体检锚拿 `ref.wav`，合成条件拿 icl（ref_base 系），Base 克隆的固有偏移被记到每一句头上。
+
+**修法（ref_base 版本账本）**
+
+- **ref_base/icl 全带 sign 后缀**：`ref_base_<sign>.wav` / `icl_<sign>.wav` / `icl_<sign>.txt`，sign = 原生 ref 的 sha256 前 8 位——文件名即映射，可验证不靠记忆。
+- **角色账本 `音色/<角色>/base_refs.json`**：`entries[sign]` = 原生 ref sha16 / 来源 / 文件组 / created，`active` 指当前生效 sign。**同一原生 ref 永远只克隆一次**——重克隆 = Base 重掷骰子 = 音色变化，账本命中即复用现有文件。
+- **换嗓三处接线**：`adopt` 换嗓前把旧版本件 stash 出来再覆盖目录、拷完原样还原（旧嗓的 ref_base 一个不丢，换回旧嗓零克隆）；`adopt_official` / `inherit` 认领后接 `ensure_base_ref()`——按当前 ref 字节重算 sign 查账，命中直接切 active，未命中才生成新条目。
+- **合成判定收口**：`_ref_pair()` 按账本 active 取 `icl_<sign>` 那一对，**缺件 fail-closed 硬报错，绝不静默退回 ref.wav**（本次串嗓的口子封死）。
+- **体检锚与合成条件同源**（当期用什么生成就用什么检测）：声纹锚从 `ref.wav` 改为当期合成同源的 `ref_base_<sign>`；`voice_profiles` 带出 `base_wav` / `base_sign`，体检报告 `sv_info.anchors` 记录当期用的哪条嗓子，可追溯。
+- 旧的无后缀 `ref_base.wav` / `icl.wav` 不做兼容迁移（未推送过，存量项目删了重做即可）。
+
+**测试**
+
+- `tests/test_voice_design.py` 新增 `TestBaseRefLedger` 7 条：命中不重做 / 生成记账 / 换嗓保留旧版 / 切回复用 / 读者缺件 fail-closed / 锚同源 / 无账本 legacy；四处认领测试补 ensure 替身。
+- 全量 **1519 通过（skipped=1）**。
+
+**实测（项目端到端）**
+
+- 删旧无后缀件 → 真机生成 `ref_base_a71d9702`（A）/ `ref_base_2d9a4787`（B）+ 账本落盘；复跑出「账本命中，不重做」；reader 判定 A/B 各归各 sign，合成条件与锚严格同源。
+- 锚自检：`cos(ref_base_<sign>, 原生 ref)` = A 0.994 / B 0.974；现有 138 句为旧嗓所出，新锚下 B 破线属预期，该期重出后同源。
+
+---
+
+## v2.5.0
+
+**本次改动：随仓声库与 VoiceDesign 双案生成**
+
+**说明（车间与声库分离）**
+
+- `official_voices/` 是**车间**：9 预设 × A/B 双案 × 各 3 take 的原始产出，含落选样本，不随仓推送；人耳挑中的 take 才是**声库**——落 `podcast_maker/resources/voices/`（与 bgm 同级），随仓走、永不丢，认领的源就是这里。重录只动车间，声库里的已定稿嗓子不受影响。
+- 音色条目**具名不用 take 序号**：目录名 = `家族-风味`（家族名给人认，风味名给这条 take 认），全局唯一。
+- **为什么 VoiceDesign 要双案**：A/B 角永远念不同的稿子，ref 的韵律先验整条继承——只造一案的话，另一角拿到的 ref 念的是别案的文案，节奏先验错位。
+
+**新增**
+
+- **`tts_service/curate_voices.py`（新工具，人耳挑选落库）**：按 `PICKS` 表（人耳试听结论，键 = (预设名, take 号)）从车间抽 37 条（A 案 20 / B 案 17）落声库，与车间账本 sha16 逐条对账；每条三件：`ref.wav`（逐字节复制，响度入库时已归一）+ `ref.txt`（这条 take 自己念的文案）+ `profile.json`（`kind="voice_library"` + `text_role` + 全套溯源：builtin_voice / official_take / seed / sha16 / F0 / 语速）；已存在目录跳过，`--force` 覆盖重写。
+- **`library:` 音色来源语法**：`parse_voice_source()` 增 `library:名字`（随仓声库条目），`official:` 旧语法兼容读取；`DEFAULT_VOICES` 出厂默认改 `{"A": "library:瑟琳-利落", "B": "library:老傅-收束"}`。
+- **`adopt_official` 改源声库**：认领源从车间改随仓声库，按 profile 的 `text_role` 把关（A 角只认 A 案、B 角只认 B 案，反认硬拒）；`ref.txt` 写该 take 自己的文案（ICL 命门：参考转录与音频逐字对应）；take 参数降为溯源对账；车间 `takes` 元数据缺位视为无从分案整表放行，不误杀旧数据。
+- **web_ui 声库接线**：`_library_voice_options()` 产 `library:` 前缀候选（label 带 `家族-风味（X案 · 声库）` 与 `role` 字段）；A/B 下拉按点位角色过滤——A 角只列 A 案、B 角只列 B 案（ICL 命门在入口把关）；`/api/voice/library-audio/` 原声试听路由；`api_voice_officials` 改纯 JSON 读声库。
+- **`/api/voice/library/promote`（自制嗓进声库）**：VoiceDesign 草稿一键提升——整目录复制进声库 + 改标（`kind="voice_library"` + 溯源补记），原项目档案不动；三道 fail-closed：无 `text_role` 拒、同名拒、档案不完整拒；管理面板「进声库」按钮（红字确认）。
+- **VoiceDesign 双案生成**：`design()` 增 `cases=("A", "B")`——一次生成 A/B 双案，A 案念 A 案定稿文案、B 案念 B 案定稿文案，模型只加载一次；界面双案卡片，**各案独立试听、独立保存**；产物落 `音色/<基准名><案>/`（如 老陈说书A / 老陈说书B，同名两案不冲突），profile 记 `text_role` + `base_name`；种子键 =（该案文案，档案名，描述），两案种子天然分离；`adopt()` 加分案把关（与声库同一条规矩）；CLI `--design-case A|B|all`。
+
+**修复**
+
+- **草稿保存保留草稿基准名**：`api_voice_draft_save` 原用 `setdefault` 写 `base_name`，草稿里存的是草稿基准名（`_draft*`），已有时被静默保留、正式档案带着草稿名入库——草稿值 → 正式值必须强制写（`prof["base_name"] = name`）。
+- **测试夹具同名方法定义两次**：后者静默覆盖前者（Python 类体不报重复定义），测试实际没跑全——重构为 `_make_draft(role, text_role=None)` 公共夹具。
+
+**测试**
+
+- **`tests/test_voice_design.py` 重写，65 条全绿**：`TestOfficialAdopt` / `TestBuildSources` 改声库夹具（含 `takes` 缺位兼容与反认被拒），`TestDraftFlow` 双案化（双案落盘结构 / text_role / 分案把关 / 提升三道 fail-closed）。
+- **全量 1512 通过（skipped=1）**；真实声库认领冒烟 PASS：A/B 各认各案、反认被拒。
+
+---
+
+## v2.4.0
+
+**本次改动：官方基准音色档案升级双文案录制与认领把关**
+
+**说明（参考文案设计依据）**
+
+- ICL 克隆整条继承 ref 的韵律先验：混合三句型（陈述+疑问+感叹）使输出疑问句尾抬高约 +2.7 半音（超 1 半音可辨阈）；省略号补「拖停」停顿先验（原档案缺失的唯一韵律料）；引号转述句式补「转述他人说话」的语调先验。
+- 四种符号各留一个干净实例（句号平收／问号上扬／感叹提气／省略号句中悬停），不共句——用省略号收疑问句会顶掉疑问上扬先验；引号包住完整疑问句、省略号不进引号（嵌套停顿的对齐行为未经验证，不冒险）。
+- 文案仍须与项目内容无关（音色基准不随项目漂）；`ref_text` 与音频逐字对应是 ICL 的命门。
+
+**新增**
+
+- **`make_voice.REF_TEXTS` 定稿双文案**：A 52 字 / B 48 字，混合三句型 + 四符号 + 引号转述；官方档案升双文案结构（每音色 A 案 take1–3、B 案 take4–6），`OFFICIAL_TEXT` 保留为兼容旧读者。
+- **`record_official_presets.py` schema 2**：逐 take 记 `text_role`／`text`／种子；CLI 新增 `--rate-min/--rate-max/--max-attempts`（缺省沿用 make_voice 门禁常量，不绑死）；语速窄窗（本轮 4.00~4.36 字/s）内重试，重试耗尽后取**念全（段数 ≥3）里离窗最近**的一条定稿并记 `rate_out_of_window`，试听页红标供人耳裁决；念全没有兜底——缺句音频按废品硬报错，不进候选。
+- **种子搜索区间互不相交**：take 种子起点改 `seed0 + take_no*1000`、重试 +7（上限 16×7=112 < 1000，区间永不重叠）。修复：旧方案 `seed0 + (take_no-1)*7` 在宽窗时代无恙（首种子基本即过），窄窗下各 take 的重试序列大量重叠、全部收敛到同一条离窗最近的种子——三条 take 逐字节相同（实测 Vivian take1/2/3 同语速 4.83、take4/5/6 同 3.99），take 序号失去意义；区间不相交后兜底落点也保证不同波形，种子仍全由 (text, voice, take, attempt) 决定、可复现。
+- **`adopt_official` 双文案把关**：A 角只认 A 案 take、B 角只认 B 案 take；旧档案无 `text_role` 视为任意角色兼容、`takes` 元数据缺位视为无从分案整表放行——不误杀旧数据。
+- **`chosen` 过期结论精确作废**：按本轮实际重录集合 `re_takes` 作废人耳结论，不再按「take 号仍在」保留——force 重录同号时波形已变，旧结论不得沿用；旧数据单选 int 统一成列表。
+- **试听页**：每条 take 挂 A案/B案 徽标、超窗红标，note 区展示双文案。
+
+**修复**
+
+- **认领写出的 `ref.txt` 文案错位**：原读 profile 级单一 `text` 字段（恒 A 案文案），B 角认领 B 案 take 会配上与音频不符的参考转录——ICL 参考转录必须与音频逐字对应，改逐 take 文案落 `ref.txt`。
+
+**测试**
+
+- **`tests.test_voice_design` 58 条全绿**（含双文案把关与旧档案向后兼容路径）；`py_compile` 两文件通过。
+- 双文案重录（9 预设 × 6 take）以单文件试听页交付人耳挑选，落窗情况以 profile 的 `rate_window`／`rate_out_of_window` 字段为准。
+
+---
+
+## v2.3.0
+
+**本次改动：音色体检下沉句内——段级「异常混入」判据与音色否决（第 9 维）**
+
+**说明（判据研究链与口径教训）**
+
+- 整句单点判据的结构盲区：每句仅一组整句中位标量，0.31s 的局部混入被九成正常帧抹平（实测句 0012_B 体检分 0.28、flag 恒 false）；身份／嵌入／共振峰 F1／VTL／声纹五路替代维度在短段上对「同人喊高」与「换人混入」全部重叠——句内问题须句内分辨率，整句统计量到顶。
+- F0 测量层病根：pyin／ACF／HPS／CEP 对弱基频男声普遍锁第 2 谐波（假高读数 405~455 Hz 反高于真混入 344 Hz——任何「越高越异常」的判据必然漏掉真混入）；修法＝段内平均谱 + 谐波和（SHS）求真基频，整条谐波串成立才取值，倍频读数 405~457 Hz 归位至 129~216 Hz。
+- 报警线口径：「每句最高段」是极值统计（N≈10 段取 max 天然落在 2~3σ），固定线 3.2 恰好卡在该分布的中位数上（池内 44.6% 句被点名）→ 改池自校准：线＝该角色「每句最高段」分布的 90 分位（B 5.73／A 4.27），句数不足退固定线。
+- 第 9 维两件：倒谱谱包络（帧平均谱→log→irfft 取 quefrency<2ms——1/F0 在 70~500 Hz 对应 2~14 ms 全部切在门外，对 F0 免疫）→rfft 回包络→13 个对数频点逐点减均值（去增益与倾斜，只留共振峰形状）→按角色池逐系数 σ 归一 RMS＝`d_cep`；声门三件套 CPP（倒谱峰相对回归线）/HNR（归一化自相关）/H1*–H2*（谐波落差再减倒谱包络落差＝去声道影响）段级 μ/σ 归一。真混入签名＝CPP↑ + HNR↑ + H1*–H2* 转负（两个独立来源件给出同一套签名）；金属污染则包络巨偏而声门不动（宽带噪声不是换嗓子）——三种病各走一条路。
+- 探针期能量门单位错配（STFT 幅度谱矩阵属频谱量纲，与时域帧 RMS 差约 20 倍，能量门实际变成「全文件最响帧的 120%」）导致声门大面积「缺失」；修为时域帧 RMS 95 分位后，修复前标定的全部阈值作废、池基线重标——基线采集口径必须先于阈值标定验证。
+- 端到端复验推翻三道级联：报警线提至 90 分位后报警句稀少，p80/p70 幅度组合道框出的「常态区」把真混入也压掉（d_cep 2.25/d_glot 3.36 vs 区 2.44/3.53）→ 砍为两道（`d_cep < 1.0` 绝对线，或 `h1h2_z ≥ 0`）。「第 9 维只能往下压」的镜像纪律＝也不能压到真阳性头上；样本太薄的分位线宁可不上。
+
+**新增**
+
+- **`podcast_maker/seg_incursion.py`（新模块，纯 numpy 零新增依赖）**：FFT 重采样（抗混叠，替代无低通的粗抽）→ STFT 谱通量 + 自实现 mel/DCT 倒谱通量归一求和找变点分段（段序列覆盖整条音频：首段起点 0、末段到结尾，无空洞）→ 段内平均谱 + SHS 真基频；倒谱包络与声门三件套按同一帧格计算；API `available/measure/baseline/score/flag/d_cep/d_glot/h1h2_z/calibrate/veto_hit`，带 mtime 缓存。
+- **基线按角色池建立**：该角色当期全部句子的段池现场统计 μ/σ（σ=1.4826×MAD）——「一套标准扫全场」曾致女声被系统性全报（1954 段报 312 段绝大多数为 A 角）的结构性修复；A/B 各自一条基线，换嗓零改动自适配。
+- **池自校准 `calibrate()`**：报警线＝该角色「每句最高段」z 分布 q 分位（`tts.timbre_seg_line_q` 默认 90），句数 < `MIN_CAL_FILES=8` 退固定线 `Z_LINE=3.2`（配置改口「退路值」）；校准结果写体检日志。
+- **第 9 维否决接线**：`_timbre_capture` 加 `seg_veto` 参数，检测与候选验收两个调用点都接；否决命中即不点名并注明理由；纪律三条——只能往下压、不能压到真阳性、不能新增报警。
+- **配置 6 键**：`tts.timbre_seg_guard(True)` / `timbre_seg_line(3.2，退路值)` / `timbre_seg_min_seconds(0.20)` / `timbre_seg_line_q(90)` / `timbre_veto(True)` / `timbre_cep_abs(1.0)`。
+- **web_ui**：ZONES 新增「段级混入与音色否决」卡（6 键）。
+
+**验证（落地代码直接跑真实音频，端到端）**
+
+- B 池（男声线 83 句/886 段）：线 5.73，触发 9 → 否决压 6 → 仍报 3＝0097_B（金属真问题）+ 0003_B / 0113_B（特征空间真边界，残余档可接受）。
+- 金标准 17 件逐件核对：保留组 6 全报，零漏零误伤；干净组 4 全静；0127_B／syn_f0x2 被否决压掉；base_i097_o1 静（90 分位线的既定代价）。
+- A 池（女声线 88 句/1008 段）：线 4.27，触发 9 → 压 8 → 仍报 1（0149_A 待耳听档）；声门可算率 100%，HNR 中位 8.27 高于男声 5.17（物理合理）。
+- **全量 1505 测试通过**（skipped=1）。
+
+**测试**
+
+- **`tests/test_timbre_guard.py` 新增 SegIncursionVetoTest（8 条）**：两道否决零误伤钉、否决压不掉真混入的守卫、`flag()` veto 关键字兼容、calibrate 句数门；**SegIncursionDimsTest**：合成 150 Hz 谐波 wav 钉段级行结构与 f0 读数。
+- **`tests/test_banner.py`**：`_python_sources` 排除 `_backup_*` 目录（改动前整树备份不是第一方源，版本字面量扫描曾被其污染）。
+
+---
+
+## v2.2.0
+
+**本次改动：生成侧参考音频重构——base_ref 进 ICL 上下文**
+
+**说明（设计依据，同种子配对探针实测）**
+
+- 句首漂移根因定性：句首约 0.9 秒内说话人条件尚未充分调制采样，条件分布呈多模态（男声/女声两个吸引子）；同句只换种子，句首中位 F0 在 143~310 Hz 间摆动。采样侧参数全部实测否决：`non_streaming_mode=True` 句首女声区命中 45%→70% 恶化、`top_p` 1.0→0.85 为噪声级且身份余弦单调下降、`instruct` 写身份描述方向与语义无关且动不了句首——三者皆为全局旋钮，够不着句首局部吸引子。
+- 生成侧有效手段为改条件：段首预热（ICL 前缀在档案之后再接一段同角色真实语音）实测句首女声区 6/15→1/15、真男声 8/15→12/15；逐句滚动前缀优于固定前缀；以 Base 克隆自造前缀可完全替代当期成品前缀，且不依赖成品、前缀固定可并行。
+- 落地结构取「一条嗓子两段」：`ref_base + 0.15s 静音 + ref_base`，两半同源、同率、同后端——不再出现「一段录的一段生的」的两嗓拼读；`ref.wav` 字节不动（音色来源凭证与声纹参考）。
+
+**新增**
+
+- **`tts_service/make_base_ref.py`**：以 Base 克隆本角色 `ref.wav` 内容重生成 3 个候选，按平均谱形相似度挑最贴参考的一条（不以自相关 F0 挑——该尺会倍频）；`resolve_sample_rate()` 读统一推动点 `audio.sample_rate`（优先级 CLI 覆盖 > config.json），读不到报错退出不猜（fail-closed），`--sample-rate` 显式覆盖；产物落 `音色/<角色>/ref_base.wav` + `ref_base.json`（溯源含 source_sample_rate/sample_rate）+ `icl.wav`（= ref_base + 0.15s 静音 + ref_base）+ `icl.txt`（两段转录连写，与音频逐字对应）。
+- **`layout.py`**：`VOICE_BASEREF` / `VOICE_ICL_WAV` / `VOICE_ICL_TXT` 三常量与三个路径函数。
+- **`tts_engine.voice_profiles._ref_pair()`**：ICL 参考唯一判定处——icl 两件齐备即用 icl，否则退回 `ref.wav`；`_service_synth` 零改动自动跟随；无 icl 档案的项目行为与既往一致。
+- **声纹参考隔离**：`ref` 对象新增 `ref_wav` 键恒指音色本体，声纹参考四处（检测／候选验收／基线池等）全部改用——icl 是含静音的拼接件，不得参与说话人相似度比对。
+- **采样率统一推动点**：ref_base／icl 全按 `audio.sample_rate`（当前 44100）落盘；本地语音服务输出 24000 与段级分析内率（24000）分属输出／分析两层，与出片率不是一回事。
+
+**修复**
+
+- **两处硬编码估时长**：`os.path.getsize(...)/48000.0` 改用 `_wav_seconds()`——采样率写死属「另跑一套逻辑」同类病因，归一到唯一实现。
+
+**测试**
+
+- **`tests/test_tts_engine.py` 新增 `test_the_base_ref_file_names_match_the_tool`**：锁 layout 与 make_base_ref 两侧的 ICL 三件套文件名（原仅锁 ref 三件）；`tests.test_tts_engine + tests.test_layout` 116 条全绿。
+- **端到端实测**：`voice_profiles()` 后 A/B 送合成为 `icl.wav`、声纹参考为 `ref.wav`；A ref_base 6.80s／icl 13.75s（6.80+0.15+6.80 精确）、B 6.16s／12.47s，产物均为 44100 Hz。
+
+---
+
+## v2.1.0
+
+**本次改动：BGM 音乐库档位、搭建环境加固与推送清单（含三条已随 v2.0.0 出货但未记档条目的补记）**
+
+**新增**
+
+- **AI 音乐库接入 BGM 档位选择**：`bgm.mode` 新增 `library`（AI 音乐库）档与点位 `bgm.library_name`（动态下拉 `options_source=music-library`——声明式 enum 会被枚举门禁拦截，动态源必须是 str）；`validate_config` 选库来源未选曲目报错；`assets_factory.library_bgm_path` 以 `sys.path` 挂 `music_service` 直 import `music_gen` 复用 `library_entries`（单源实现），缺曲目/空名 fail-closed 停产报错不降级；配置页 `fillMusicLibrarySelects` 遍历注册表不写死键名、旧值不在库中显式追加「已不在库中，重选即换新」、空库出提示，挂进 `refreshMusicState` 与初始化。
+- **flash-attn 默认跳过（BGM 搭建脚本）**：`setup_music_env.py` 安装依赖前以 `_requirements_without_flash` 滤除 flash-attn 行并打 `[WARN]`——其仅为注意力加速，SDPA 自动回退下功能与音质零影响，缺席仅慢不残；需要时以 `--with-flash-attn` 旗标走 ghproxy.net / gh-proxy.com 镜像链安装（直连 GitHub 下载不可用）。
+- **nano-vllm 改 `--no-deps` 挂载**：其 pyproject 把 flash-attn 声明为硬依赖（GitHub 直链），常规 pip 安装必炸；其 `attention.py` 自带 `_HAS_FLASH_ATTN` 导入守卫与 SDPA 回退（注释明示 no flash_attn dependency），其余依赖（torch/triton-windows/transformers/xxhash）requirements 全覆盖，故排除其依赖声明单独挂载。滤一处依赖前全仓 grep 该依赖的所有声明点（requirements/pyproject 两处）。
+- **推送名单.md（工作仓根）**：git-sync 发布的必带/显式排除清单（模型权重、第三方 clone、venv、备份、临时产物的排除锚点）与自检脚本（MUST/BAN 锚点断言，真跑列出缺失与泄漏）；推送名单为活文档，新增功能性文件先改名单再推送。
+
+**测试**
+
+- **`tests/test_music_service.py` 47 条中的新增钉子**：flash-attn 镜像链与默认跳过（`test_flash_attn_mirror_chain` / `test_flash_attn_optional_by_default`——滤行先于 requirements 安装、WARN 在场、旗标接线）、nano-vllm `--no-deps`（`test_nano_vllm_no_deps`）、音乐库接线（`TestBgmLibraryWiring` 5 条）；E2E 真服务器（页面钉 / params payload / state）与库解析链（命中/缺失报错）通过；全量 1496 条为 v2.0.0 出货态。
+
+---
+
 ## v2.0.0
 
 **本次改动：新增本地 BGM 生成模块（music_service）**

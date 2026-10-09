@@ -5,7 +5,7 @@ Licensed under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-
 See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 -->
 
-# 第三部 · 12｜本地语音服务的显存为什么越占越多：黑窗、孤儿进程与 Job 对象
+# 第三部 · 13｜本地语音服务的显存为什么越占越多：黑窗、孤儿进程与 Job 对象
 
 > 摘要：本地 TTS 服务是主程序拉起的独立进程；若不显式处理 Windows 的两类进程副作用，就会留下占着数 G 显存的孤儿进程、且每次合成弹黑窗挡在前面。本文只讲这两类副作用的根因与修法：用 **Job 对象**（父进程退出时由内核一并回收整棵服务进程树）解决孤儿与显存泄漏，用 **CREATE_NO_WINDOW**（而非 DETACHED_PROCESS）解决黑窗。边界声明：Job 对象是 Windows 内核机制，非 Windows 退化为从前行为、不挡合成。
 

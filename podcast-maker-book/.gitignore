@@ -3,5 +3,9 @@
 书稿规划_我写故我播.md
 进度清单.md
 测试记录索引.md
+发布进度.md
 ARCHITECTURE_快照*.md
 CHANGELOG_快照*.md
+
+# 公众号发布凭证（本地仅存，绝不推送）
+wechat-publish/.env

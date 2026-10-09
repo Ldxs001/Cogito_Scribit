@@ -5,7 +5,7 @@ Licensed under Creative Commons Attribution-ShareAlike 4.0 International (CC BY-
 See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 -->
 
-# 第四部 · 18｜背景音乐为什么听不见：素材响度参差与混音压低的双重衰减
+# 第四部 · 21｜背景音乐为什么听不见：素材响度参差与混音压低的双重衰减
 
 > 摘要：成片里的 BGM 一直听不见，是两件事叠加——素材本身响度不齐，混音参数又把音乐压在人声底下三十多分贝。本文只讲这一对矛盾：先用 `tools/bgm_level.py` 把 15 档素材统一到 -23 LUFS（EBU R128 响度归一），再变更三个混音默认值（音量、闪避阈值、压比）由实测确定，让音乐落在人声底。边界声明：响度是 K 加权量（LUFS），与峰值电平不是一回事；恢复时间 400 ms 实测几乎不起作用，真正有效的旋钮是音量与阈值。
 

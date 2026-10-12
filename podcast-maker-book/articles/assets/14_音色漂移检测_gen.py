@@ -16,7 +16,7 @@ font_manager.fontManager.addfont(FONT)
 plt.rcParams["font.family"] = "SimHei"
 plt.rcParams["axes.unicode_minus"] = False
 
-OUT = r"C:/Users/<redacted>/WorkBuddy/Cogito_Scribit/podcast-maker-book/articles/assets"
+OUT = r"assets"  # 本脚本位于 articles/assets/，输出到同目录（留档脱敏：原为本机绝对路径）
 
 
 def fig1():

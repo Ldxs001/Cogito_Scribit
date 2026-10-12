@@ -23,7 +23,7 @@ plt.rcParams["axes.unicode_minus"] = False
 OUT = "articles/assets"
 
 # ---------- 图1：加载顺序对比 ----------
-fig, ax = plt.subplots(figsize=(11.2, 4.4))
+fig, ax = plt.subplots(figsize=(11.2, 4.8))
 ax.set_xlim(0, 100); ax.set_ylim(0, 100); ax.axis("off")
 
 def box(ax, x, y, w, h, text, fc, tc="white", fs=12):
@@ -43,26 +43,26 @@ ax.text(50, 96, "配置加载：搬迁(_migrate) 与 白名单过滤 的顺序",
         va="center", fontsize=14, fontweight="bold", fontproperties=prop)
 
 # 上排：正确顺序
-ax.text(2, 82, "正确顺序（搬迁 → 白名单过滤）", ha="left", va="center",
+ax.text(2, 89, "正确顺序（搬迁 → 白名单过滤）", ha="left", va="center",
         fontsize=12, color="#1a7a3a", fontproperties=prop, fontweight="bold")
-box(ax, 2, 60, 26, 13, "存档\nlyric_window = 5", "#5a7fb0")
-arrow(ax, 28, 66.5, 38, 66.5)
-box(ax, 38, 60, 30, 13, "_migrate 改名\n→ window = 5", "#2f8f4e")
-arrow(ax, 68, 66.5, 78, 66.5)
-box(ax, 78, 60, 20, 13, "白名单\n在表内", "#2f8f4e")
-arrow(ax, 88, 60, 88, 46, "#1a7a3a")
-box(ax, 70, 33, 28, 13, "取值 = 5（保留）", "#2f8f4e")
+box(ax, 2, 71, 26, 13, "存档\nlyric_window = 5", "#5a7fb0")
+arrow(ax, 28, 77.5, 38, 77.5)
+box(ax, 38, 71, 30, 13, "_migrate 改名\n→ window = 5", "#2f8f4e")
+arrow(ax, 68, 77.5, 78, 77.5)
+box(ax, 78, 71, 20, 13, "白名单\n在表内", "#2f8f4e")
+arrow(ax, 88, 71, 88, 65, "#1a7a3a")
+box(ax, 70, 54, 28, 11, "取值 = 5（保留）", "#2f8f4e")
 
 # 下排：错误顺序
-ax.text(2, 30, "注入缺陷（白名单过滤 → 搬迁）", ha="left", va="center",
+ax.text(2, 42, "注入缺陷（白名单过滤 → 搬迁）", ha="left", va="center",
         fontsize=12, color="#b03030", fontproperties=prop, fontweight="bold")
-box(ax, 2, 8, 26, 13, "存档\nlyric_window = 5", "#5a7fb0")
-arrow(ax, 28, 14.5, 38, 14.5)
-box(ax, 38, 8, 30, 13, "白名单\n不在表内", "#b03030")
-arrow(ax, 68, 14.5, 78, 14.5)
-box(ax, 78, 8, 20, 13, "丢弃", "#b03030")
-arrow(ax, 88, 8, 88, 24, "#b03030")
-box(ax, 64, 26, 34, 12, "window = 默认 3（值丢）", "#b03030")
+box(ax, 2, 25, 26, 13, "存档\nlyric_window = 5", "#5a7fb0")
+arrow(ax, 28, 31.5, 38, 31.5)
+box(ax, 38, 25, 30, 13, "白名单\n不在表内", "#b03030")
+arrow(ax, 68, 31.5, 78, 31.5)
+box(ax, 78, 25, 20, 13, "丢弃", "#b03030")
+arrow(ax, 88, 25, 88, 19, "#b03030")
+box(ax, 64, 8, 34, 11, "window = 默认 3（值丢）", "#b03030")
 
 fig.tight_layout()
 fig.savefig(f"{OUT}/3_peizhiqianyi_fig1.png", dpi=150, bbox_inches="tight")

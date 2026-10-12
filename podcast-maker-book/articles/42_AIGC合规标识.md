@@ -19,7 +19,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 ## 二、现象：它到底长什么样
 
-强标 GB 45438-2025《网络安全技术 人工智能生成合成内容标识方法》要求给生成合成内容打标识，落到本工具是**三层**：
+强标 GB 45438-2025《网络安全技术 人工智能生成合成内容标识方法》要求给生成合成内容打标识，落到本工具是**三层**，三层的义务属性不同：元数据隐式标识是**无条件义务**——不管产物发到哪、经不经平台转码，文件里都得带着；语音显式标识与封面水印是**显式义务**——对着听的人、看的人说清这是 AI 生成的 [1]：
 
 - **元数据隐式标识**（无条件义务）：文件里写一段 JSON，含七要素；
 - **语音显式标识**：音频片头最前加一句「本节目人声由人工智能合成」；
@@ -44,7 +44,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 **第二条：声明时长和片头偏移各算各的。** 声明是一段音频、片头是另一段音频、字幕是另一条时间轴——三处若各持一个数，画面字幕必然错位。实测「偏移口径分家」正是字幕错位的成因；声明时长若没并进片头秒数，字幕整体后移的量就少算一段 [1][3]。
 
-**第三条：给 mp4 直接写 `-metadata` 不开 `use_metadata_tags`。** 字段确实写进去了，可 mov 封装把它丢了，`ffprobe` 读不回来——标识静默失效，比明错更危险，因为没人会去查 [1]。
+**第三条：给 mp4 直接写 `-metadata` 不开 `use_metadata_tags`。** 字段确实写进去了，可 mov 封装把它丢了，`ffprobe` 读不回来——标识静默失效，比明错更危险，因为没人会去查 [1]。这条错的隐蔽性在于「写入操作成功了」：ffmpeg 返回码为 0、文件体积变大、流程无任何异常，唯一能暴露它的办法是写完**读回来对账**——修法里「读回断言」正由此而来。
 
 ## 四、根因：为什么
 
@@ -54,7 +54,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 **第二道：声明是音频、字幕是时间轴，二者共享一个偏移。** 声明拼在片头最前，它占的秒数必须并进「片头偏移」那一个数，字幕时间轴只认这一个值。任何一处把声明时长藏起来单算，画面与字幕就脱节 [3]。
 
-**第三道：制作者身份跟的是运行工具的人。** 开源后每个用户填自己的；代码里若预设任何人的名字，既违法理也不通用。所以 `ContentProducer` 是唯一要人填的必填项，留空即 fail-closed 停产 [2]。
+**第三道：制作者身份跟的是运行工具的人。** 开源后每个用户填自己的；代码里若预设任何人的名字，既违法理也不通用。所以 `ContentProducer` 是唯一要人填的必填项，留空即 fail-closed 停产 [2]。三道裂缝必须一起修的原因也在这：只修容器适配（第一道），声明时长分家照旧错位；只修偏移口径（第二道），mp4 照样静默丢标识；只把必填卡死（第三道），前两道修出来的合规标识又因容器脾气白写——三层标识、三道裂缝，一一对应，缺一道整层塌。
 
 > **fail-closed**：出错时默认失败、不静默继续，靠报错而非假装成功暴露问题。本篇指打标失败（ffmpeg 缺失、声明合成失败、自定义音频路径不存在）让整条流水线停下来，不跳过。
 
@@ -84,7 +84,7 @@ def aigc_json(cfg, content_id=""):
     return json.dumps({FIELD: payload}, separators=(",", ":"))
 ```
 
-内容编号 `ProduceID` 一律取**去扩展名的文件名**——产物文件名已含期号，天然唯一，不需要调用方再传一份编号 [1]。
+内容编号 `ProduceID` 一律取**去扩展名的文件名**——产物文件名已含期号，天然唯一，不需要调用方再传一份编号 [1]。这个取法把「编号从哪来」的问题一并消掉：调用方少传一个参数，就少一处传错的机会；期号在文件名里已经唯一，编号的唯一性跟着文件名走，不需要额外的计数器或查重逻辑。
 
 ### 5.2 隐式标识：逐容器适配，不重编码
 
@@ -131,9 +131,11 @@ def add_intro_outro(body, out_path, cfg, sample_rate, channels):
 
 **声明并入片头、字幕不错位**（`TestDeclarationOffset::test_decl_absorbed_into_intro`）：声明 1.0s + 片头 2.0s → `intro_sec` 实测 **3.0 s**（误差 ≤0.02s），总时长 **8.0 s**；`test_no_decl_no_intro_passthrough` 验证无声明无片头时偏移恒为 0 [3][4]。
 
+**容器写入对照实验设计**（数据源 [1][4]）：**目的**——证明 `use_metadata_tags` 不是可选项；**输入**——同一段七要素 JSON、同一个 mp4；**步骤**——① 不开 `use_metadata_tags` 直接 `-metadata` 写入 → `ffprobe` 读回；② 开启后同样写入 → 同法读回；**观测**——① 读回为空（mov 封装默认静默丢未知键，全程不报错）；② 读回 `AIGC` 七要素齐整；**判定**——读不回即 FAIL，`tests/test_aigc_label.py::test_mp4_tag_readable` 的断言 `raw is not None` 就是这条实验的常驻形态。图片路同法设计：PNG `tEXt` / JPEG `COM` 写后读回，再加幂等一步——同值二次打标断言**零改动**（`test_tag_twice_is_idempotent`），错误魔数（非 PNG）被 `LabelError` 拒绝 [4]。
+
 **图片块插入与幂等**（`TestImageTagging`）：PNG 经 `tEXt`、JPEG 经 `COM` 写入后读回 `AIGC` 七要素；`test_tag_twice_is_idempotent` 断言同值重复打标**零改动**；错误魔数（非 PNG）被 `LabelError` 拒绝 [2][4]。
 
-**配置面同源**（`test_config_surface`）：`PARAM_SPEC["aigc.content_producer"]` 默认 `""` 且 `required=True`，且**断言 JSON 里不含 `wUwproject`**——制作者身份不预设任何人名，开源后由每个用户自己填 [5]。
+**配置面同源**（`test_config_surface`）：`PARAM_SPEC["aigc.content_producer"]` 默认 `""` 且 `required=True`，且**断言 JSON 里不含 `wUwproject`**——制作者身份不预设任何人名，开源后由每个用户自己填 [5]。这条断言与第三道根因一一对应：配置面守「不预设」，`aigc_json` 守「留空停产」，两端夹住，伪造归属在代码路径上无处发生。
 
 | 维度 | 验证点 | 断言（节选自 `tests/test_aigc_label.py`） |
 |---|---|---|
@@ -164,4 +166,4 @@ def add_intro_outro(body, out_path, cfg, sample_rate, channels):
 
 ---
 
-*最后更新：2026-10-11（四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS）*
+*最后更新：2026-10-12（字数补厚：容器写入对照实验设计 + 读回对账由来 + 三层义务属性 + ProduceID 取名理由 + 三道裂缝联合修复语义；四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS）*

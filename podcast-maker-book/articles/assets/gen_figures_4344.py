@@ -59,10 +59,10 @@ def fig43():
          "人称叙事 / 产品定位论证 / 口语化措辞\n三类禁用串逐行比对\n命中即报 (行号, 词)",
          "#e6f5e6", "#5a9a5a", fs=8.8)
 
-    # 注：跳过体例区避免自证
+    # 注：跳过体例区避免自证（文字置于箭头下方净带，宽度预算 ≤ 两盒间隙 2.4u）
     _arrow(ax, 2.0, 3.4, 8.0, 3.4, color="#c0392b")
-    ax.text(5.0, 3.62, "跳过体例区：那里写着词表本身，扫进去即自证",
-            fontproperties=FONT, ha="center", va="bottom", fontsize=8.5,
+    ax.text(5.0, 3.20, "跳过体例区，扫进去即自证",
+            fontproperties=FONT, ha="center", va="top", fontsize=8.5,
             color="#c0392b")
 
     # 结果

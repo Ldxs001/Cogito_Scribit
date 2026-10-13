@@ -38,6 +38,8 @@ def fig38():
         shown = cards[: max(6, ncol * 2)]
         idx = 0
         rows = (len(shown) + ncol - 1) // ncol
+        y_bottom = y0 - (rows - 1) * (h + gy)   # 画布随行数自适应：框永远完整入画
+        ax.set_ylim(min(0, y_bottom - 0.3), 6)
         for r in range(rows):
             for c in range(ncol):
                 if idx >= len(shown):
@@ -83,7 +85,7 @@ def fig12():
     ax1.tick_params(axis="x", labelsize=9)
 
     # Panel B：压比体检红线（分母=成稿目标）
-    ax2.set_xlim(0, 7)
+    ax2.set_xlim(0, 7.8)   # 宽度预算：右侧注释「上限 6.25…」起 x=6.6，画布随之放宽不裁边
     ax2.set_ylim(0, 1)
     ax2.add_patch(Rectangle((1.5, 0), 6.25 - 1.5, 1, facecolor="#9ab87a", alpha=0.35))
     ax2.add_patch(Rectangle((0, 0), 1.5, 1, facecolor="#d98b8b", alpha=0.25))
@@ -104,16 +106,23 @@ def fig12():
     print("wrote", p)
 
     # fig2: calibration.json 配比实测 k 分布（同音色异速比例，与 STANDARD_K=4.39 对照）
-    ck = os.path.join(os.path.dirname(HERE), "..", "..", "podcast-maker", "calibration.json")
-    if not os.path.exists(ck):
-        ck = r"<本地 podcast-maker 仓>/calibration.json"  # 留档脱敏：原为本机绝对路径
+    cands = [
+        os.environ.get("PODCAST_MAKER_HOME", ""),          # 运行时注入，不落本机路径
+        os.path.join(HERE, "..", "..", "..", "..", "podcast-maker", "calibration.json"),
+        os.path.join(os.path.dirname(HERE), "..", "..", "podcast-maker", "calibration.json"),
+    ]
+    ck = next((c for c in cands if c and os.path.exists(c)), None)
+    if ck is None:
+        print("skip fig2: calibration.json 未找到（可设 PODCAST_MAKER_HOME 注入；留档脱敏不写死本机路径）")
+        return
     d = json.load(open(ck))
     g = d.get("groups", {})
     ks = [v["k"] for v in g.values() if "k" in v]
     fig2, ax = plt.subplots(figsize=(7.2, 3.8))
     ax.bar(range(len(ks)), ks, color="#7ea6c4")
     ax.axhline(4.39, color="#c0392b", lw=1.6, ls="--")
-    ax.text(0, 4.46, "STANDARD_K=4.39（脚本估时基准）", fontproperties=FONT, color="#c0392b", fontsize=9)
+    ax.text(0, 5.55, "STANDARD_K=4.39（脚本估时基准）", fontproperties=FONT,
+            color="#c0392b", fontsize=9, va="top")   # 独立通道：贴顶放置，不蹭柱顶与基准线
     ax.set_ylabel("k（有效字/秒）", fontproperties=FONT)
     ax.set_xlabel("已校准音色组（按引擎·音色·语速分组）", fontproperties=FONT)
     ax.set_title("配比实测：时长校准系数 k 围绕基准波动、不同音色互不污染", fontproperties=FONT, fontsize=11)

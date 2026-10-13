@@ -37,11 +37,14 @@ axR.text(0.5, 0.42, "TXT（先写盘）", ha="center", va="center", bbox=bad, fo
 axR.annotate("", xy=(0.5, 0.16), xytext=(0.5, 0.32),
              arrowprops=dict(arrowstyle="->", color="#d33", lw=1.8))
 axR.text(0.5, 0.08, "洁版 TXT\n（读 .txt 反解）", ha="center", va="center", bbox=bad, fontsize=9)
-axR.text(0.5, -0.08, "↯ 旧 .txt 静默产错 / 顺序依赖", ha="center", fontsize=8, color="#d33")
+axR.text(0.5, -0.08, "错：旧 .txt 静默产错 / 顺序依赖", ha="center", fontsize=8, color="#d33")
 
 fig.text(0.01, -0.02, "数据源：podcast-maker · CHANGELOG.md · v0.46.0（四份同源、不从产物反解）[1][2]",
          fontsize=7, color="#666")
 fig.tight_layout()
-fig.savefig("articles/assets/22_字幕_fig1.png", bbox_inches="tight")
-fig.savefig("articles/assets/22_字幕_fig1.svg", bbox_inches="tight")
-print("OK 22_字幕_fig1 png+svg")
+import os
+_here = os.path.dirname(os.path.abspath(__file__))
+_p = os.path.join(_here, "30_字幕_fig1")
+fig.savefig(_p + ".png", bbox_inches="tight")
+fig.savefig(_p + ".svg", bbox_inches="tight")
+print("OK 30_字幕_fig1 png+svg")

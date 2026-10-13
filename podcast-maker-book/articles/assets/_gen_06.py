@@ -21,14 +21,16 @@ OUT = os.path.dirname(os.path.abspath(__file__))
 
 
 def _box(ax, x, y, w, h, title, body, fc, ec="#333", fs=9.5):
+    """行账本体：标题独占第 1 行，body 以 va=top 锚在标题行之下，逐行向下排——
+    标题与 body 各有独立行带，永不相撞（STYLE_GUIDE 十二·1）。"""
     box = FancyBboxPatch((x, y), w, h,
                          boxstyle="round,pad=0.02,rounding_size=0.04",
                          fc=fc, ec=ec, lw=1.2)
     ax.add_patch(box)
-    ax.text(x + w / 2, y + h - 0.42, title, ha="center", va="center",
+    ax.text(x + w / 2, y + h - 0.30, title, ha="center", va="center",
              fontsize=10.5, weight="bold", color="#1a1a1a")
-    ax.text(x + w / 2, y + h / 2 - 0.15, body, ha="center", va="center",
-            fontsize=fs, color="#222")
+    ax.text(x + w / 2, y + h - 0.62, body, ha="center", va="top",
+            fontsize=fs, color="#222", linespacing=1.55)
 
 
 def fig1():
@@ -43,29 +45,29 @@ def fig1():
     ax.add_patch(FancyArrowPatch((1.6, 10.8), (5.0, 10.0),
                  arrowstyle="-|>", mutation_scale=14, color="#a05050", lw=1.6))
 
-    _box(ax, 2.2, 8.4, 5.6, 1.5,
+    _box(ax, 2.2, 8.4, 5.6, 1.9,
          "层① 结构层（schema 锁）",
          "PATCH_SCHEMA.anyOf：\nedits / inserts 至少一个非空数组\n白卷在结构里写不出来",
          fc="#dbe4f0")
-    _box(ax, 2.2, 5.6, 5.6, 1.5,
+    _box(ax, 2.2, 5.6, 5.6, 1.9,
          "层② 提示词层（system 终审）",
          "patch_system 增加终审条款：\n结论已定，仅保留执行权\n不许返回空补丁",
          fc="#e7f0e7")
-    _box(ax, 2.2, 2.8, 5.6, 1.5,
+    _box(ax, 2.2, 2.8, 5.6, 1.9,
          "层③ 解析层（parse 兜底）",
          "parse_patch 空补丁拦截保留：\n格式合法也拦，给出原因递回下一轮\n解析层最后一道防线",
          fc="#f0e7e7")
 
-    ax.add_patch(FancyArrowPatch((5.0, 8.4), (5.0, 7.1),
+    ax.add_patch(FancyArrowPatch((5.0, 8.4), (5.0, 7.55),
                  arrowstyle="-|>", mutation_scale=14, color="#333", lw=1.4))
-    ax.add_patch(FancyArrowPatch((5.0, 5.6), (5.0, 4.3),
+    ax.add_patch(FancyArrowPatch((5.0, 5.6), (5.0, 4.75),
                  arrowstyle="-|>", mutation_scale=14, color="#333", lw=1.4))
 
-    ax.text(8.6, 9.1, "拒绝", ha="center", va="center", fontsize=12,
+    ax.text(8.6, 9.35, "拒绝", ha="center", va="center", fontsize=12,
             color="#a05050", weight="bold")
-    ax.text(8.6, 6.3, "拒绝", ha="center", va="center", fontsize=12,
+    ax.text(8.6, 6.55, "拒绝", ha="center", va="center", fontsize=12,
             color="#a05050", weight="bold")
-    ax.text(8.6, 3.5, "拦截", ha="center", va="center", fontsize=12,
+    ax.text(8.6, 3.75, "拦截", ha="center", va="center", fontsize=12,
             color="#a05050", weight="bold")
 
     ax.text(5.0, 1.3,

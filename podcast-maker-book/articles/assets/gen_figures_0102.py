@@ -40,7 +40,7 @@ def _box(ax, x, y, w, h, text, fc, ec="#2b3a55"):
                                 boxstyle="round,pad=0.012,rounding_size=0.03",
                                 fc=fc, ec=ec, lw=1.4))
     ax.text(x + w / 2, y + h / 2, text, ha="center", va="center",
-            fontsize=9.5, color="#16213a", weight="bold")
+            fontsize=8.0, color="#16213a", weight="bold")
 
 
 def _arrow(ax, x1, y1, x2, y2, color="#2b3a55"):
@@ -53,7 +53,7 @@ def _arrow(ax, x1, y1, x2, y2, color="#2b3a55"):
 def fig_pipeline():
     steps = [
         ("1 脚本", "取定稿稿\n(合成不写稿)", 0.05, "#dbe7ff"),
-        ("2 背景/封面/音乐", "静帧预烘焙+\nBGM生成", 0.15, "#cfeede"),
+        ("2 背景/封面\n/音乐", "静帧预烘焙+\nBGM生成", 0.15, "#cfeede"),
         ("3 语音合成", "edge-tts /\nQwen3-TTS", 0.30, "#ffe9cf"),
         ("4 音频后处理", "拼接/降噪/\n响度归一", 0.45, "#ffd6d6"),
         ("5 导出音频", "ffmpeg 编码\n落盘", 0.55, "#e8d6ff"),
@@ -67,8 +67,8 @@ def fig_pipeline():
     ax1.axis("off")
     ax2.axis("off")
     n = len(steps)
-    w = 1.06
-    gap = 0.18
+    w = 1.14
+    gap = 0.12
     total_w = n * w + (n - 1) * gap
     x0 = (12.4 - total_w) / 2
     y0 = 1.55

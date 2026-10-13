@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2026-10-10T03:05:03.680261</dc:date>
+    <dc:date>2026-10-13T23:40:58.804076</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -31,51 +31,51 @@ z
   <g id="axes_1">
    <g id="patch_2">
     <path d="M 36.3125 250.7915 
-L 470.506524 250.7915 
-L 470.506524 27.25125 
+L 507.6 250.7915 
+L 507.6 27.25125 
 L 36.3125 27.25125 
 z
 " style="fill: #ffffff"/>
    </g>
    <g id="patch_3">
-    <path d="M 56.048592 250.7915 
-L 141.184675 250.7915 
-L 141.184675 166.963906 
-L 56.048592 166.963906 
+    <path d="M 57.734659 250.7915 
+L 150.143973 250.7915 
+L 150.143973 166.963906 
+L 57.734659 166.963906 
 z
-" clip-path="url(#pe86c6fe2a7)" style="fill: #7a94b2; stroke: #333333; stroke-linejoin: miter"/>
+" clip-path="url(#p30d58eb116)" style="fill: #7a94b2; stroke: #333333; stroke-linejoin: miter"/>
    </g>
    <g id="patch_4">
-    <path d="M 210.84147 250.7915 
-L 295.977554 250.7915 
-L 295.977554 139.021375 
-L 210.84147 139.021375 
+    <path d="M 225.751593 250.7915 
+L 318.160907 250.7915 
+L 318.160907 139.021375 
+L 225.751593 139.021375 
 z
-" clip-path="url(#pe86c6fe2a7)" style="fill: #7e9e8a; stroke: #333333; stroke-linejoin: miter"/>
+" clip-path="url(#p30d58eb116)" style="fill: #7e9e8a; stroke: #333333; stroke-linejoin: miter"/>
    </g>
    <g id="patch_5">
-    <path d="M 365.634349 250.7915 
-L 450.770432 250.7915 
-L 450.770432 83.136312 
-L 365.634349 83.136312 
+    <path d="M 393.768527 250.7915 
+L 486.177841 250.7915 
+L 486.177841 83.136312 
+L 393.768527 83.136312 
 z
-" clip-path="url(#pe86c6fe2a7)" style="fill: #9e8a74; stroke: #333333; stroke-linejoin: miter"/>
+" clip-path="url(#p30d58eb116)" style="fill: #9e8a74; stroke: #333333; stroke-linejoin: miter"/>
    </g>
    <g id="matplotlib.axis_1">
     <g id="xtick_1">
      <g id="line2d_1">
       <defs>
-       <path id="m849b16da11" d="M 0 0 
+       <path id="m99ebb88b34" d="M 0 0 
 L 0 3.5 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#m849b16da11" x="98.616634" y="250.7915" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m99ebb88b34" x="103.939316" y="250.7915" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_1">
       <!-- v1.1.0 -->
-      <g transform="translate(83.616634 264.6665) scale(0.1 -0.1)">
+      <g transform="translate(88.939316 264.6665) scale(0.1 -0.1)">
        <defs>
         <path id="SimHei-76" d="M 2875 2925 
 L 1825 75 
@@ -141,7 +141,7 @@ z
        <use xlink:href="#SimHei-30" transform="translate(250 0)"/>
       </g>
       <!-- 三维 -->
-      <g transform="translate(88.616634 275.432125) scale(0.1 -0.1)">
+      <g transform="translate(93.939316 275.432125) scale(0.1 -0.1)">
        <defs>
         <path id="SimHei-4e09" d="M 6000 -200 
 Q 5550 -175 5200 -175 
@@ -271,12 +271,12 @@ z
     <g id="xtick_2">
      <g id="line2d_2">
       <g>
-       <use xlink:href="#m849b16da11" x="253.409512" y="250.7915" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m99ebb88b34" x="271.95625" y="250.7915" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_2">
       <!-- v1.2.0 -->
-      <g transform="translate(238.409512 264.6665) scale(0.1 -0.1)">
+      <g transform="translate(256.95625 264.6665) scale(0.1 -0.1)">
        <defs>
         <path id="SimHei-32" d="M 300 250 
 Q 325 625 650 925 
@@ -311,7 +311,7 @@ z
        <use xlink:href="#SimHei-30" transform="translate(250 0)"/>
       </g>
       <!-- 四维 -->
-      <g transform="translate(243.409512 275.432125) scale(0.1 -0.1)">
+      <g transform="translate(261.95625 275.432125) scale(0.1 -0.1)">
        <defs>
         <path id="SimHei-56db" d="M 5750 4750 
 Q 5725 4125 5725 3425 
@@ -358,12 +358,12 @@ z
     <g id="xtick_3">
      <g id="line2d_3">
       <g>
-       <use xlink:href="#m849b16da11" x="408.20239" y="250.7915" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m99ebb88b34" x="439.973184" y="250.7915" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_3">
       <!-- v1.3.0 -->
-      <g transform="translate(393.20239 264.6665) scale(0.1 -0.1)">
+      <g transform="translate(424.973184 264.6665) scale(0.1 -0.1)">
        <defs>
         <path id="SimHei-33" d="M 250 1225 
 L 700 1300 
@@ -403,7 +403,7 @@ z
        <use xlink:href="#SimHei-30" transform="translate(250 0)"/>
       </g>
       <!-- 六维测量 -->
-      <g transform="translate(388.20239 275.432125) scale(0.1 -0.1)">
+      <g transform="translate(419.973184 275.432125) scale(0.1 -0.1)">
        <defs>
         <path id="SimHei-516d" d="M 5100 3425 
 Q 5625 3425 5975 3475 
@@ -611,12 +611,12 @@ z
     <g id="ytick_1">
      <g id="line2d_4">
       <defs>
-       <path id="m717a524e8e" d="M 0 0 
+       <path id="m73a636500d" d="M 0 0 
 L -3.5 0 
 " style="stroke: #000000; stroke-width: 0.8"/>
       </defs>
       <g>
-       <use xlink:href="#m717a524e8e" x="36.3125" y="250.7915" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m73a636500d" x="36.3125" y="250.7915" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_4">
@@ -629,7 +629,7 @@ L -3.5 0
     <g id="ytick_2">
      <g id="line2d_5">
       <g>
-       <use xlink:href="#m717a524e8e" x="36.3125" y="222.848969" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m73a636500d" x="36.3125" y="222.848969" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_5">
@@ -642,7 +642,7 @@ L -3.5 0
     <g id="ytick_3">
      <g id="line2d_6">
       <g>
-       <use xlink:href="#m717a524e8e" x="36.3125" y="194.906437" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m73a636500d" x="36.3125" y="194.906437" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_6">
@@ -655,7 +655,7 @@ L -3.5 0
     <g id="ytick_4">
      <g id="line2d_7">
       <g>
-       <use xlink:href="#m717a524e8e" x="36.3125" y="166.963906" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m73a636500d" x="36.3125" y="166.963906" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_7">
@@ -668,7 +668,7 @@ L -3.5 0
     <g id="ytick_5">
      <g id="line2d_8">
       <g>
-       <use xlink:href="#m717a524e8e" x="36.3125" y="139.021375" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m73a636500d" x="36.3125" y="139.021375" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_8">
@@ -702,7 +702,7 @@ z
     <g id="ytick_6">
      <g id="line2d_9">
       <g>
-       <use xlink:href="#m717a524e8e" x="36.3125" y="111.078844" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m73a636500d" x="36.3125" y="111.078844" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_9">
@@ -746,7 +746,7 @@ z
     <g id="ytick_7">
      <g id="line2d_10">
       <g>
-       <use xlink:href="#m717a524e8e" x="36.3125" y="83.136312" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m73a636500d" x="36.3125" y="83.136312" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_10">
@@ -788,7 +788,7 @@ z
     <g id="ytick_8">
      <g id="line2d_11">
       <g>
-       <use xlink:href="#m717a524e8e" x="36.3125" y="55.193781" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m73a636500d" x="36.3125" y="55.193781" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_11">
@@ -813,7 +813,7 @@ z
     <g id="ytick_9">
      <g id="line2d_12">
       <g>
-       <use xlink:href="#m717a524e8e" x="36.3125" y="27.25125" style="stroke: #000000; stroke-width: 0.8"/>
+       <use xlink:href="#m73a636500d" x="36.3125" y="27.25125" style="stroke: #000000; stroke-width: 0.8"/>
       </g>
      </g>
      <g id="text_12">
@@ -1058,18 +1058,18 @@ L 36.3125 27.25125
    </g>
    <g id="patch_7">
     <path d="M 36.3125 250.7915 
-L 470.506524 250.7915 
+L 507.6 250.7915 
 " style="fill: none; stroke: #000000; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="text_14">
     <!-- 3 -->
-    <g transform="translate(95.116634 161.860802) scale(0.14 -0.14)">
+    <g transform="translate(100.439316 161.860802) scale(0.14 -0.14)">
      <use xlink:href="#SimHei-33"/>
     </g>
    </g>
    <g id="text_15">
     <!-- 谱心×1.0 -->
-    <g style="fill: #444444" transform="translate(78.366634 220.466302) scale(0.09 -0.09)">
+    <g style="fill: #444444" transform="translate(83.689316 220.466302) scale(0.09 -0.09)">
      <defs>
       <path id="SimHei-8c31" d="M 5600 1850 
 Q 5575 1375 5575 575 
@@ -1221,7 +1221,7 @@ z
      <use xlink:href="#SimHei-30" transform="translate(400 0)"/>
     </g>
     <!-- 基频×0.8 -->
-    <g style="fill: #444444" transform="translate(78.366634 230.113177) scale(0.09 -0.09)">
+    <g style="fill: #444444" transform="translate(83.689316 230.113177) scale(0.09 -0.09)">
      <defs>
       <path id="SimHei-57fa" d="M 1800 4550 
 Q 1800 4900 1775 5200 
@@ -1402,7 +1402,7 @@ z
      <use xlink:href="#SimHei-38" transform="translate(400 0)"/>
     </g>
     <!-- 响度×0.4 -->
-    <g style="fill: #444444" transform="translate(78.366634 239.886614) scale(0.09 -0.09)">
+    <g style="fill: #444444" transform="translate(83.689316 239.886614) scale(0.09 -0.09)">
      <defs>
       <path id="SimHei-54cd" d="M 4150 5125 
 Q 4000 4975 3850 4325 
@@ -1469,13 +1469,13 @@ z
    </g>
    <g id="text_16">
     <!-- 4 -->
-    <g transform="translate(249.909512 133.918271) scale(0.14 -0.14)">
+    <g transform="translate(268.45625 133.918271) scale(0.14 -0.14)">
      <use xlink:href="#SimHei-34"/>
     </g>
    </g>
    <g id="text_17">
     <!-- ＋存在感频带 -->
-    <g style="fill: #444444" transform="translate(226.409512 231.336614) scale(0.09 -0.09)">
+    <g style="fill: #444444" transform="translate(244.95625 231.336614) scale(0.09 -0.09)">
      <defs>
       <path id="SimHei-ff0b" d="M 3425 4700 
 L 3425 2475 
@@ -1790,7 +1790,7 @@ z
      <use xlink:href="#SimHei-5e26" transform="translate(500 0)"/>
     </g>
     <!-- 2.4-4.8kHz -->
-    <g style="fill: #444444" transform="translate(230.909512 239.886614) scale(0.09 -0.09)">
+    <g style="fill: #444444" transform="translate(249.45625 239.886614) scale(0.09 -0.09)">
      <defs>
       <path id="SimHei-2d" d="M 2975 2125 
 L 125 2125 
@@ -1857,13 +1857,13 @@ z
    </g>
    <g id="text_18">
     <!-- 6 -->
-    <g transform="translate(404.70239 78.033209) scale(0.14 -0.14)">
+    <g transform="translate(436.473184 78.033209) scale(0.14 -0.14)">
      <use xlink:href="#SimHei-36"/>
     </g>
    </g>
    <g id="text_19">
     <!-- ＋&lt;300Hz能量 -->
-    <g style="fill: #444444" transform="translate(381.20239 230.070989) scale(0.09 -0.09)">
+    <g style="fill: #444444" transform="translate(412.973184 230.070989) scale(0.09 -0.09)">
      <defs>
       <path id="SimHei-3c" d="M 2950 250 
 L 2725 -25 
@@ -1974,7 +1974,7 @@ z
      <use xlink:href="#SimHei-91cf" transform="translate(500 0)"/>
     </g>
     <!-- ＋基音抖动 -->
-    <g style="fill: #444444" transform="translate(385.70239 239.886614) scale(0.09 -0.09)">
+    <g style="fill: #444444" transform="translate(417.473184 239.886614) scale(0.09 -0.09)">
      <defs>
       <path id="SimHei-97f3" d="M 5100 2100 
 Q 5075 1725 5075 1350 
@@ -2167,17 +2167,17 @@ z
     </g>
    </g>
    <g id="patch_8">
-    <path d="M 173.876785 126.49717 
-Q 137.127516 146.256936 101.36296 165.48723 
+    <path d="M 179.771291 126.492115 
+Q 142.738174 146.256819 106.691406 165.495106 
 " style="fill: none; stroke: #a05050; stroke-linecap: round"/>
-    <path d="M 105.162599 165.374361 
-L 101.36296 165.48723 
-L 103.552448 162.379797 
+    <path d="M 110.491377 165.394011 
+L 106.691406 165.495106 
+L 108.890512 162.394472 
 " style="fill: none; stroke: #a05050; stroke-linecap: round"/>
    </g>
    <g id="text_20">
     <!-- 2da 0054：三维放行，频谱形状重分布漏检 -->
-    <g style="fill: #a05050" transform="translate(106.356278 122.255856) scale(0.085 -0.085)">
+    <g style="fill: #a05050" transform="translate(112.340163 122.255856) scale(0.085 -0.085)">
      <defs>
       <path id="SimHei-64" d="M 2750 125 
 L 2250 125 
@@ -2900,17 +2900,17 @@ z
     </g>
    </g>
    <g id="patch_9">
-    <path d="M 409.467939 68.862918 
-Q 408.923376 75.004729 408.477556 80.032875 
+    <path d="M 359.226198 49.295513 
+Q 398.632492 59.674108 436.95762 69.767952 
 " style="fill: none; stroke: #a05050; stroke-linecap: round"/>
-    <path d="M 410.471196 76.796302 
-L 408.477556 80.032875 
-L 407.084482 76.49602 
+    <path d="M 434.102713 67.258071 
+L 436.95762 69.767952 
+L 433.236771 70.54595 
 " style="fill: none; stroke: #a05050; stroke-linecap: round"/>
    </g>
    <g id="text_21">
     <!-- 0058_B：四维总分放行，基频塌 -2.75σ 漏检 -->
-    <g style="fill: #a05050" transform="translate(323.066307 63.576541) scale(0.085 -0.085)">
+    <g style="fill: #a05050" transform="translate(246.75371 45.491712) scale(0.085 -0.085)">
      <defs>
       <path id="SimHei-5f" d="M 3150 -850 
 L 0 -850 
@@ -3150,7 +3150,7 @@ z
    </g>
    <g id="text_22">
     <!-- 音色漂移检测：测量维度演进（v1.1.0 → v1.3.0） -->
-    <g transform="translate(115.409512 21.25125) scale(0.12 -0.12)">
+    <g transform="translate(133.95625 21.25125) scale(0.12 -0.12)">
      <defs>
       <path id="SimHei-8272" d="M 2925 4975 
 Q 2725 4875 2425 4450 
@@ -3624,8 +3624,8 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pe86c6fe2a7">
-   <rect x="36.3125" y="27.25125" width="434.194024" height="223.54025"/>
+  <clipPath id="p30d58eb116">
+   <rect x="36.3125" y="27.25125" width="471.2875" height="223.54025"/>
   </clipPath>
  </defs>
 </svg>

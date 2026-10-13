@@ -16,7 +16,8 @@ font_manager.fontManager.addfont(FONT)
 plt.rcParams["font.family"] = "SimHei"
 plt.rcParams["axes.unicode_minus"] = False
 
-OUT = r"assets"  # 本脚本位于 articles/assets/，输出到同目录（留档脱敏：原为本机绝对路径）
+import os
+OUT = os.path.dirname(os.path.abspath(__file__))  # 本脚本位于 articles/assets/，输出到同目录（留档脱敏：原为本机绝对路径）
 
 
 def fig1():
@@ -38,8 +39,8 @@ def fig1():
                 fontsize=8.5, color="#a05050",
                 arrowprops=dict(arrowstyle="->", color="#a05050"))
     ax.annotate("0058_B：四维总分放行，基频塌 -2.75σ 漏检",
-                xy=(2, 6), xytext=(1.45, 6.7),
-                fontsize=8.5, color="#a05050",
+                xy=(2, 6.45), xytext=(0.85, 7.45),
+                fontsize=8.5, color="#a05050", va="center",
                 arrowprops=dict(arrowstyle="->", color="#a05050"))
     ax.set_ylabel("测量维度数量")
     ax.set_ylim(0, 8)

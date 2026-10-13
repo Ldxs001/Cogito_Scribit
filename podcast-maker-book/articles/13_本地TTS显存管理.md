@@ -88,7 +88,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 黑窗一侧，启动服务时给进程创建标志 `CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW`（仅 Windows），全链路隐藏控制台：
 
-```text
+```python
 # podcast_maker/tts_engine.py —— 拉起本地语音服务
 # 用 CREATE_NO_WINDOW（隐藏控制台）而不是 DETACHED_PROCESS：DETACHED 下
 # 服务自身没有控制台，venv 启动器（Scripts\python.exe）再拉真身解释器时
@@ -104,7 +104,7 @@ proc = subprocess.Popen([py, serve, "--host", host, "--port", str(port)],
 
 孤儿一侧，服务进程起来后立刻挂进 Job 对象，设 `KILL_ON_JOB_CLOSE`：
 
-```text
+```python
 # podcast_maker/tts_engine.py —— Job 对象绑定
 _JOB_KILL_ON_CLOSE = 0x2000      # JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
 _JOB_EXTENDED_LIMIT_INFO = 9     # JobObjectExtendedLimitInformation
@@ -128,7 +128,7 @@ def _job_assign(proc, log=None):
 
 挂 Job 之前，`_job_assign` 先把 `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE` 写进 `EXTENDED_LIMIT_INFORMATION` 结构的 `BasicLimitInformation.LimitFlags`，再交给 `SetInformationJobObject`——这段 ctypes 结构（`IO_COUNTERS` / `BASIC_LIMIT` / `EXT_LIMIT`）就是 Windows 要求的入参形状，缺了它内核不认这个标志：
 
-```text
+```python
 # podcast_maker/tts_engine.py —— Job 扩展限额结构（ctypes）
 class EXT_LIMIT(ctypes.Structure):
     _fields_ = [
@@ -139,13 +139,11 @@ class EXT_LIMIT(ctypes.Structure):
         ("PeakProcessMemoryUsed", ctypes.c_size_t),
         ("PeakJobMemoryUsed", ctypes.c_size_t),
     ]
-# :445  info.BasicLimitInformation.LimitFlags = _JOB_KILL_ON_CLOSE
-# :458  AssignProcessToJobObject(job, ph)  # 服务进程挂进 Job
 ```
 
 句柄的关闭由 `_job_close` 独立负责，正常收工是「先 `_kill(proc)` 再关句柄」双保险；异常路径下句柄随主进程被内核收走，同样触发 `KILL_ON_JOB_CLOSE`：
 
-```text
+```python
 # podcast_maker/tts_engine.py —— Job 句柄关闭（双保险）
 def _job_close(job):
     """关掉 Job 句柄。KILL_ON_JOB_CLOSE 生效时，句柄一关内核清掉整棵进程树。
@@ -162,7 +160,7 @@ def _job_close(job):
 
 **形态 C · 起服务移出业务锁**：`acquire_service`（:566）改用 `starting` 状态位 + 条件变量（`_SERVICE_LOCK` :264、`_SERVICE_CV` :268、`_SERVICE["starting"]` :270）：起服务移到锁外，只放一个线程去起，其余在「启动中」上等待；`release_service` 在启动完成后才裁决是否停机，避免「刚起好、引用计数已归零、无人停」的泄漏 [6]。
 
-```text
+```python
 # podcast_maker/tts_engine.py —— acquire_service 起服务移出锁
 # 旧：_spawn_service(含 90s _wait_ready) 整个包在 _SERVICE_LOCK 内，
 #     读锁入口一并等待 → 整页卡死。

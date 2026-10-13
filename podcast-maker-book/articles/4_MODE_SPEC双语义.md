@@ -86,15 +86,19 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 两个消费方的骨架（真实实现 `podcast_maker/config_manager.py`，`param_options` :1400、`coerce` :1427，伪代码化）：
 
-```text
-# config_manager.py —— 接驳表的两处接法：界面取档位、写入做校验
-界面取档位(key):
-    接驳表没有该点 → 返回空（界面不出现该控件）
-    有 → 逐档返回（档位值, 显示标签）              # 标签是枚举值的唯一展示来源
+```python
+# config_manager.py —— MODE_SPEC 接驳表的两处接法：界面取档位、写入做校验
+def mode_options(key):                             # 界面取档位
+    if key not in MODE_SPEC:
+        return []                                  # 界面不出现该控件
+    return list(MODE_SPEC[key]["options"].items()) # 逐档返回（档位值, 显示标签）
 
-写入校验(key, value):
-    接驳表没有该点 → 拒绝（报「未知模式点」）
-    value 不在该点的档位表里 → 拒绝                # 野模式值不静默收下
+def set(self, key, value):                         # 写入校验
+    if key not in MODE_SPEC:
+        raise ConfigError("未知模式点")
+    if value not in MODE_SPEC[key]["options"]:
+        raise ConfigError("野模式值")               # 野模式值不静默收下
+# 显示标签是枚举值的唯一展示来源——PARAM_SPEC 里再写 options 会被忽略
 ```
 
 `param_options` 与 `coerce` 不认识任何具体模式名——它们只读 `MODE_SPEC`。新增一个带模式的枚举点位，这两个函数一行不改；写进一个不在接驳表里的模式值，当场 `KeyError` / `ValueError`。

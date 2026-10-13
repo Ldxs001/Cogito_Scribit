@@ -59,22 +59,14 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 素材侧，新增 `tools/bgm_level.py` 把 15 档统一到同一响度。测量走 ffmpeg `loudnorm`（EBU R128），增益走纯 PCM 整数运算，不做动态压缩、不改采样率/位深/声道：
 
-```text
+```python
 # tools/bgm_level.py —— 内置 BGM 素材统一到 -23 LUFS
-# 测量：ffmpeg loudnorm（EBU R128，K 加权响度）
-# 增益：纯 PCM 整数运算（不动态压缩、不改采样率/位深/声道）
-# 真峰值硬约束：mech 真峰值只剩 0.6 dB 空间 → 目标响度定 -23 LUFS
-# 写入后复测：偏差超 0.5 LU 或出现削波即拒写（失败 = 文件一个字节不变）
-target_lufs   = -23.0
-tp_ceil       = -1.0      # dBTP，真峰值上限
-for clip in builtin_bgm_15_clips:
-    measured = loudnorm_measure(clip)          # 实测 LUFS / 真峰值
-    gain_db  = target_lufs - measured.lufs      # PCM 整数增益
-    if measured.true_peak + gain_db > tp_ceil:  # 不可达：写入前就拒绝
-        reject(clip, "真峰值受限 %.1f LU" % (tp_ceil - measured.true_peak))
-        continue
-    apply_pcm_gain(clip, gain_db)
-    assert abs(loudnorm_measure(clip).lufs - target_lufs) <= 0.5   # 复测幂等
+target_lufs = -23.0                                # 真峰值硬上限 -1.0 dBTP：mech 真峰值只剩 0.6 dB 空间
+for clip in builtin_clips:                         # 15 档素材逐档
+    measured = measure(clip)                       # 测量：EBU R128 K 加权响度（ffmpeg loudnorm）
+    plan = plan_one(clip, ffmpeg, target_lufs, tp_ceil=-1.0)
+    apply(plan)                                    # 增益走纯 PCM 整数运算：不动态压缩、不改采样率/位深/声道；
+                                                   # 写入后复测，偏差超 0.5 LU 或削波即拒写（失败 = 文件一个字节不变）
 ```
 
 这把素材归一收敛成「一处算法、两条入口」：生成侧 `_bgm_gen.py` 落盘即调 `bgm_loudness.normalize_file()`，新素材一出来就是平的一档；校正侧 `tools/bgm_level.py` 事后对已存在目录就地拉平，带备份 + 闭环复测，用来补历史素材或外来素材。两者共用 `tools/bgm_loudness.py` 同一套测量与增益算法，不会跑出两个标准（早先 `bgm_level.py` 自带一套实现，两边并存迟早分叉，已在 v0.15.0 把归一实现抽到一处）。
@@ -104,21 +96,21 @@ for clip in builtin_bgm_15_clips:
 
 `bgm_level.py` 的写入是 fail-closed 的：不传 `--apply` 一个文件都不写，只打印对照表；传了 `--apply` 也先备份到 `_smoke/_bgm_level_backup_<日期>`，再逐档 `normalize_file`。`normalize_file` 内部保证「失败 = 文件未变」（md5 比对），任一档不可达目标就整批回退、把备份拷回——调用方看返回码拿到的是不合标素材还是未动过的原文件，边界清清楚楚：
 
-```text
-# tools/bgm_level.py —— 备份 + 闭环复测 + 失败回退
+```python
+# tools/bgm_level.py —— 备份 + 闭环复测 + 失败整批回退（fail-closed）
 backup = os.path.join(BACKUP_ROOT, "_bgm_level_backup_%s" % stamp)
-os.makedirs(backup, exist_ok=True)            # 先备份原档
+os.makedirs(backup, exist_ok=True)                 # 先备份原档
 for p in ok:
-    shutil.copy2(src, os.path.join(backup, name))
-    res = normalize_file(src, target_lufs, tp_ceil, ffmpeg)  # 失败=文件未变
+    shutil.copy2(p, os.path.join(backup, basename(p)))
+    res = normalize_file(p, target_lufs, tp_ceil, ffmpeg)   # 失败 = 文件未变（md5 比对）
     if not res.get("ok"):
-        failures.append(...)                  # 记失败项，继续下一档
+        failures.append(p)                         # 记失败项，继续下一档
 if failures:
-    print("回退：把 %s 下的文件拷回 %s" % (backup, BGM_DIR))
-    return 1                                  # 整批回退
+    copy_backup_back(backup, BGM_DIR)              # 整批回退：备份拷回
+    return 1                                       # 调用方看返回码：不合标素材 or 未动过的原文件
+```
 
 v0.15.0 只做了「事后校正」，但它有个漏：生成脚本本身没改，重新生成素材就前功尽弃、且不报错。v0.15.1 把归一挪到生成侧——`_bgm_gen.py` 落盘即调 `normalize_file()`，新素材出来天然平的一档；并补两道保险：归一失败立即删半成品并抛错（旧逻辑会让未归一文件因「已存在」被永久跳过），以及 `tests/test_bgm_loudness.py` 8 项钉，其中最关键的一条「内置 15 档响度极差必须 ≤1.0 LU」——活性已验：人为把一档推高 8 dB 后，7.95 LU 的极差会被拦下。全仓随这 8 项升到 853 项通过。
-```
 
 ## 七、结语：一句话收束
 

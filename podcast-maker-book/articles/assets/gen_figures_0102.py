@@ -106,29 +106,36 @@ def fig_config_chain():
     ax.axis("off")
     ax.set_xlim(0, 12.4)
     ax.set_ylim(0, 7.2)
-    # central definition
-    _box(ax, 4.6, 4.4, 3.2, 1.5, "PARAM_SPEC\n(一处定义)", "#ffe9cf")
-    ax.text(6.2, 4.2, "type / min / max / step /\ndefault / label / views / group",
-            ha="center", va="top", fontsize=7.6, color="#33415c")
-    # UI consumer
-    _box(ax, 0.7, 1.4, 3.4, 1.5, "界面\nui_payload / coerce /\n_views_of / section_of", "#dbe7ff")
-    # pipeline consumer
-    _box(ax, 8.3, 1.4, 3.4, 1.5, "管线\nget / set / apply_to_config\n/ default_config", "#d3f0e0")
-    _arrow(ax, 4.6, 4.4, 1.7, 2.9)
-    _arrow(ax, 7.8, 4.4, 10.3, 2.9)
-    ax.text(2.5, 3.5, "读同一份", fontsize=8, color="#33415c", rotation=58)
-    ax.text(9.9, 3.5, "读同一份", fontsize=8, color="#33415c", rotation=-58)
-    # CONFIG_PASS_THROUGH channel
-    _box(ax, 4.6, 0.5, 3.2, 1.1,
-         "CONFIG_PASS_THROUGH\n(通道键：项目设定→配置副本)", "#e8d6ff")
-    _arrow(ax, 4.6, 1.6, 4.6, 2.55, color="#7a4fb0")
-    _arrow(ax, 6.2, 1.6, 6.2, 2.55, color="#7a4fb0")
-    ax.text(8.0, 1.05, "只送不配：不是配置点位", fontsize=7.6, color="#5a3a8a")
-    # guard note
+
+    # 顶层守门注（挂画布顶，两行，中轴对齐）
     ax.text(6.2, 6.7, "一处定义 → 界面与管线两处消费，通道键单列且不得同时是配置点位",
             ha="center", fontsize=9, weight="bold", color="#16213a")
     ax.text(6.2, 6.35, "（test_config_keys / test_project_store 对账守卫）",
             ha="center", fontsize=7.8, color="#33415c")
+
+    # 第一层：一处定义（字段清单收进盒内分行，不悬空盒外）
+    _box(ax, 4.2, 4.35, 4.0, 1.5, "", "#ffe9cf")
+    ax.text(6.2, 5.52, "PARAM_SPEC（一处定义）", ha="center", va="center",
+            fontsize=9, color="#16213a", weight="bold")
+    ax.text(6.2, 5.10, "type / min / max / step\ndefault / label / views / group",
+            ha="center", va="top", fontsize=7.6, color="#33415c")
+
+    # 第二层：两处消费（垂直箭头、水平标签走净带，起点落点都落在元素上）
+    _box(ax, 1.3, 2.0, 3.6, 1.5, "界面\nui_payload / coerce /\n_views_of / section_of", "#dbe7ff")
+    _box(ax, 7.5, 2.0, 3.6, 1.5, "管线\nget / set / apply_to_config\n/ default_config", "#d3f0e0")
+    _arrow(ax, 4.6, 4.35, 4.6, 3.55)
+    _arrow(ax, 7.8, 4.35, 7.8, 3.55)
+    ax.text(4.75, 3.95, "读同一份", ha="left", va="center", fontsize=8, color="#33415c")
+    ax.text(7.95, 3.95, "读同一份", ha="left", va="center", fontsize=8, color="#33415c")
+
+    # 第三层：通道键（斜向短箭头有明确落点——指向两消费盒底边）
+    _box(ax, 4.45, 0.55, 3.5, 1.0,
+         "CONFIG_PASS_THROUGH\n（通道键：项目设定→配置副本）", "#e8d6ff")
+    _arrow(ax, 5.1, 1.55, 4.1, 1.95, color="#7a4fb0")
+    _arrow(ax, 7.3, 1.55, 8.3, 1.95, color="#7a4fb0")
+    ax.text(6.2, 0.35, "只送不配：不是配置点位", ha="center", va="top",
+            fontsize=7.6, color="#5a3a8a")          # 注挂盒正下方，不漂浮
+
     fig.suptitle("图 1 · 配置总表一处定义，界面与管线读同一份数据",
                  fontsize=11, weight="bold", color="#16213a")
     out_png = os.path.join(HERE, "2_配置总表驱动_fig1.png")

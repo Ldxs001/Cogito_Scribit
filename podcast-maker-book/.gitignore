@@ -9,3 +9,16 @@ CHANGELOG_快照*.md
 
 # 公众号发布凭证（本地仅存，绝不推送）
 wechat-publish/.env
+
+# 成书管线生成物（assemble/build 产物，非源码，不推送；脚本 book/build/*.py 仍跟踪）
+build/output/
+
+# 会话本地数据（WorkBuddy 工作记忆，不入仓）
+.workbuddy/
+
+# 定时任务 prompt（含本机绝对路径，仅本地使用）
+定时任务prompt_*.txt
+
+# 冗余打包件（cloud-relay/ 源码已跟踪）
+wechat-publish/cloud-relay.zip
+wechat-publish/__pycache__/

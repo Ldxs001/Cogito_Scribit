@@ -159,7 +159,7 @@ def coerce(key, value):
 |------|------|------|
 | [1] | 「一套配置管两种字幕模式」；「接驳表（同一批配置两种语义）」逐行两义对照（margin_lr / margin_v / bg_alpha / outline / lyric_max_rows） | podcast-maker · CHANGELOG.md · v0.41.0（L1526 / L1554） |
 | [2] | `MODE_SPEC` 字典与 `label`/`options` 双语义；`param_options`（唯一枚举标签来源）/ `coerce`（校验入口）/ `modes_payload`（喂配置页） | `podcast_maker/config_manager.py`（MODE_SPEC L282；param_options L1400；coerce L1427；modes_payload L1505） |
-| [3] | 守卫：接驳表只描述已声明点、每个模式点都是枚举、每个默认落在 options、界面标签从不等于裸值 | `podcast_maker/tests/test_config_keys.py`（TestConfigKeys L64：test_mode_spec_only_describes_declared_points L147 / test_every_mode_point_is_an_enum L151 / test_every_mode_default_is_one_of_its_options L157；TestEnumLabels L260：test_labels_are_never_the_raw_value L268 / test_style_preset_labels_come_from_preset_spec L298） |
+| [3] | 守卫：接驳表只描述已声明点、每个模式点都是枚举、每个默认落在 options、界面标签从不等于裸值 | `tests/test_config_keys.py`（TestConfigKeys L64：test_mode_spec_only_describes_declared_points L147 / test_every_mode_point_is_an_enum L151 / test_every_mode_default_is_one_of_its_options L157；TestEnumLabels L260：test_labels_are_never_the_raw_value L268 / test_style_preset_labels_come_from_preset_spec L298） |
 
 ## 延伸阅读
 

@@ -105,7 +105,7 @@ for clip in builtin_bgm_15_clips:
 `bgm_level.py` 的写入是 fail-closed 的：不传 `--apply` 一个文件都不写，只打印对照表；传了 `--apply` 也先备份到 `_smoke/_bgm_level_backup_<日期>`，再逐档 `normalize_file`。`normalize_file` 内部保证「失败 = 文件未变」（md5 比对），任一档不可达目标就整批回退、把备份拷回——调用方看返回码拿到的是不合标素材还是未动过的原文件，边界清清楚楚：
 
 ```text
-# tools/bgm_level.py:111-139 —— 备份 + 闭环复测 + 失败回退
+# tools/bgm_level.py —— 备份 + 闭环复测 + 失败回退
 backup = os.path.join(BACKUP_ROOT, "_bgm_level_backup_%s" % stamp)
 os.makedirs(backup, exist_ok=True)            # 先备份原档
 for p in ok:
@@ -134,6 +134,7 @@ BGM 听不见不是没混进去，而是素材响度（13.6 LU 参差）与混�
 | [4] | 三个默认值变更与实测定标（人声段音乐低约 13 dB） | `podcast-maker · CHANGELOG.md · v0.15.0 · 变更段`；`config.json:76-78` |
 | [5] | `tools/bgm_level.py` 归一（loudnorm + PCM 增益 + 真峰值硬约束 + 拒写） | `podcast-maker · CHANGELOG.md · v0.15.0 · 新增段`；`tools/bgm_level.py` |
 | [6] | 全量 845 项通过 | `podcast-maker · CHANGELOG.md · v0.15.0 · 测试段` |
+| [7] | v0.15.1 生成侧归一 + 两道保险（失败删半成品抛错 / 8 项钉「极差 ≤1.0 LU」活性已验）+ 全量 853 项；备份 + 闭环复测 + 失败整批回退 fail-closed | `podcast-maker · CHANGELOG.md · v0.15.1`；`tools/bgm_level.py:111-139`；`tests/test_bgm_loudness.py` |
 
 ## 延伸阅读
 
@@ -142,4 +143,4 @@ BGM 听不见不是没混进去，而是素材响度（13.6 LU 参差）与混�
 
 ---
 
-*最后更新：2026-10-13（引子修正：删除无来源的虚构用户场景与对白，问题起点改为对齐 CHANGELOG v0.15.0 首段的现象断言；论证与证据链未动。2026-10-09 首版：论证：两重衰减现象 → 旧凑法（只调音量/只加压缩/分开修）各自踏空 → 素材不归一 + 混音三默认值未量过两根因 → bgm_level.py 归一 + 三默认值重定双修法 → 13.6 LU 收敛至 ≤0.05 LU、845 项通过；文献佐证 6 条均取自真实 CHANGELOG 与代码；四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS）*
+*最后更新：2026-10-13（引子修正：删除无来源的虚构用户场景与对白，问题起点改为对齐 CHANGELOG v0.15.0 首段的现象断言；论证与证据链未动。2026-10-09 首版：论证：两重衰减现象 → 旧凑法（只调音量/只加压缩/分开修）各自踏空 → 素材不归一 + 混音三默认值未量过两根因 → bgm_level.py 归一 + 三默认值重定双修法 → 13.6 LU 收敛至 ≤0.05 LU、845 项通过；文献佐证 6 条均取自真实 CHANGELOG 与代码；四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS；2026-10-13 稿面修订：正文代码块伪代码化（STYLE_GUIDE §2.12），论证与证据未动）*

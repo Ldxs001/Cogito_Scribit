@@ -86,20 +86,15 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 
 两个消费方的骨架（真实实现 `podcast_maker/config_manager.py`，`param_options` :1400、`coerce` :1427，伪代码化）：
 
-```python
-def param_options(key):
-    spec = MODE_SPEC.get(key)            # 唯一接驳处
-    if spec is None:
-        return []                        # 不在接驳表的点，界面不出现
-    return [(sub, body.get("label", sub)) for sub, body in spec["options"].items()]
+```text
+# config_manager.py —— 接驳表的两处接法：界面取档位、写入做校验
+界面取档位(key):
+    接驳表没有该点 → 返回空（界面不出现该控件）
+    有 → 逐档返回（档位值, 显示标签）              # 标签是枚举值的唯一展示来源
 
-def coerce(key, value):
-    spec = MODE_SPEC.get(key)
-    if spec is None:
-        raise KeyError("未知模式点: %s" % key)
-    if value not in spec["options"]:     # 野模式值直接拒绝，不静默收下
-        raise ValueError("模式值不在接驳表: %s=%s" % (key, value))
-    return value
+写入校验(key, value):
+    接驳表没有该点 → 拒绝（报「未知模式点」）
+    value 不在该点的档位表里 → 拒绝                # 野模式值不静默收下
 ```
 
 `param_options` 与 `coerce` 不认识任何具体模式名——它们只读 `MODE_SPEC`。新增一个带模式的枚举点位，这两个函数一行不改；写进一个不在接驳表里的模式值，当场 `KeyError` / `ValueError`。
@@ -167,4 +162,4 @@ def coerce(key, value):
 
 ---
 
-*最后更新：2026-10-13（字数补厚：MODE_SPEC 17 枚举点/64 档子值/0 孤儿/双档四档十五档实测（2026-10-13 逐键解析）+ 17 键全貌表 + 两义对照表 + param_options/coerce 守门伪代码（config_manager.py:1400/:1427）+ 双语义一致性复跑设计 + 计数复跑；四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS）*
+*最后更新：2026-10-13（字数补厚：MODE_SPEC 17 枚举点/64 档子值/0 孤儿/双档四档十五档实测（2026-10-13 逐键解析）+ 17 键全貌表 + 两义对照表 + param_options/coerce 守门伪代码（config_manager.py:1400/:1427）+ 双语义一致性复跑设计 + 计数复跑；四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS；2026-10-13 稿面修订：正文代码块伪代码化（STYLE_GUIDE §2.12），论证与证据未动）*

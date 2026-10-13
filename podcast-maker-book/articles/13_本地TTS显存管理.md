@@ -89,7 +89,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 黑窗一侧，启动服务时给进程创建标志 `CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW`（仅 Windows），全链路隐藏控制台：
 
 ```text
-# podcast_maker/tts_engine.py:495 —— 拉起本地语音服务
+# podcast_maker/tts_engine.py —— 拉起本地语音服务
 # 用 CREATE_NO_WINDOW（隐藏控制台）而不是 DETACHED_PROCESS：DETACHED 下
 # 服务自身没有控制台，venv 启动器（Scripts\python.exe）再拉真身解释器时
 # 不透传这个标志，真身发现自己没台可继承就自建一个新控制台——黑窗从合成
@@ -105,7 +105,7 @@ proc = subprocess.Popen([py, serve, "--host", host, "--port", str(port)],
 孤儿一侧，服务进程起来后立刻挂进 Job 对象，设 `KILL_ON_JOB_CLOSE`：
 
 ```text
-# podcast_maker/tts_engine.py:385 —— Job 对象绑定
+# podcast_maker/tts_engine.py —— Job 对象绑定
 _JOB_KILL_ON_CLOSE = 0x2000      # JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
 _JOB_EXTENDED_LIMIT_INFO = 9     # JobObjectExtendedLimitInformation
 
@@ -129,7 +129,7 @@ def _job_assign(proc, log=None):
 挂 Job 之前，`_job_assign` 先把 `JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE` 写进 `EXTENDED_LIMIT_INFORMATION` 结构的 `BasicLimitInformation.LimitFlags`，再交给 `SetInformationJobObject`——这段 ctypes 结构（`IO_COUNTERS` / `BASIC_LIMIT` / `EXT_LIMIT`）就是 Windows 要求的入参形状，缺了它内核不认这个标志：
 
 ```text
-# podcast_maker/tts_engine.py:410-431 —— Job 扩展限额结构（ctypes）
+# podcast_maker/tts_engine.py —— Job 扩展限额结构（ctypes）
 class EXT_LIMIT(ctypes.Structure):
     _fields_ = [
         ("BasicLimitInformation", BASIC_LIMIT),   # 内含 LimitFlags
@@ -146,7 +146,7 @@ class EXT_LIMIT(ctypes.Structure):
 句柄的关闭由 `_job_close` 独立负责，正常收工是「先 `_kill(proc)` 再关句柄」双保险；异常路径下句柄随主进程被内核收走，同样触发 `KILL_ON_JOB_CLOSE`：
 
 ```text
-# podcast_maker/tts_engine.py:466-472 —— Job 句柄关闭（双保险）
+# podcast_maker/tts_engine.py —— Job 句柄关闭（双保险）
 def _job_close(job):
     """关掉 Job 句柄。KILL_ON_JOB_CLOSE 生效时，句柄一关内核清掉整棵进程树。
     正常收工路径先 _kill(proc) 再关句柄，双保险；句柄无效或非 Windows 什么都不做。"""
@@ -163,7 +163,7 @@ def _job_close(job):
 **形态 C · 起服务移出业务锁**：`acquire_service`（:566）改用 `starting` 状态位 + 条件变量（`_SERVICE_LOCK` :264、`_SERVICE_CV` :268、`_SERVICE["starting"]` :270）：起服务移到锁外，只放一个线程去起，其余在「启动中」上等待；`release_service` 在启动完成后才裁决是否停机，避免「刚起好、引用计数已归零、无人停」的泄漏 [6]。
 
 ```text
-# podcast_maker/tts_engine.py:566 —— acquire_service 起服务移出锁
+# podcast_maker/tts_engine.py —— acquire_service 起服务移出锁
 # 旧：_spawn_service(含 90s _wait_ready) 整个包在 _SERVICE_LOCK 内，
 #     读锁入口一并等待 → 整页卡死。
 # 新：starting 状态位 + 条件变量；只放一个线程去起，其余在「启动中」上等。
@@ -227,4 +227,4 @@ v2.10.0 又补两处：起服务移出业务锁，不让 90 秒等待串行化�
 
 ---
 
-*最后更新：2026-10-10（论证：黑窗/孤儿两类失败形态 → 旧凑法 DETACHED/手动 kill 各自踏空 → Windows 控制台继承与进程无父死子亡语义两根因 → Job 绑定 + CREATE_NO_WINDOW 双修法 → 4 项测试钉；v2.10.0 增起服务移出业务锁、标定与音色工具补腾显存并烙设备身份；文献佐证 8 条均取自真实代码与 CHANGELOG；四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS）*
+*最后更新：2026-10-13（论证：黑窗/孤儿两类失败形态 → 旧凑法 DETACHED/手动 kill 各自踏空 → Windows 控制台继承与进程无父死子亡语义两根因 → Job 绑定 + CREATE_NO_WINDOW 双修法 → 4 项测试钉；v2.10.0 增起服务移出业务锁、标定与音色工具补腾显存并烙设备身份；文献佐证 8 条均取自真实代码与 CHANGELOG；四检：真实性 PASS / 底层逻辑 PASS / 空推论 PASS / 循环论证 PASS；2026-10-13 稿面修订：正文代码块伪代码化（STYLE_GUIDE §2.12），论证与证据未动）*

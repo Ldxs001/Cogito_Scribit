@@ -22,3 +22,6 @@ build/output/
 # 冗余打包件（cloud-relay/ 源码已跟踪）
 wechat-publish/cloud-relay.zip
 wechat-publish/__pycache__/
+
+# 公众号发文中间产物（md_to_tech_html.py 生成，可重转，不进仓）
+articles/*_tech.html

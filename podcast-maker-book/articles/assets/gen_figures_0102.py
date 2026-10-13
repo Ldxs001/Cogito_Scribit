@@ -53,7 +53,7 @@ def _arrow(ax, x1, y1, x2, y2, color="#2b3a55"):
 def fig_pipeline():
     steps = [
         ("1 脚本", "取定稿稿\n(合成不写稿)", 0.05, "#dbe7ff"),
-        ("2 背景/封面\n/音乐", "静帧预烘焙+\nBGM生成", 0.15, "#cfeede"),
+        ("2 背景/封面\n音乐", "静帧预烘焙+\nBGM生成", 0.15, "#cfeede"),
         ("3 语音合成", "edge-tts /\nQwen3-TTS", 0.30, "#ffe9cf"),
         ("4 音频后处理", "拼接/降噪/\n响度归一", 0.45, "#ffd6d6"),
         ("5 导出音频", "ffmpeg 编码\n落盘", 0.55, "#e8d6ff"),
@@ -62,15 +62,15 @@ def fig_pipeline():
         ("8 文章与清单", "公众号图文\n+产物清单", 0.95, "#d3f0e0"),
         ("9 完成", "记账+\n校验报告", 1.00, "#c9e8ff"),
     ]
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(11.2, 6.4),
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12.2, 6.4),
                                    gridspec_kw={"height_ratios": [3.0, 1.4]})
     ax1.axis("off")
     ax2.axis("off")
     n = len(steps)
     w = 1.14
-    gap = 0.12
+    gap = 0.34                                   # 缝宽必须 > 箭头头长(~0.14u)，否则箭头被盒边吞掉
     total_w = n * w + (n - 1) * gap
-    x0 = (12.4 - total_w) / 2
+    x0 = (13.6 - total_w) / 2
     y0 = 1.55
     h = 1.05
     for i, (title, sub, prog, fc) in enumerate(steps):
@@ -79,16 +79,16 @@ def fig_pipeline():
         ax1.text(x + w / 2, y0 - 0.18, sub, ha="center", va="top",
                  fontsize=7.6, color="#33415c")
         if i < n - 1:
-            _arrow(ax1, x + w + 0.01, y0 + h / 2, x + w + gap - 0.01, y0 + h / 2)
+            _arrow(ax1, x + w + 0.03, y0 + h / 2, x + w + gap - 0.03, y0 + h / 2)
         # progress weight axis
         ax2.add_patch(plt.Rectangle((x, 0.2), w, 0.55, fc=fc, ec="#2b3a55"))
         ax2.text(x + w / 2, 0.475, "%.2f" % prog, ha="center", va="center",
                  fontsize=7.8, color="#16213a")
     ax2.plot([x0, x0 + total_w], [0.95, 0.95], color="#2b3a55", lw=1.0, ls="--")
     ax2.text(x0, 1.02, "进度权重（累积到 1.0，第 9 步收口）", fontsize=8, color="#33415c")
-    ax1.set_xlim(0, 12.4)
-    ax1.set_ylim(0, 3.2)
-    ax2.set_xlim(0, 12.4)
+    ax1.set_xlim(0, 13.6)
+    ax1.set_ylim(0.55, 3.2)                      # 底收至 0.55：副注最低行 ~0.95，消除死空带
+    ax2.set_xlim(0, 13.6)
     ax2.set_ylim(0, 1.3)
     fig.suptitle("图 1 · 九步管线：脚本→声音→字幕→画面→产物（pipeline._run_episode）",
                  fontsize=11, weight="bold", color="#16213a")

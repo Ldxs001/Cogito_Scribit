@@ -84,10 +84,10 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 - **界面消费（label 语义）**：`param_options(key)` 给出下拉选项与文案，`modes_payload()` 把整张接驳表喂给配置页——分区标题、选项文案全部来自 `MODE_SPEC` 的 `label`，不在前端再写一遍 [2]。`coerce(key, value)` 按接驳表声明校验用户选的值是否落在 `options` 里，是唯一入口 [2]。
 - **管线消费（options 子值语义）**：背景绘制读 `options[选中的档].bg_top` 等色值；动画引擎读 `options[选中的档].filter` 拼进 ffmpeg；预算估算读 `options[选中的档].cost` [2]。管线不认 `label`，只认 `options` 里的具体键。
 
-两个消费方的骨架（真实实现 `podcast_maker/config_manager.py`，`param_options` :1400、`coerce` :1427，伪代码化）：
+两个消费方的骨架（真实实现 `podcast_maker/config_manager.py`，`param_options` :1400、`coerce` :1427）：
 
 ```python
-# config_manager.py —— MODE_SPEC 接驳表的两处接法：界面取档位、写入做校验
+# podcast_maker/config_manager.py —— MODE_SPEC 接驳表的两处接法：界面取档位、写入做校验
 def mode_options(key):                             # 界面取档位
     if key not in MODE_SPEC:
         return []                                  # 界面不出现该控件

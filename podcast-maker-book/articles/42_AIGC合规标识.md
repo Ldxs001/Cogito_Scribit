@@ -67,7 +67,7 @@ See https://creativecommons.org/licenses/by-sa/4.0/ for details.
 `aigc_json(cfg, content_id)` 按强标七要素组装元数据，强制 `ensure_ascii`（ASCII 安全，任何容器文本段都放得下）。七要素里法律必填的只有三个——`Label`（生成合成标签，取值只能是 1/2/3，本工具恒取 1）、`ContentProducer`（内容制作者）、`ProduceID`（内容编号）。`ContentProducer` 留空直接抛 `LabelError` 报错停产，**绝不代填**；两个传播者要素首次写入时与制作者/制作编号镜像 [2]。
 
 ```python
-# aigc_label.py —— aigc_json：显式标识 JSON 组装（七要素，法定三项必填起底）
+# podcast_maker/aigc_label.py —— aigc_json：显式标识 JSON 组装（七要素，法定三项必填起底）
 def aigc_json(cfg, content_id=""):
     producer = str(cfg.get("aigc.content_producer") or "").strip()
     if not producer:
@@ -106,7 +106,7 @@ def aigc_json(cfg, content_id=""):
 关键是声明时长**并入片头秒数一起返回**，字幕时间轴拿这一个偏移整体后移，无需单独知道「声明」的存在——偏移口径分家正是字幕错位的成因，这里从源头堵死 [3]。
 
 ```python
-# audio_engine.py —— add_intro_outro：AI 语音声明固定排最前
+# podcast_maker/audio_engine.py —— add_intro_outro：AI 语音声明固定排最前
 def add_intro_outro(body, out_path, cfg, sample_rate, channels):
     decl = cfg.get("_ai_decl_src") or ""
     decl_sec = probe_duration_safe(decl) if decl else 0.0

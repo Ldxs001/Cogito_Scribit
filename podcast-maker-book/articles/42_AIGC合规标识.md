@@ -150,7 +150,7 @@ def add_intro_outro(body, out_path, cfg, sample_rate, channels):
 
 合规标识不是写个字段：横着要逐容器适配（mp4 必须开 `use_metadata_tags` 防静默丢键），纵着要让声明时长与字幕偏移共享一个数，而制作者身份绝不代填——留空就 fail-closed 停产，比伪造归属安全。
 
-### 引用与出处说明
+## 引用与出处说明
 
 | 编号 | 引用 | 出处 |
 |------|------|------|

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="description" content="《我写故我播——一本 AI 犯过错的书：边界的实测、缺陷的坐标与因地制宜的裁量》免费在线阅读与下载"/>
+<title>我写故我播——一本 AI 犯过错的书</title>
+<style>
+:root { color-scheme: light dark; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+       max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem; line-height: 1.8; color: #222; }
+h1 { font-size: 1.9rem; margin-bottom: .3rem; }
+.subtitle { font-size: 1.05rem; color: #666; margin-bottom: 2rem; }
+.buttons { display: flex; gap: 1rem; flex-wrap: wrap; margin: 2rem 0; }
+.btn { display: inline-block; padding: .8rem 1.6rem; border-radius: 8px; text-decoration: none;
+       font-size: 1rem; transition: opacity .2s; }
+.btn:hover { opacity: .85; }
+.btn-read { background: #2a6fd6; color: #fff; }
+.btn-epub { background: #e8a33d; color: #fff; }
+.btn-pdf { background: #2d6da3; color: #fff; }
+.card { background: rgba(128,128,128,.08); border-radius: 10px; padding: 1.4rem 1.6rem; margin: 1.2rem 0; }
+.card h2 { font-size: 1.1rem; margin-bottom: .6rem; }
+.card p { font-size: .95rem; color: #555; }
+.parts { width: 100%; border-collapse: collapse; font-size: .92rem; margin-top: .4rem; }
+.parts td { padding: .32rem 0; border-bottom: 1px dashed rgba(128,128,128,.25); color: #555; vertical-align: top; }
+.parts td:first-child { white-space: nowrap; padding-right: .8rem; color: #888; }
+.parts td:last-child { white-space: nowrap; text-align: right; padding-left: .8rem; color: #888; }
+.parts tr:last-child td { border-bottom: none; }
+.meta { font-size: .88rem; color: #888; margin-top: 2.5rem; }
+.meta a { color: #2a6fd6; }
+@media (max-width: 600px) { body { padding: 2rem 1rem; } h1 { font-size: 1.5rem; } }
+@media (prefers-color-scheme: dark) {
+  body { background: #161616; color: #ddd; }
+  .subtitle, .card p, .meta, .parts td { color: #aaa; }
+  .card { background: rgba(255,255,255,.05); }
+  .meta a { color: #6ba4ff; }
+  .parts td { border-bottom-color: rgba(255,255,255,.12); }
+}
+</style>
+</head>
+<body>
+<h1>我写故我播</h1>
+<p class="subtitle">一本 AI 犯过错的书：边界的实测、缺陷的坐标与因地制宜的裁量</p>
+
+<p style="text-align:center; margin:1.5rem 0;">
+  <img src="book/cover.png" alt="《我写故我播》书封" style="max-width:100%; border-radius:10px; box-shadow:0 4px 18px rgba(0,0,0,.18);"/>
+</p>
+
+<div class="buttons">
+  <a class="btn btn-read" href="book/build/output/book.html">在线阅读整本书</a>
+  <a class="btn btn-epub" href="book/build/output/book.epub">下载 EPUB</a>
+  <a class="btn btn-pdf" href="https://github.com/Ldxs001/Cogito_Scribit/releases/download/podcast-v1.0.0/book_podcast-v1.0.0.pdf">下载 PDF（打印版）</a>
+</div>
+
+<div class="card">
+  <h2>这本书是什么</h2>
+  <p>播客智能体 podcast-maker 从空目录跑到能出片，路上踩了 47 个坑。每一个坑的现象、错误尝试、根因、修法、验证，原样留档——不抽象、不美化、不补估算。其中 13 个是 LLM 在执行过程中自己犯的错：漏声明、抄近路、被上下文劫持、把开放任务当封闭任务、嵌套结构里丢约束。错出现的形状和位置，就是边界的坐标。</p>
+  <p style="margin-top:.6rem;">它不给定律。一座矿的 47 个缺陷够标坐标，不够提炼定律——所以交付的是可裁的物证：带走形状和纪律，留下数字和实现，因地制宜、适体量裁。</p>
+</div>
+
+<div class="card">
+  <h2>八部结构</h2>
+  <table class="parts">
+    <tr><td>第 I 部 · 管线与配置总表</td><td>一条链从脚本走到产物</td><td>4 篇 · 1.45 万字</td></tr>
+    <tr><td>第 II 部 · 约束与修补</td><td>约束写在哪里，模型才不会糊弄</td><td>8 篇 · 3.11 万字</td></tr>
+    <tr><td>第 III 部 · 声音与音频</td><td>把不确定的嗓固定成可复现的波形</td><td>8 篇 · 3.46 万字</td></tr>
+    <tr><td>第 IV 部 · BGM 与环境音</td><td>让机器配乐不塌成一面墙</td><td>9 篇 · 3.61 万字</td></tr>
+    <tr><td>第 V 部 · 字幕</td><td>一份时间轴，四种产物</td><td>6 篇 · 2.12 万字</td></tr>
+    <tr><td>第 VI 部 · 界面与工程体验</td><td>用户看见的每一秒都要有交代</td><td>6 篇 · 2.27 万字</td></tr>
+    <tr><td>第 VII 部 · 合规与纪律</td><td>能发出去之前先能说得清</td><td>3 篇 · 1.08 万字</td></tr>
+    <tr><td>第 VIII 部 · 方法论与哲学</td><td>从一座矿回望那个圈</td><td>3 篇 · 1.50 万字</td></tr>
+  </table>
+  <p style="margin-top:.8rem;">全书 66 章（前置 3 + 导读 8 + 正文 47 + 结语 1 + 附录 7），约 18.7 万字（出版折算口径）。</p>
+</div>
+
+<div class="card">
+  <h2>怎么读最省时间</h2>
+  <p>先看阅读指南里的<strong>缺陷坐标表</strong>——47 篇逐篇标了「缺陷主体」（LLM 执行 13 篇 / 工程常规 34 篇）与「摸到的边界」。想找边界样本，直接读那 13 篇；想找工程教训，读剩下 34 篇。两类不要混着读：前者的教训能带走形状，后者的只能带走纪律。</p>
+</div>
+
+<div class="card">
+  <h2>与《我思故我写》的关系</h2>
+  <p>平行同级，不属于任何一册的附卷，也不存在主从。两册语料完全独立，关系是「方法论源头 → 第二应用现场」：前者给判断，后者给证据。本册引用一律署《我思故我写》＋篇号。</p>
+</div>
+
+<div class="card">
+  <h2>协议</h2>
+  <p>本书整体采用 CC BY-SA 4.0（署名-相同方式共享）——可自由复制、分发、演绎，须注明作者 wUwproject 并按相同协议共享。</p>
+</div>
+
+<p class="meta">
+作者：wUwproject　|　协议：CC BY-SA 4.0　|　v1.0.0<br/>
+正文来源（可溯源）：
+<a href="https://gitee.com/wUwproject/Cogito_Scribit/tree/main/podcast-maker-book" target="_blank" rel="noopener">Gitee</a> ·
+<a href="https://github.com/Ldxs001/Cogito_Scribit/tree/main/podcast-maker-book" target="_blank" rel="noopener">GitHub</a><br/>
+2026 年 10 月 · 初版
+</p>
+</body>
+</html>

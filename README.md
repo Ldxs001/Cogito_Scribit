@@ -9,13 +9,15 @@ Copyright (c) 2026 wUwproject
 >
 > wUwproject 重型技能构建过程中沉淀的方法论体系。CC BY-SA 4.0。
 
-## 系列三部曲
+## 系列四本书
 
-| 母书 | 姊妹卷 · 排版 | 姊妹卷 · 架构 |
-|------|--------------|--------------|
-| <a href="book/README.md"><img src="book/cover.png" width="330" alt="《我思故我写》"></a> | <a href="typesetting/book/README.md"><img src="typesetting/book/cover.png" width="330" alt="《排版解析》"></a> | <a href="https://gitee.com/wUwproject/architecture/blob/main/book/README.md"><img src="assets/arch-cover.png" width="330" alt="《架构解析》"></a> |
-| **我思故我写**——一本 AI 写成的书 | **排版解析**——五层排版如何把一篇文章变成一本书 | **架构解析**——七套核心系统的工程实现 |
-| 回答"为什么" | 回答"怎么排" | 回答"怎么做" |
+| 《我思故我写》 | 《我写故我播》 | 姊妹卷 · 排版 | 姊妹卷 · 架构 |
+|------|------|--------------|--------------|
+| <a href="book/README.md"><img src="book/cover.png" width="240" alt="《我思故我写》"></a> | <a href="podcast-maker-book/README.md"><img src="podcast-maker-book/book/cover.png" width="240" alt="《我写故我播》"></a> | <a href="typesetting/book/README.md"><img src="typesetting/book/cover.png" width="240" alt="《排版解析》"></a> | <a href="https://gitee.com/wUwproject/architecture/blob/main/book/README.md"><img src="assets/arch-cover.png" width="240" alt="《架构解析》"></a> |
+| **我思故我写**——一本 AI 写成的书 | **我写故我播**——一本 AI 犯过错的书 | **排版解析**——五层排版如何把一篇文章变成一本书 | **架构解析**——七套核心系统的工程实现 |
+| 回答"为什么" | 回答"边界在哪" | 回答"怎么排" | 回答"怎么做" |
+
+**四本的关系**：《我思故我写》与《我写故我播》**平行同级**——前者画圈，后者用一个工程现场实测圈的位置，两册不存在主从，也不互为姊妹卷，引用一律写《我思故我写》。《排版解析》《架构解析》是《我思故我写》的姊妹卷，分别回答"怎么排"与"怎么做"。
 
 ## 仓库定位
 
@@ -68,6 +70,14 @@ Copyright (c) 2026 wUwproject
 
 书是系列文章的再加工成品：正文为发布版文章，另新增版权页、序言、阅读指南、四部导读、全书结语与附录四件（术语表/工具索引/参考文献/方法论地图）。
 
+## 成书：《我写故我播》
+
+《**我写故我播——一本 AI 犯过错的书：边界的实测、缺陷的坐标与因地制宜的裁量**》（约 18.7 万字，66 章 = 八部 47 篇 + 8 篇部导读 + 序言/阅读指南/版权页 + 结语 + 附录七件，CC BY-SA 4.0）。
+
+**获取与下载（在线阅读 / EPUB / PDF / 书稿源码 / 构建管线）统一见 [`podcast-maker-book/README.md`](podcast-maker-book/README.md)。**
+
+与《我思故我写》的关系：《我思故我写》的结论要画圈，但圈的边界没有明确坐标；本书把 podcast-maker 这一个工程现场连同 LLM 执行过程中自己犯下的错一并留下，用错的形状反推边界的位置。技术实现是载体，边界的位置才是主线；不抽象成定律，只到坐标——方便读者因地制宜、适体量裁。
+
 ## 目录结构
 
 ```
@@ -76,7 +86,8 @@ Cogito_Scribit/
 ├── README.md
 ├── 方法论体系总览.md           # 系列总纲
 ├── index.html                 # 成书《我思故我写》入口页（GitHub Pages 首页）
-├── book/                      # 成书书稿（四部 + 序言/导读/结语/附录 + 构建管线）
+├── book/                      # 成书《我思故我写》（四部 + 序言/导读/结语/附录 + 构建管线）
+├── podcast-maker-book/        # 成书《我写故我播》（八部 47 篇 + 序言/导读/结语/附录七件 + 构建管线）
 ├── typesetting/               # 排版规范 + 排版解析册（导读见 typesetting/README.md）
 ├── assets/                    # 跨仓库展示用封面
 └── 01_~10_*.md                # 方法论文章（含 08a/08b/08c、09a~09f、10a、10b）

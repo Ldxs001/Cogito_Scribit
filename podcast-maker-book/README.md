@@ -16,7 +16,7 @@ podcast-maker-book/
 ├── articles/               ← 47 篇正文源稿 + 8 篇部导读（唯一源，书稿即单篇）
 ├── book/                   ← 成书构件区（前置件 / 结语 / 七附录 / 构建管线 / 封面）
 │   └── README.md           ← 构件与构建命令
-├── wechat-publish/         ← 单篇对外发布的中间件（与入书无关，各自独立）
+├── wechat-publish/         ← 单篇对外发布的中间件（与入书无关，本地工具链，不入仓）
 ├── index.html              ← 落地页：在线阅读 / EPUB / PDF
 └── 成册说明_我写故我播.md   ← 书是什么、八部是什么、怎么读
 ```
@@ -27,10 +27,11 @@ podcast-maker-book/
 
 | 项目 | 链接 |
 |------|------|
-| 在线阅读 | [book/build/output/book.html](book/build/output/book.html) |
-| EPUB | [book/build/output/book.epub](book/build/output/book.epub) |
-| PDF 打印版 | [Releases · podcast-v1.0.0](https://github.com/Ldxs001/Cogito_Scribit/releases/download/podcast-v1.0.0/book_podcast-v1.0.0.pdf) |
-| 全书 Markdown | [book/build/output/我写故我播全书.md](book/build/output/我写故我播全书.md) |
+| **在线阅读整本书** | GitHub Pages：<https://ldxs001.github.io/Cogito_Scribit/podcast-maker-book/book/build/output/book.html>（书入口页 <https://ldxs001.github.io/Cogito_Scribit/podcast-maker-book/>） |
+| **下载 EPUB（电子书）** | [book/build/output/book.epub](book/build/output/book.epub) |
+| **下载 PDF（打印版）** | 独立发行版 **podcast-v1.0.0**：[GitHub](https://github.com/Ldxs001/Cogito_Scribit/releases/download/podcast-v1.0.0/book_podcast-v1.0.0.pdf)／[Release 页](https://github.com/Ldxs001/Cogito_Scribit/releases/tag/podcast-v1.0.0) |
+| **书稿源码（Markdown）** | 本目录 `articles/`（47 篇 + 8 篇部导读，唯一源）＋ `book/`（前置件/结语/附录/管线） |
+| **全书 Markdown（合订本）** | [book/build/output/我写故我播全书.md](book/build/output/我写故我播全书.md) |
 
 ## 八部与 47 篇
 

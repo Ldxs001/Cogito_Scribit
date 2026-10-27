@@ -11,11 +11,47 @@ Copyright (c) 2026 wUwproject
 
 ## 系列四本书
 
-| 《我思故我写》 | 《我写故我播》 | 姊妹卷 · 排版 | 姊妹卷 · 架构 |
-|------|------|--------------|--------------|
-| <a href="book/README.md"><img src="book/cover.png" width="240" alt="《我思故我写》"></a> | <a href="podcast-maker-book/README.md"><img src="podcast-maker-book/book/cover.png" width="240" alt="《我写故我播》"></a> | <a href="typesetting/book/README.md"><img src="typesetting/book/cover.png" width="240" alt="《排版解析》"></a> | <a href="https://gitee.com/wUwproject/architecture/blob/main/book/README.md"><img src="assets/arch-cover.png" width="240" alt="《架构解析》"></a> |
-| **我思故我写**——一本 AI 写成的书 | **我写故我播**——一本 AI 犯过错的书 | **排版解析**——五层排版如何把一篇文章变成一本书 | **架构解析**——七套核心系统的工程实现 |
-| 回答"为什么" | 回答"边界在哪" | 回答"怎么排" | 回答"怎么做" |
+四本分两组，**每行三本**、按层级排列：第一组是《我思故我写》一系（一本本体 + 两本姊妹卷），第二组是与之平行同级的另一本本体《我写故我播》，右侧留空。
+
+### 第一组 ·《我思故我写》系（本体 + 两本姊妹卷）
+
+<table>
+  <tr>
+    <td width="240" align="center"><a href="book/README.md"><img src="book/cover.png" width="240" alt="《我思故我写》"></a></td>
+    <td width="240" align="center"><a href="typesetting/book/README.md"><img src="typesetting/book/cover.png" width="240" alt="《排版解析》"></a></td>
+    <td width="240" align="center"><a href="https://gitee.com/wUwproject/architecture/blob/main/book/README.md"><img src="assets/arch-cover.png" width="240" alt="《架构解析》"></a></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>我思故我写</strong><br>本体 · 一本 AI 写成的书</td>
+    <td align="center"><strong>排版解析</strong><br>姊妹卷 · 五层排版如何把一篇文章变成一本书</td>
+    <td align="center"><strong>架构解析</strong><br>姊妹卷 · 七套核心系统的工程实现</td>
+  </tr>
+  <tr>
+    <td align="center">回答"为什么"</td>
+    <td align="center">回答"怎么排"</td>
+    <td align="center">回答"怎么做"</td>
+  </tr>
+</table>
+
+### 第二组 ·《我写故我播》（与《我思故我写》平行同级）
+
+<table>
+  <tr>
+    <td width="240" align="center"><a href="podcast-maker-book/README.md"><img src="podcast-maker-book/book/cover.png" width="240" alt="《我写故我播》"></a></td>
+    <td width="240">&nbsp;</td>
+    <td width="240">&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="center"><strong>我写故我播</strong><br>本体 · 一本 AI 犯过错的书</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td align="center">回答"边界在哪"</td>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
 
 **四本的关系**：《我思故我写》与《我写故我播》**平行同级**——前者画圈，后者用一个工程现场实测圈的位置，两册不存在主从，也不互为姊妹卷，引用一律写《我思故我写》。《排版解析》《架构解析》是《我思故我写》的姊妹卷，分别回答"怎么排"与"怎么做"。
 
